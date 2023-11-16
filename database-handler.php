@@ -42,13 +42,15 @@ Class Database {
         }
 
         if($this->db_connection->connect_error) {
-            echo "Connection Error: " . htmlspecialchars($this->db_connection->connect_error, ENT_QUOTES);
+            $msg =  "Connection Error: " . htmlspecialchars($this->db_connection->connect_error, ENT_QUOTES);
         } else {
-            echo "OK";
+            $msg = "OK";
         }
 
         $this->destroyDatabaseConnection();
+        return $msg;
     }
+
 
 
 }
