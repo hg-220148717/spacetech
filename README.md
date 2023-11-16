@@ -5,6 +5,14 @@ SpaceTech eCommerce Website (Team Project - Group 35)
 The database is handled using functions to carry out specific operations, rather than allowing user requests & other PHP files to directly access the database.
 
 The following functions are used internally by `database-handler.php` to create & destroy database connections:
-`createDatabaseConnection()` & `destroyDatabaseConnection()`. These functions cannot be directly accessed, but allow for the internal functions to connect to the database.
 
-The database connection can be tested by calling `testDatabaseConnection()`, which will echo out "OK" if the connection was successful or an error message if unsuccessful. This function is a good example for how to handle database connections in this class.
+| Function    | Description |
+| ----------- | ----------- |
+| `createDatabaseConnection()`    | intialises the connection to the database       |
+| `destroyDatabaseConnection()`   | destroys the connection to the database after database use        |
+| `checkSetup()` | check if the database has been initialsed, and run setup function if not setup |
+| `runSetup()` | intialises the database for a new installation |
+
+These functions cannot be directly accessed, but allow for use by internal functions to connect and interface with the database.
+
+The database connection can be tested by calling `testDatabaseConnection()`, which will return "OK" if the connection was successful or an error message if unsuccessful. This function is a good example for how to handle database connections in this class.
