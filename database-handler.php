@@ -15,20 +15,27 @@ $db_connection = null;
 
 function createDatabaseConnection() {
 
-    if($db_connection === null) {
-        // connection already established, some kind of handling needs to be done here
-    } else {
+    if($db_connection !== null) {
         $db_connection = new mysqli($db_host, $db_username, $db_password, $db_name);
-
-        if($db_connection->connect_error) {
-            // connection failed - error message stored in $db_connection->connect_error
-        } else {
-            // connection successful
-        }
-
     }
 
+    // if a connection is already established, continue on to ensure
+    // that connection object is successfully connected
 
+    if($db_connection->connect_error) {
+        return $db_connection->connect_error;
+    } else {
+        return "OK";
+    }
+
+}
+
+function destroyDatabaseConnection() {
+    if($db_connection !== null) {
+        $db_connection -> close();
+    }
+
+    $db_connection == null;
 }
 
 ?>
