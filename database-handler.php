@@ -19,17 +19,13 @@ Class Database {
         // check if database connectoin is already established
 
         if($this->db_connection === null) {
-            $this->db_connection = new mysqli($this->db_host, $this->db_username, $this->db_password, $this->db_name);
+            $this->db_connection = new mysqli($this->db_host, $this->db_username, $this->db_password, $this->db_name, $this->db_port);
         }
 
         // if a connection is already established, continue on to ensure
         // that connection object is successfully connected
 
-        if($this->db_connection->connect_error) {
-            return $this->db_connection->connect_error;
-        } else {
-            return "OK";
-        }
+        $this->testDatabaseConnection();
 
     }
 
@@ -53,6 +49,7 @@ Class Database {
 
         $this->destroyDatabaseConnection();
     }
+
 
 }
 
