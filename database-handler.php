@@ -13,7 +13,9 @@ $db_password = "password"; // password for accessing db
 
 $db_connection = null;
 
-function createDatabaseConnection() {
+private function createDatabaseConnection() {
+
+    // check if database connectoin is already established
 
     if($db_connection !== null) {
         $db_connection = new mysqli($db_host, $db_username, $db_password, $db_name);
@@ -30,11 +32,10 @@ function createDatabaseConnection() {
 
 }
 
-function destroyDatabaseConnection() {
+private function destroyDatabaseConnection() {
     if($db_connection !== null) {
         $db_connection -> close();
     }
-
     $db_connection == null;
 }
 
