@@ -42,7 +42,7 @@ Class Database {
         }
 
         if($this->db_connection->connect_error) {
-            $msg =  "Connection Error: " . htmlspecialchars($this->db_connection->connect_error, ENT_QUOTES);
+            $msg = "Connection Error: " . htmlspecialchars($this->db_connection->connect_error, ENT_QUOTES);
         } else {
             $msg = "OK";
         }
@@ -51,7 +51,20 @@ Class Database {
         return $msg;
     }
 
+    private function checkSetup() {
+        if($this->createDatabaseConnection() == "OK") {
 
+            $result = $this->db_connection->execute_query("SELECT 1 FROM `users` LIMIT 1");
+            foreach($result as $row) {
+                if($row == null) {
+                    // setup has not occurred, default superadmin user does not exist
+                    // trigger creation of database tables
+                } else {
+                    return true; // setup has already occurred
+                }
+            }
+        }
+    }
 
 }
 
