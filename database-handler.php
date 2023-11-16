@@ -7,9 +7,9 @@
 
 $db_host = "localhost"; // host name for db server
 $db_port = 3306; // port for db server
-$db_name = "spacetech"; // database name
-$db_username = "username"; // username for accessing db
-$db_password = "password"; // password for accessing db
+$db_name = "spacetech_dev"; // database name
+$db_username = "spacetech_dev"; // username for accessing db
+$db_password = "m@tz%H83dtS4#XS"; // password for accessing db
 
 $db_connection = null;
 
