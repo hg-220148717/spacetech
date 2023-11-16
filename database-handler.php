@@ -59,11 +59,17 @@ Class Database {
                 if($row == null) {
                     // setup has not occurred, default superadmin user does not exist
                     // trigger creation of database tables
+                    $this->runSetup();
+                    return true;
                 } else {
                     return true; // setup has already occurred
                 }
             }
         }
+    }
+
+    private function runSetup() {
+        // todo
     }
 
 }
