@@ -65,16 +65,25 @@ Class Database {
         }
     }
         
+    private function generatePasswordHash($password) {
+      return password_hash($password, PASSWORD_DEFAULT);
+    }
+
+    private function checkPassword($input, $hash) {
+      return password_verify($input, $hash);
+    }
 
     private function runSetup() {
         $sql_setup_commands = ["CREATE TABLE `users` (
             `user_id` integer PRIMARY KEY,
-            `user_email` varchar(50) NOT NULL,
+            `user_email` varchar(50) NOT NULL UNIQUE,
             `user_passwordhash` varchar(255) NOT NULL,
             `user_name` varchar(50) NOT NULL,
             `user_isstaff` boolean NOT NULL DEFAULT false,
             `user_isadmin` boolean NOT NULL DEFAULT false
           );",
+
+          "ALTER TABLE `users` CHANGE `user_id` `user_id` INT(11) NOT NULL AUTO_INCREMENT;",
           
           "CREATE TABLE `categories` (
             `category_id` integer PRIMARY KEY,
@@ -148,8 +157,6 @@ Class Database {
           
           "ALTER TABLE `reviews` ADD FOREIGN KEY (`review_productid`) REFERENCES `products` (`product_id`);",
           
-          "ALTER TABLE `basket_entries` ADD FOREIGN KEY (`basket_userid`) REFERENCES `users` (`user_id`);",
-          
           "ALTER TABLE `basket_entries` ADD FOREIGN KEY (`basket_productid`) REFERENCES `products` (`product_id`);",
           
           "ALTER TABLE `orders` ADD FOREIGN KEY (`order_userid`) REFERENCES `users` (`user_id`);",
@@ -176,10 +183,34 @@ Class Database {
         }
     }
 
+    public function createUser($email, $password, $name) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $result = $this->db_connection->execute_query("SELECT user_email FROM `users` WHERE `user_email` LIKE ?", [$email]);
+          if($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc() ) {
+              if(strtolower($row["user_email"]) == $email) {
+                return "Error - supplied email address already in use.";
+              }
+            }
+          } else {
+              $passhash = $this->generatePasswordHash($password);
+              $this->db_connection->execute_query("INSERT INTO `users` (`user_email`, `user_passwordhash`, `user_name`) VALUES (?,?,?);", [$email, $passhash, $name]);
+              return "User account created successfully.";
+          }
+        } catch (Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+      }
+    }
+
+    
 }
 
 $db_handler = new Database();
 echo $db_handler->testDatabaseConnection();
 echo $db_handler->checkSetup();
+echo $db_handler->createUser("220148717@aston.ac.uk", "password", "Harrison");
+echo $db_handler->createUser("220148717@aston.ac.uk", "password2", "Harrison2");
 
 ?>
