@@ -20,3 +20,5 @@ These functions cannot be directly accessed, but allow for use by internal funct
 The database connection can be tested by calling `testDatabaseConnection()`, which will return "OK" if the connection was successful or an error message if unsuccessful. This function is a good example for how to handle database connections in this class.
 
 Creating a new user can be done by calling `createUser($email, $password, $hash)`.
+
+Checking a user's inputted username & password can be done by calling `checkCredentials($email, $password)`.
