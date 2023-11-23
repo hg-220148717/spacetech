@@ -1,3 +1,17 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('img/section\ image.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+
+
+
+
 #hero {
     background-color: blue;
     width: 100%;
@@ -24,6 +38,7 @@
     justify-content: space-between;
     padding-top: 20px;
     flex-wrap: wrap;
+
 }
 
 #products1 .pro{
@@ -39,7 +54,7 @@ transition: 0.2s ease;
 }
 
 #products1 .pro:hover{
-    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.08);
+    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.477);
 }
 
 #products1 .pro img{
@@ -54,13 +69,13 @@ transition: 0.2s ease;
 }
 
 #products1 .pro .description span{
-    color: #606063;
+    color: #efeff7d3;
     font-size: 12px;
 }
 
 #products1 .pro .description h5{
     padding-top: 7px;
-    color: #1a1a1a;
+    color: #fffa;
     font-size: 14px;
 }
 
