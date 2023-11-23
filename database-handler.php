@@ -300,6 +300,43 @@ Class Database {
       }
     }
 
+    public function getProductsByName($inputted_name) {
+      if(is_string($inputted_name)) {
+        if($this->createDatabaseConnection() == "OK") {
+
+          $output = array();
+
+          try {
+            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_name` = '%?%' ORDER BY `product_name`;", [$inputted_name]);
+
+            while ($row = $result->fetch_assoc() ) {
+              if($result->num_rows > 0) {
+                $product = array();
+                $product["product_id"] = $row["product_id"];
+                $product["category_id"] = $row["category_id"];
+                $product["product_name"] = $row["product_name"];
+                $product["product_desc"] = $row["product_desc"];
+                $product["product_price"] = $row["product_price"];
+                $product["product_stockcount"] = $row["product_stockcount"];
+                $product["product_isdisabled"] = $row["product_isdisabled"];
+              
+                $output = $output + $product;
+  
+              } else {
+                return "Error - No results found.";
+              }
+            }
+
+          } catch(Exception $e) {
+            return "An error occurred. Stack trace: " . $e;
+          }
+
+        }
+      } else {
+        return "Error - input must be a string";
+      }
+    }
+
     
 }
 
