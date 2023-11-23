@@ -55,7 +55,7 @@ Class Database {
             try {
                 $this->db_connection->execute_query("SELECT 1 FROM `users` LIMIT 1");
             } catch(mysqli_sql_exception $e) {
-                // setup has not occurred, default superadmin user does not exist
+                // setup has not occurred, users table does not exist
                 // trigger creation of database tables
                 $this->runSetup();
                 return true;
@@ -207,7 +207,7 @@ Class Database {
     public function checkCredentials($email, $password) {
       if($this->createDatabaseConnection() == "OK") {
         try {
-          $result = $this->db_connection->execute_query("SELECT * FROM `users` WHERE `user_email` LIKE ?", [$email]);
+          $result = $this->db_connection->execute_query("SELECT * FROM `users` WHERE `user_email` LIKE ?;", [$email]);
           if($result->num_rows > 0) {
             while ($row = $result->fetch_assoc() ) {
               if(strtolower($row["user_email"]) == $email) {
@@ -227,6 +227,45 @@ Class Database {
       }
     }
 
+    public function getAllProducts($includeDisabledProducts) {
+      if($this->createDatabaseConnection() == "OK") {
+
+        $output = array();
+
+        try {
+          if($includeDisabledProducts) {
+            $result = $this->db_connection->execute_query("SELECT * FROM `products`;");
+          } else { 
+            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_isdisabled` = FALSE;");
+          }
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+              $product = array();
+              $product["product_id"] = $row["product_id"];
+              $product["category_id"] = $row["category_id"];
+              $product["product_name"] = $row["product_name"];
+              $product["product_desc"] = $row["product_desc"];
+              $product["product_price"] = $row["product_price"];
+              $product["product_stockcount"] = $row["product_stockcount"];
+              $product["product_isdisabled"] = $row["product_isdisabled"];
+
+              $output = array_push($output, $product);
+
+            } else {
+              break;
+            }
+          }
+
+
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+
+        return $output;
+      }
+    }
+
     
 }
 
@@ -234,6 +273,7 @@ $db_handler = new Database();
 echo $db_handler->testDatabaseConnection();
 echo $db_handler->checkSetup();
 echo $db_handler->createUser("220148717@aston.ac.uk", "password", "Harrison");
-echo $db_handler->createUser("220148717@aston.ac.uk", "password2", "Harrison2");
+
+
 
 ?>
