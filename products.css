@@ -29,6 +29,11 @@ body {
     color: #fff;
 }
 
+#products1 h2, 
+#products1 p{
+    color: #c1abf0;
+}
+
 #products1{
     text-align: center;
 }
