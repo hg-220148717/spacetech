@@ -24,3 +24,5 @@ Creating a new user can be done by calling `createUser($email, $password, $hash)
 Checking a user's inputted username & password can be done by calling `checkCredentials($email, $password)`.
 
 Retrieving products from the database can be done by calling the function `getAllProducts($includeDisabledProducts)`. The variable `$includeDisabledProducts` can be set to true to return all products, even if they are disabled, or false, to only include enabled products.
+
+A product can also be retrieved from the database using the `getProductByID($id)` function, which takes an integer as a parameter and returns product details based on the given product ID.
