@@ -1,48 +1,36 @@
 <?php
 
+include "database-handler.php";
+
 session_start(); // Start the session
 
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+
+// check if user already logged in
+if(isset($_SESSION['loggedin'])) {
+    $error = "User already logged in.";
+    echo "<div style='color:red'>" . htmlspecialchars($error, ENT_QUOTES) . "</div>";
+}
+
+
     // Get the form data
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Connect to the database
-    $servername = "localhost";
-    $dbusername = "root";
-    $dbpassword = "";
-    $dbname = "";// e-coomerce database name
-    
-    $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
-    
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    
-    // Prepare the SQL statement to check if the credentials match
-    $sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ss", $username, $password);
-    
-    // Execute the SQL statement
-    $stmt->execute();
-    
-    // Check if there is a row with the matching credentials
-    $result = $stmt->get_result();
-    if ($row = $result->fetch_assoc()) {
-        // Login successful, redirect to index.html
-        $_SESSION['loggedin'] = true;
+    $db_handler = new Database();
+    $request = $db_handler->checkCredentials($username, $password);
+
+    if(is_int($request)) {
+        $_SESSION['user_id'] = $request; // set user id to session
+        $_SESSION['loggedin'] = true; // set session variable to show user as logged in
         header("Location: index.html");
     } else {
         // Login failed, display error message
         $error = "Invalid username or password";
-        echo "<div style='color:red'>$error</div>";
+        echo "<div style='color:red'>" . htmlspecialchars($error, ENT_QUOTES) . "</div>";
     }
-    
-    // Close the statement and the database connection
-    $stmt->close();
-    $conn->close();
+
 }
 ?>
