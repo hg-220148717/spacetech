@@ -249,8 +249,8 @@ Class Database {
               $product["product_price"] = $row["product_price"];
               $product["product_stockcount"] = $row["product_stockcount"];
               $product["product_isdisabled"] = $row["product_isdisabled"];
-
-              $output = array_push($output, $product);
+            
+              $output = $output + $product;
 
             } else {
               break;
