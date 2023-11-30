@@ -2,7 +2,6 @@
 body {
     margin: 0;
     padding: 0;
-    
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -31,7 +30,7 @@ body {
 
 #products1 h2, 
 #products1 p{
-    color: #c1abf0;
+    color: rgb(241, 239, 245);
 }
 
 #products1{
@@ -74,13 +73,13 @@ transition: 0.2s ease;
 }
 
 #products1 .pro .description span{
-    color: #efeff7d3;
+    color: #010115d3;
     font-size: 12px;
 }
 
 #products1 .pro .description h5{
     padding-top: 7px;
-    color: #fffa;
+    color: rgba(16, 1, 1, 0.667);
     font-size: 14px;
 }
 
@@ -88,5 +87,5 @@ transition: 0.2s ease;
  padding-top: 7px;
  font-size: 15px;
  font-weight: 700;
- color: #088178;   
+ color: #021615;   
 }
