@@ -44,3 +44,5 @@ A list of products can also be retrieved from the database using the `getProduct
 ### Product & Category Creation
 
 A category can be created by calling the function `createCategory($name, $is_disabled, $image_path)`, which takes the name for the category, an option to disable the category, and a path to a locally stored image.
+
+A product can be created by calling the function `createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled)`, which takes the desired name, category ID (must be valid), description, price, current amount of stock, and option to disable.
