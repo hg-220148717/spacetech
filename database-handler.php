@@ -409,14 +409,44 @@ Class Database {
       }
     }
 
+    public function createCategory($name, $is_disabled, $image_path) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
+          return "Category created successfully.";
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+    } else {
+      return "An error occurred.";
+    }
+  }
 
+  public function createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled) {
+    if($this->createDatabaseConnection() == "OK") {
+      try {
+        $result = $this->db_connection->execute_query("SELECT `category_id` FROM `categories` WHERE `category_id` LIKE ?", [$category_id]);
+        if($result->num_rows <= 0) {
+          return "Category ID invalid.";
+        }
+
+        $this->db_connection->execute_query("INSERT INTO `products` (`product_name`, `category_id`, `product_desc`, `product_price`, `product_stockcount`, `product_isdisabled`) VALUES (?,?,?,?,?,?);", [$name, $category_id, $desc, $price, $stockcount, $is_disabled]);
+        return "Product created successfully.";
+
+      } catch(Exception $e) {
+        return "An error occurred. Stack trace: " . $e;
+      }
+  } else {
+    return "An error occurred.";
+  }
+}
     
 }
 
 $db_handler = new Database();
-echo $db_handler->testDatabaseConnection();
-echo $db_handler->checkSetup();
-echo $db_handler->createUser("220148717@aston.ac.uk", "password", "Harrison");
+//echo $db_handler->testDatabaseConnection();
+//echo $db_handler->checkSetup();
+//echo $db_handler->createUser("220148717@aston.ac.uk", "password", "Harrison");
 
 
 
