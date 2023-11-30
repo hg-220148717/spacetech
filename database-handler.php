@@ -266,6 +266,42 @@ Class Database {
       }
     }
 
+    public function getAllCategories($includeDisabledCategories) {
+      if($this->createDatabaseConnection() == "OK") {
+
+        $output = array();
+
+        try {
+          if($includeDisabledCategories) {
+            $result = $this->db_connection->execute_query("SELECT * FROM `categories`;");
+          } else { 
+            $result = $this->db_connection->execute_query("SELECT * FROM `categories` WHERE `category_isdisabled` = FALSE;");
+          }
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+              $category = array();
+              $category["category_id"] = $row["category_id"];
+              $category["category_name"] = $row["category_name"];
+              $category["category_isdisabled"] = $row["category_isdisabled"];
+              $category["category_image"] = $row["category_image"];
+            
+              $output = $output + $category;
+
+            } else {
+              break;
+            }
+          }
+
+
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+
+        return $output;
+      }
+    }
+  
     public function getProductByID($id) {
       if(is_int($id)) {
         if($this->createDatabaseConnection() == "OK") {
@@ -336,6 +372,7 @@ Class Database {
         return "Error - input must be a string";
       }
     }
+
 
     
 }
