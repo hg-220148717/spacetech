@@ -29,4 +29,6 @@ Retrieving categories from the database can be done by calling the function `get
 
 A product can also be retrieved from the database using the `getProductByID($id)` function, which takes an integer as a parameter and returns product details based on the given product ID.
 
+A list of products can also be retrieved from the database using the `getProductsByCategoryID($category_id)` function, which takes an integer as a parameter and returns a list of product details based on the given category ID.
+
 A list of products can also be retrieved from the database using the `getProductsByName($inputted_name)` function, which takes a string as a parameter and returns a list of matching products and their details based on the given search query.
