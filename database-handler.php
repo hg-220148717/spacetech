@@ -266,6 +266,150 @@ Class Database {
       }
     }
 
+    public function getAllCategories($includeDisabledCategories) {
+      if($this->createDatabaseConnection() == "OK") {
+
+        $output = array();
+
+        try {
+          if($includeDisabledCategories) {
+            $result = $this->db_connection->execute_query("SELECT * FROM `categories`;");
+          } else { 
+            $result = $this->db_connection->execute_query("SELECT * FROM `categories` WHERE `category_isdisabled` = FALSE;");
+          }
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+              $category = array();
+              $category["category_id"] = $row["category_id"];
+              $category["category_name"] = $row["category_name"];
+              $category["category_isdisabled"] = $row["category_isdisabled"];
+              $category["category_image"] = $row["category_image"];
+            
+              $output = $output + $category;
+
+            } else {
+              break;
+            }
+          }
+
+
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+
+        return $output;
+      }
+    }
+  
+    public function getProductByID($id) {
+      if(is_int($id)) {
+        if($this->createDatabaseConnection() == "OK") {
+          try {
+            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_id` = ? LIMIT 1;", [$id]);
+
+            while ($row = $result->fetch_assoc() ) {
+              if($result->num_rows > 0) {
+                $product = array();
+                $product["product_id"] = $row["product_id"];
+                $product["category_id"] = $row["category_id"];
+                $product["product_name"] = $row["product_name"];
+                $product["product_desc"] = $row["product_desc"];
+                $product["product_price"] = $row["product_price"];
+                $product["product_stockcount"] = $row["product_stockcount"];
+                $product["product_isdisabled"] = $row["product_isdisabled"];
+              
+                return $product;
+  
+              } else {
+                return "Error - No results found.";
+              }
+            }
+
+          } catch(Exception $e) {
+            return "An error occurred. Stack trace: " . $e;
+          }
+
+        }
+      } else {
+        return "Error - ID must be an integer";
+      }
+    }
+
+    public function getProductsByName($inputted_name) {
+      if(is_string($inputted_name)) {
+        if($this->createDatabaseConnection() == "OK") {
+
+          $output = array();
+
+          try {
+            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_name` = '%?%' ORDER BY `product_name`;", [$inputted_name]);
+
+            while ($row = $result->fetch_assoc() ) {
+              if($result->num_rows > 0) {
+                $product = array();
+                $product["product_id"] = $row["product_id"];
+                $product["category_id"] = $row["category_id"];
+                $product["product_name"] = $row["product_name"];
+                $product["product_desc"] = $row["product_desc"];
+                $product["product_price"] = $row["product_price"];
+                $product["product_stockcount"] = $row["product_stockcount"];
+                $product["product_isdisabled"] = $row["product_isdisabled"];
+              
+                $output = $output + $product;
+  
+              } else {
+                return "Error - No results found.";
+              }
+            }
+
+          } catch(Exception $e) {
+            return "An error occurred. Stack trace: " . $e;
+          }
+
+        }
+      } else {
+        return "Error - input must be a string";
+      }
+    }
+
+    public function getProductsByCategoryID($category_id) {
+      if(is_int($category_id)) {
+        if($this->createDatabaseConnection() == "OK") {
+          try {
+            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `category_id` = ?;", [$category_id]);
+            $output = array();
+            while ($row = $result->fetch_assoc() ) {
+              if($result->num_rows > 0) {
+                $product = array();
+                $product["product_id"] = $row["product_id"];
+                $product["category_id"] = $row["category_id"];
+                $product["product_name"] = $row["product_name"];
+                $product["product_desc"] = $row["product_desc"];
+                $product["product_price"] = $row["product_price"];
+                $product["product_stockcount"] = $row["product_stockcount"];
+                $product["product_isdisabled"] = $row["product_isdisabled"];
+              
+                $output = $output + $product;
+  
+              } else {
+                return "Error - No results found.";
+              }
+            }
+
+            return $output;
+
+          } catch(Exception $e) {
+            return "An error occurred. Stack trace: " . $e;
+          }
+
+        }
+      } else {
+        return "Error - ID must be an integer";
+      }
+    }
+
+
     
 }
 
