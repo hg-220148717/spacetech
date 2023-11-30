@@ -414,9 +414,9 @@ Class Database {
 }
 
 $db_handler = new Database();
-echo $db_handler->testDatabaseConnection();
-echo $db_handler->checkSetup();
-echo $db_handler->createUser("220148717@aston.ac.uk", "password", "Harrison");
+//echo $db_handler->testDatabaseConnection();
+//echo $db_handler->checkSetup();
+//echo $db_handler->createUser("220148717@aston.ac.uk", "password", "Harrison");
 
 
 
