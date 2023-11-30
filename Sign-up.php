@@ -1,23 +1,16 @@
 <?php
-// Database connection parameters
-$servername = "localhost";
-$username = "";
-$password = "";
-$dbname = "";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+include "database-handler.php";
+$db_handler = new Database(); // setup database handler
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+session_start(); // Start the session
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve user input
-    $username = $_POST["username"];
-    $rawPassword = $_POST["password"];
+    $email = $_POST["email"];
+    $password = $_POST["password"];
+    $name = $_POST["name"];
 
     // Validate password requirements
     if (!preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/", $rawPassword)) {
@@ -26,26 +19,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    // Hash the password using PASSWORD_BCRYPT algorithm
-    $password = password_hash($rawPassword, PASSWORD_BCRYPT);
+    if($db_handler->createUser($email, $password, $name) == "User account created successfully.") {
+        // Redirect to a Home Page, login successful
 
-    // Prepare and execute SQL statement to insert user data
-    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $username, $password);
-
-    if ($stmt->execute()) {
-        // Redirect to a Home Page
+        // may want to autologin/redirect to login page in future?
         header("Location: index.html");
         exit();
     } else {
-        // Handle errors,display's an error message.
-        echo "Error: " . $stmt->error;
+        echo "User already exists. Please log in.";
+        exit();
     }
 
-    // Close statement
-    $stmt->close();
 }
 
-// Close database connection
-$conn->close();
 ?>
