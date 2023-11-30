@@ -409,7 +409,18 @@ Class Database {
       }
     }
 
-
+    public function createCategory($name, $is_disabled, $image_path) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
+          return "Category created successfully.";
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+    } else {
+      return "An error occurred.";
+    }
+  }
     
 }
 
