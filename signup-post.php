@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["name"];
 
     // Validate password requirements
-    if (!preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/", $rawPassword)) {
+    if (!preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/", $password)) {
         // Password does not meet the requirements
         echo "Password must contain at least one uppercase letter, one number, and one special character, and be at least 8 characters long.";
         exit();
