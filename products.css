@@ -33,6 +33,10 @@ img{
     color: #fff;
 }
 
+.section-p1 {
+    padding: 40px 80px;
+}
+
 #products1 h2, 
 #products1 p{
     color: rgb(241, 239, 245);
