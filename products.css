@@ -59,15 +59,15 @@ width: 25%;
 min-width: 250px;
 padding: 10px 12px;
 border: 1px solid rgb(245, 242, 242);
-border-radius: 25px;
+border-radius: 4px;
 cursor: pointer;
-box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.02);
+box-shadow: 20px 20px 34px rgba(0, 0, 0, 0.02);
 margin: 15px 0;
 transition: 0.2s ease;
 }
 
 #products1 .pro:hover{
-    box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.477);
+    box-shadow: 10px 10px 54px rgba(80, 70, 200, 0.1);
 }
 
 #products1 .pro img{
