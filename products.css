@@ -142,3 +142,19 @@ transition: 0.2s ease;
     width: 50%;
     padding-top: 30px;
 }
+
+#productsdetails .proimagedetails h4{
+padding: 10px 0 10px 0;
+
+}
+
+#productsdetails .proimagedetails h2{
+    font-size: 30px;
+}
+
+#productsdetails .proimagedetails select{
+    display: block;
+    padding: 5px;
+    margin-bottom: 10px;
+
+}
