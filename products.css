@@ -15,7 +15,6 @@ body {
  }
 
 
-
 #hero {
     background-image: url(img/hero\ img/hero.jpg);
     width: 100%;
@@ -129,3 +128,7 @@ transition: 0.2s ease;
 
 }
 
+.multipleimagecolumn{
+    flex-basis: 24%;
+    cursor: pointer;
+}
