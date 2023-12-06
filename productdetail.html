@@ -49,6 +49,23 @@
     </div>
 </section>
 
+<script>
+    var bigimage = document.getElementById("bigimage");
+    var miniimage = document.getElementsByClassName("miniimage");
+
+    miniimage[0].onclick = function(){
+        bigimage.src = miniimage[0].src;
+    }
+    miniimage[1].onclick = function(){
+        bigimage.src = miniimage[1].src;
+    }
+    miniimage[2].onclick = function(){
+        bigimage.src = miniimage[2].src;
+    }
+    miniimage[3].onclick = function(){
+        bigimage.src = miniimage[3].src;
+    }
+</script>
 
 <script src="products.js"></script>
 
