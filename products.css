@@ -7,7 +7,7 @@ body {
     background-attachment: fixed;
 }
 
-img{
+#myimage{
     width:150px;
     height:150px;
     object-fit:scale-down;
@@ -116,3 +116,16 @@ transition: 0.2s ease;
     font-weight: 600;
 
 }
+
+#productsdetails .proimage{
+    width: 40%;
+    margin-right: 50px;
+   
+}
+
+.multipleimage{
+    display: flex;
+    justify-content: space-between;
+
+}
+
