@@ -165,3 +165,17 @@ padding: 10px 0 10px 0;
     font-size: 12px;
     margin-right: 10px;
 }
+
+#productsdetails .proimagedetails input:focus{
+    outline: none;
+}
+
+#productsdetails .proimagedetails button{
+    background: #a27dde;
+    color: white;
+
+}
+
+#productsdetails .proimagedetails span{
+    line-height: 25px;
+}
