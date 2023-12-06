@@ -116,6 +116,11 @@ transition: 0.2s ease;
 
 }
 
+#productsdetails{
+    display: flex;
+    margin-top: 20px;
+}
+
 #productsdetails .proimage{
     width: 40%;
     margin-right: 50px;
@@ -131,4 +136,9 @@ transition: 0.2s ease;
 .multipleimagecolumn{
     flex-basis: 24%;
     cursor: pointer;
+}
+
+#productsdetails .proimagedetails{
+    width: 50%;
+    padding-top: 30px;
 }
