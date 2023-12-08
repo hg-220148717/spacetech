@@ -2,7 +2,7 @@
 
 session_start();
 
-if (!isset($_SESSION["uid"])) {
+if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
     // redirect as no user id found in session, user is not logged i
 }
@@ -11,8 +11,8 @@ include("database-handler.php");
 $db_handler = new Database();
 $db_handler->checkSetup();
 
-$email = $db_handler->getEmailFromUserID($_SESSION["uid"]);
-$name = $db_handler->getNameFromUserID($_SESSION["uid"]);
+$email = $db_handler->getEmailFromUserID($_SESSION["user_id"]);
+$name = $db_handler->getNameFromUserID($_SESSION["user_id"]);
 
 
 
@@ -40,12 +40,12 @@ $name = $db_handler->getNameFromUserID($_SESSION["uid"]);
 
         <div class="basic">
             <span>Full Name:</span>
-            <input type="text" placeholder="John Doe" required>
+            <input type="text" placeholder="John Doe" <?php echo "value='" . htmlspecialchars($name, ENT_QUOTES) . "'"; ?> disabled required>
         </div>
 
         <div class="basic">
             <span>Email</span>
-            <input type="text" placeholder="johndoe@gmail.com"required>
+            <input type="text" placeholder="johndoe@gmail.com"  <?php echo "value='" . htmlspecialchars($email, ENT_QUOTES) . "'"; ?> disabled required>
         </div>
 
         <div class="basic">
