@@ -50,7 +50,7 @@
 
                 <div class="content">
                     <h3>why choose us?</h3>
-                    <p>SOMETHING GOES HERE!!!!</p>
+                    <p>At Spacetech, our mission is to revolutionize the accessibility of cutting-edge electronics by providing top-quality devices and accessories to all individuals, catering to their diverse needs and technological aspirations. We aim to create a seamless and reliable online platform where customers can explore, select, and purchase the latest in electronic innovation, ensuring a stellar shopping experience backed by exceptional service</p>
                     <a href="about.php" class="btn">learn more</a>
                 </div>
             </div>
