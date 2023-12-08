@@ -15,10 +15,10 @@ html{
     overflow-x: hidden;
 }
 
-/*body{
+body{
     background: linear-gradient(90deg, #0005a0 0%, #160c43 30%, #160c43 30%, #6c00c4 100%);
 }
-*/
+
 
 header{
     background-color: white;
@@ -64,11 +64,16 @@ header .navbar a:hover{
     justify-content:flex-end;
 
 }
+
+.nav-icons a {
+    display: flex;
+}
   
 .nav-icons img {
     cursor: pointer;
     margin-right: 20px;
-    width: calc(11% - 20px); /* Adjust the width as needed with margin */
+    width: 30px;
+    height: 30px;
 }
 
 

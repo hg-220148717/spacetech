@@ -1,3 +1,23 @@
+<?php
+
+session_start();
+
+if (!isset($_SESSION["user_id"])) {
+    header("Location: login.php");
+    // redirect as no user id found in session, user is not logged i
+}
+
+include("database-handler.php");
+$db_handler = new Database();
+$db_handler->checkSetup();
+
+$email = $db_handler->getEmailFromUserID($_SESSION["user_id"]);
+$name = $db_handler->getNameFromUserID($_SESSION["user_id"]);
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,24 +26,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
 </head>
-<header>
-    <div class="logopart">
-        <img src="images/logo.png">
-    </div>
 
-    <div class="navbar">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#products">Products</a>
-        <a href="#contact">ContactUs</a>
-    </div>
+<?php include_once("header.php"); ?>
 
-    <div class="photos">
-        <img src="images/cart3.png" alt="Cart">
-        <img src="images/heart.png" alt="Favourites">
-        <img src="images/profile.jpg" alt="Profile">
-    </div>
-</header>
 <body>
     <div class="checkingout">
         <div class="mainb">
@@ -35,12 +40,12 @@
 
         <div class="basic">
             <span>Full Name:</span>
-            <input type="text" placeholder="John Doe" required>
+            <input type="text" placeholder="John Doe" <?php echo "value='" . htmlspecialchars($name, ENT_QUOTES) . "'"; ?> disabled required>
         </div>
 
         <div class="basic">
             <span>Email</span>
-            <input type="text" placeholder="johndoe@gmail.com"required>
+            <input type="text" placeholder="johndoe@gmail.com"  <?php echo "value='" . htmlspecialchars($email, ENT_QUOTES) . "'"; ?> disabled required>
         </div>
 
         <div class="basic">
