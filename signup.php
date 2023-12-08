@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve user input
     $email = $_POST["email"];
     $password = $_POST["password"];
-    $name = $_POST["name"];
+    $name = $_POST["fname"] . " " . $POST["sname"];
 
     // Validate password requirements
     if (!preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/", $password)) {
@@ -48,10 +48,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h3>Join us to get some Amazing deals!</h3>
 
         <label for="First Name">First Name</label>
-        <input type="text" placeholder="First Name">
+        <input type="text" id="fname" placeholder="First Name">
 
         <label for="Last Name">Last Name</label>
-        <input type="Last Name" placeholder="Last Name">
+        <input type="Last Name" id="sname" placeholder="Last Name">
 
         <label for="Email">Email</label>
         <input type="Email" placeholder="Email">
