@@ -91,6 +91,6 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
 </script>
 
 <script src="products.js"></script>
-
+<?php include_once("footer.php"); ?>
 </body>
 </html>

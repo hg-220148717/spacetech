@@ -67,7 +67,7 @@ footer{
     height: 5px;
   }
   
-  .icons img{
+  .foot-icons img{
   width: 40px;
   height: 40px;
   position: relative;
@@ -75,7 +75,7 @@ footer{
   bottom: 53px;
   }
   
-  .icons h3{
+  .foot-icons h3{
   width: fit-content;
   margin-bottom: 12px;
   position:relative;

@@ -100,5 +100,6 @@ $name = $db_handler->getNameFromUserID($_SESSION["user_id"]);
             <p>Shipping:</p>
             <p>Total Amount:<br>(including VAT)</p>
     </div>
+    <?php include_once("footer.php"); ?>
 </body>
 </html>
