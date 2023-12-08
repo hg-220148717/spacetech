@@ -199,25 +199,30 @@ section {
     margin-bottom: 20px;
 }
 
-.footer-distributed .footer-icons{
-    margin-top: 25px;
+.social-media-icons {
+  display: flex;
+  justify-content: center;
+  margin: 20px; /* Adjust margin as needed */
 }
 
-.footer-distributed .footer-icons a{
-    display: inline-block;
-    width: 35px;
-    height: 35px;
-    cursor: pointer;
-    background-color:  #33383b;
-    border-radius: 2px;
+/* Style for individual social media icons */
+.social-media-icons a {
+  display: inline-block;
+  margin: 0 10px; /* Adjust margin as needed */
+  text-decoration: none;
+}
 
-    font-size: 20px;
-    color: #ffffff;
-    text-align: center;
-    line-height: 35px;
+/* Style for social media icon images */
+.social-media-icons img {
+  width: 40px; /* Adjust width as needed */
+  height: 40px; /* Adjust height as needed */
+  border-radius: 50%; /* Creates rounded corners for a circular appearance */
+  transition: transform 0.3s ease-in-out;
+}
 
-    margin-right: 3px;
-    margin-bottom: 5px;
+/* Hover effect for social media icons */
+.social-media-icons img:hover {
+  transform: scale(1.2); /* Adjust the scaling factor as needed */
 }
 
 /* If you don't want the footer to be responsive, remove these media queries */
@@ -242,4 +247,3 @@ section {
     }
 
 }
-
