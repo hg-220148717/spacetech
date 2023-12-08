@@ -33,3 +33,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Sign Up | SpaceTech</title>
+    <link rel="stylesheet" href="signup.css">
+</head>
+<body>
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <form>
+        <h3>Join us to get some Amazing deals!</h3>
+
+        <label for="First Name">First Name</label>
+        <input type="text" placeholder="First Name">
+
+        <label for="Last Name">Last Name</label>
+        <input type="Last Name" placeholder="Last Name">
+
+        <label for="Email">Email</label>
+        <input type="Email" placeholder="Email">
+        <label for="Password">Password</label>
+        <input type="Password" placeholder="Password">
+        <label for="Confirm Password"> Confirm Password</label>
+        <input type="Password" placeholder="Confirm Password">
+        <button>Sign Up</button>
+        
+    </form>
+</body>
+</html>
