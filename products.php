@@ -9,27 +9,7 @@
 </head>
 <body>
 
-    <header>
-
-        <input type="checkbox" name="" id="toggler">
-        <label for="toggler" class="fa fa-bars"></label>
-    
-        <a href="#" class="logo">SpaceTech<span>.</span></a>
-    
-        <nav class="navbar">
-        <a href="#home">home</a>
-        <a href="#about">about</a>
-        <a href="#products">products</a>
-        <a href="#contact us">contact us</a>
-    </nav>
-    
-    <div class="icons">
-        <a href="#" class="fa fa-heart"></a>
-        <a href="#" class="fa fa-shopping-cart"></a>
-        <a href="#" class="fa fa-user"></a>
-    </div>
-    
-    </header>
+    <?php include_once("header.php"); ?>
 
 <section id="hero"> 
     
