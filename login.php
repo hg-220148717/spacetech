@@ -41,6 +41,9 @@ if(isset($_SESSION['loggedin'])) {
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
+
+<?php include_once("header.php"); ?>
+
     <div class="background">
         <div class="shape"></div>
         <div class="shape"></div>

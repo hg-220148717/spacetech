@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="stylist.css"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
+<?php
 
+if (!defined('ABSPATH') ) {
+	die(); // prevent direct web access, may want to change to redirect?
+}
+
+?>
 <header>
     <div class="logopart">
         <img src="images/logo.png">
@@ -25,5 +23,3 @@
         <img src="images/profile.jpg" alt="Profile">
     </div>
 </header>
-</body>
-</html>
