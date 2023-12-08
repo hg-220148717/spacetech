@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>SignUp|TechSpace</title>
+    <title>Sign Up | SpaceTech</title>
     <link rel="stylesheet" href="signup.css">
 </head>
 <body>
@@ -55,8 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <label for="Email">Email</label>
         <input type="Email" placeholder="Email">
-        <label for="Phone No.">Phone No.</label>
-        <input type="Phone No." placeholder="07789876776">
         <label for="Password">Password</label>
         <input type="Password" placeholder="Password">
         <label for="Confirm Password"> Confirm Password</label>
