@@ -8,16 +8,16 @@ echo '
 </div>
 
 <div class="navbar">
-    <a href="index.php">Home</a>
-    <a href="#about">About</a>
-    <a href="#products">Products</a>
-    <a href="contact.php">ContactUs</a>
+    <a class="link" href="index.php">Home</a>
+    <a class="link" href="#about">About</a>
+    <a class="link" href="#products">Products</a>
+    <a class="link" href="contact.php">ContactUs</a>
 </div>
 
 <div class="nav-icons">
-    <a href="cart.php"><img src="images/cart3.png" alt="Cart"></a>
-    <a href="favourites.php"><img src="images/heart.png" alt="Favourites"></a>
-    <a href="login.php"><img src="images/profile.jpg" alt="Profile"></a>
+    <img src="images/cart3.png" alt="Cart">
+    <img src="images/heart.png" alt="Favourites">
+    <a><img src="images/profile.jpg" alt="Profile"></a>
 </div>
 </header>';
 
