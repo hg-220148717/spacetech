@@ -1,35 +1,29 @@
+<?php
+
+session_start();
+
+include_once("database-handler.php");
+
+$db_handler = new Database();
+$db_handler->checkSetup();
+
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecommerce Website products page</title>
+    <title>Products | SpaceTech</title>
     <link rel="stylesheet" a href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="products.css">
 </head>
 <body>
 
-    <header>
-
-        <input type="checkbox" name="" id="toggler">
-        <label for="toggler" class="fa fa-bars"></label>
-    
-        <a href="#" class="logo">SpaceTech<span>.</span></a>
-    
-        <nav class="navbar">
-        <a href="#home">home</a>
-        <a href="#about">about</a>
-        <a href="#products">products</a>
-        <a href="#contact us">contact us</a>
-    </nav>
-    
-    <div class="icons">
-        <a href="#" class="fa fa-heart"></a>
-        <a href="#" class="fa fa-shopping-cart"></a>
-        <a href="#" class="fa fa-user"></a>
-    </div>
-    
-    </header>
+    <?php include_once("header.php"); ?>
 
 <section id="hero"> 
     
@@ -40,14 +34,31 @@
 <section id="products1" class = "section-p1">   
     
     <div class="products-container">  
-        <div class="pro" onclick="window.location.href='productdetail.html'"> 
-          <img id="myimage" src="img/products img/ACER Nitro N50-650 Gaming PC - Intel® Core™ i5, RTX 4060, 1 TB SSD 899.jpg" alt="">
+        
+        <?php
+
+        $products_list = $db_handler->getAllProducts(true);
+
+        foreach ($products_list as $product) {
+            echo '
+            
+            <div class="pro" onclick="window.location.href=\'product.php?id='. htmlspecialchars($product["product_id"], ENT_QUOTES) . '\'"> 
+          <img id="myimage" src="images/products/'. htmlspecialchars($product["product_id"], ENT_QUOTES) . '.jpg" alt="">
           <div class="description"> 
-          <span>  Acer Nitro </span>
-          <h5> Intel® Core™ i5, RTX 4060, 1 TB SSD  </h5>
-          <h4> £899 </h4>
+          <span>'. htmlspecialchars($product["product_name"], ENT_QUOTES) . '</span>
+          <h5>'. htmlspecialchars($product["product_desc"], ENT_QUOTES) . '</h5>
+          <h4> £'. htmlspecialchars($product["product_price"], ENT_QUOTES) . '</h4>
           </div>
-         </div>
+        </div>  
+            
+            ';
+
+        }
+
+
+        ?>
+    
+        
          
          <div class="pro"> 
             <img id="myimage" src="img/products img/ACER Predator Orion 7000  Gaming PC - Intel® Core™ i9, RTX 4080, 2 TB HDD & 1 TB SSD 2749.jpg" alt="">

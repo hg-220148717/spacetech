@@ -249,8 +249,7 @@ Class Database {
               $product["product_price"] = $row["product_price"];
               $product["product_stockcount"] = $row["product_stockcount"];
               $product["product_isdisabled"] = $row["product_isdisabled"];
-            
-              $output = $output + $product;
+              $output[] = $output + $product;
 
             } else {
               break;
@@ -494,6 +493,9 @@ Class Database {
 }
 
 $db_handler = new Database();
+
+$db_handler->getAllProducts(true);
+
 //echo $db_handler->testDatabaseConnection();
 //echo $db_handler->checkSetup();
 //echo $db_handler->createUser("220148717@aston.ac.uk", "password", "Harrison");
