@@ -440,6 +440,56 @@ Class Database {
     return "An error occurred.";
   }
 }
+
+  public function getEmailFromUserID($id) {
+    if(is_int($id)) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $result = $this->db_connection->execute_query("SELECT `user_email` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$id]);
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+              return $row["user_email"];
+            } else {
+              return "Error - No results found.";
+            }
+          }
+
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+
+      }
+    } else {
+      return "Error - ID must be an integer";
+    }
+  }
+
+  public function getNameFromUserID($id) {
+    if(is_int($id)) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $result = $this->db_connection->execute_query("SELECT `user_name` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$id]);
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+              return $row["user_name"];
+            } else {
+              return "Error - No results found.";
+            }
+          }
+
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+
+      }
+    } else {
+      return "Error - ID must be an integer";
+    }
+  }
+
+
     
 }
 

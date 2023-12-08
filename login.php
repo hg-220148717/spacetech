@@ -49,7 +49,7 @@ if(isset($_SESSION['loggedin'])) {
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form>
+    <form action="login.php" method="POST">
         <h>Login Here</h>
 
         <label for="email">Email</label>
@@ -58,7 +58,7 @@ if(isset($_SESSION['loggedin'])) {
         <label for="password">Password</label>
         <input type="password" placeholder="Password" id="password">
 
-        <button>Log In</button>
+        <button type="submit">Log In</button>
         <div class="social">
           <div class="fp"><a href="fp.html"> Forgot Password?</a></div>
           <div class="fp"><a href="signup.html"> New User?Sign Up</a></div>

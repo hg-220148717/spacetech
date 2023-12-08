@@ -15,7 +15,7 @@ echo '
 </div>
 
 <div class="nav-icons">
-    <img src="images/cart3.png" alt="Cart">
+    <a href="cart.php"><img src="images/cart3.png" alt="Cart"></a>
     <img src="images/heart.png" alt="Favourites">
     <a href="login.php"><img src="images/profile.jpg" alt="Profile"></a>
 </div>
