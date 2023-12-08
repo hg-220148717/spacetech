@@ -488,6 +488,21 @@ Class Database {
     }
   }
 
+  public function addToBasket($user_id, $product_id, $qty, $subtotal) {
+    if(is_int($user_id) && is_int($product_id) && is_int($qty)) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $result = $this->db_connection->execute_query("INSERT INTO `basket_entries` (`basket_userid`, `basket_productid`, `entry_quanitity`, `entry_subtotal`) VALUES (?,?,?,?);", [$user_id, $product_id, $qty, $subtotal]);
+          return "Added to cart.";
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+      }
+    } else {
+      return "Error - user id, product id or qty is not a number.";
+    }
+  }
+
 
     
 }

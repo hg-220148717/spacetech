@@ -66,6 +66,5 @@ if(isset($_SESSION['loggedin'])) {
           <div class="fp"><a href="signup.html"> New User?Sign Up</a></div>
         </div>
     </form>
-    <?php include_once("footer.php"); ?>
 </body>
 </html>

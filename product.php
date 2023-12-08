@@ -60,8 +60,8 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
         <h1><?php echo htmlspecialchars($product["product_name"], ENT_QUOTES);?></h4>
         <h2>£<?php echo htmlspecialchars($product["product_price"], ENT_QUOTES);?></h2>
 
-        <form action="add-to-cart.php" method="POST">
-        <input type="number" name="product_id" value="<?php echo htmlspecialchars($product["product_id"], ENT_QUOTES);?>" hidden disabled>
+        <form action="add_to_cart.php" method="POST">
+        <input type="number" name="product_id" value="<?php echo htmlspecialchars($product["product_id"], ENT_QUOTES);?>" hidden>
         <input type="number" name="qty" value="1">
         <button type="submit">Add To Cart</button>
         </form>
