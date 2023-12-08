@@ -8,29 +8,8 @@
 </head>
 <body>
     
-    <header>
-
-        <input type="checkbox" name="" id="toggler">
-        <label for="toggler" class="fa fa-bars"></label>
-
-        <a href="#" class="logo">SpaceTech<span>.</span></a>
-
-        <nav class="navbar">
-        <a href="#home">home</a>
-        <a href="#about">about</a>
-        <a href="#products">products</a>
-        <a href="#contact us">contact us</a>
-    </nav>
-
-    <div class="icons">
-        <a href="#" class="fa fa-heart"></a>
-        <a href="#" class="fa fa-shopping-cart"></a>
-        <a href="#" class="fa fa-user"></a>
-    </div>
-
-    </header>
-
-    <h1>About Us</h1>
+    <?php include_once("header.php"); ?>
+    <h1 style="margin-top: 50px;">About Us</h1>
 
     <div class="container">
         <div class="row">
@@ -40,7 +19,8 @@
                         <div class="serviec-logo">
                             <img src="logo.jpeg" alt="">
                         </div>
-                        <h4>Our Story</h4>
+                        <h2>Our Story</h2>
+                        <br>
                         <p>Spacetech began with a vision to democratize the access to state-of-the-art technology. Founded by a team passionate about innovation, our journey started as a small initiative to bridge the gap between consumers and advanced electronics. Recognizing the challenges people faced in acquiring high-quality gadgets, we set out to create an inclusive platform offering a wide range of products to meet various demands.</p>
                     </div>
                     <div class="shadow1"></div>
@@ -53,20 +33,8 @@
                         <div class="serviec-logo">
                             <img src="logo.jpeg" alt="">
                         </div>
-                        <h4>Our Story</h4>
-                        <p>Spacetech began with a vision to democratize the access to state-of-the-art technology. Founded by a team passionate about innovation, our journey started as a small initiative to bridge the gap between consumers and advanced electronics. Recognizing the challenges people faced in acquiring high-quality gadgets, we set out to create an inclusive platform offering a wide range of products to meet various demands.</p>
-                    </div>
-                    <div class="shadow1"></div>
-                    <div class="shadow2"></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="main">
-                    <div class="service">
-                        <div class="serviec-logo">
-                            <img src="logo.jpeg" alt="">
-                        </div>
-                        <h4>Our Mission</h4>
+                        <h2>Our Mission</h2>
+                        <br>
                         <p>At Spacetech, our mission is to revolutionize the accessibility of cutting-edge electronics by providing top-quality devices and accessories to all individuals, catering to their diverse needs and technological aspirations. We aim to create a seamless and reliable online platform where customers can explore, select, and purchase the latest in electronic innovation, ensuring a stellar shopping experience backed by exceptional service</p>
                     </div>
                     <div class="shadow1"></div>
