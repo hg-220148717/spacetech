@@ -9,8 +9,8 @@ echo '
 
 <div class="navbar">
     <a class="link" href="index.php">Home</a>
-    <a class="link" href="#about">About</a>
-    <a class="link" href="#products">Products</a>
+    <a class="link" href="about.php">About</a>
+    <a class="link" href="products.php">Products</a>
     <a class="link" href="contact.php">ContactUs</a>
 </div>
 

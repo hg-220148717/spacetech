@@ -28,7 +28,7 @@
                 <h3>Welcome to SPACETECH</h3>
                 <span>Where technology meets commerce!</span>
                 <p>Explore the virtual universe of SPACETECH and travel on a cosmic adventure of invention. We're more than simply an e-commerce platform; we're your ticket to the latest technological marvels. Our carefully picked assortment features cutting-edge gadgets, smart devices, and futuristic technologies to keep you at the forefront of technological innovation.</p>
-                <a href="#" class="btn">shop now</a>
+                <a href="products.php" class="btn">shop now</a>
             </div>
 
         </section>
@@ -51,7 +51,7 @@
                 <div class="content">
                     <h3>why choose us?</h3>
                     <p>SOMETHING GOES HERE!!!!</p>
-                    <a href="#" class="btn">learn more</a>
+                    <a href="about.php" class="btn">learn more</a>
                 </div>
             </div>
 
