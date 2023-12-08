@@ -1,8 +1,21 @@
-.icon-hover:hover {
-    border-color: #3b71ca !important;
-    background-color: white !important;
-  }
-  
-.icon-hover:hover i {
-    color: #3b71ca !important;
+.option-selector_colour input[type="radio"]{
+  width: 18px;
+  height: 25px;
+  border: 0px;
+}
+
+.option-selector_colour input[type="radio"].beige {
+  accent-color: rgb(240, 234, 224);
+}
+
+.option-selector_colour input[type="radio"].black {
+  accent-color: black;
+}
+
+.option-selector_colour input[type="radio"].blue {
+  accent-color: blue;
+}
+
+.option-selector_colour input[type="radio"].red {
+  accent-color: red;
 }
