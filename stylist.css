@@ -1,0 +1,74 @@
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Franklin Gothic Medium', 'Times', Arial, sans-serif;
+    outline: none;
+    border: none;
+    text-decoration: none;
+}
+
+html{
+    font-size: 67%;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body{
+    background: linear-gradient(90deg, #0005a0 0%, #160c43 30%, #160c43 30%, #6c00c4 100%);
+}
+
+
+header{
+    background-color: white;
+   /* background: linear-gradient(90deg, #0005a0 0%, #160c43 30%, #160c43 30%, #6c00c4 100%);*/
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0, .1);
+    height: 60px;
+}
+
+.logopart{
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    /* float: left;
+    justify-content:space-between; */
+}
+
+header .navbar a{
+    display: flex;
+    justify-content:flex-end;
+    font-size: 2rem;
+    color: #000000;
+    padding:0 20px;
+    position: relative;
+    top: 1px;
+    right: 0;
+    left: 130px;
+}
+
+header .navbar{
+    display: flex;
+    align-items: center;
+}
+
+header .navbar a:hover{
+    color:#0005a0;
+}
+
+.icons {
+    display: flex;
+    justify-content:flex-end;
+
+}
+  
+.icons img {
+    cursor: pointer;
+    margin-right: 20px;
+    width: calc(11% - 20px); /* Adjust the width as needed with margin */
+}
+
+
