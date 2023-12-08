@@ -1,46 +1,22 @@
-*:before,
+
 *:after{
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
 body{
-    background-color: black;
+    background-color: rebeccapurple;
 }
 .background{
     width: 430px;
     height: 520px;
     position: absolute;
-    transform: translate(-50%,-50%);
-    left: 50%;
-    top: 50%;
+    
 }
-.background .shape{
-    height: 200px;
-    width: 200px;
-    position: absolute;
-    border-radius: 50%;
-}
-.shape:first-child{
-    background: linear-gradient(
-        blueviolet,
-        #23a2f6
-    );
-    right: -60px;
-    top: -70px;
-}
-.shape:last-child{
-    background: linear-gradient(
-        to right,
-        rebeccapurple,
-        #9305ff
-    );
-    right: 300px;
-    bottom: -70px;
-}
+
 form{
     height: 520px;
-    width: 400px;
+    width: 420px;
     background-color: rgba(255,255,255,0.13);
     position: absolute;
     transform: translate(-50%,-50%);
@@ -52,21 +28,24 @@ form{
     box-shadow: 0 0 40px rgba(8,7,16,0.6);
     padding: 50px 35px;
 }
+form *{
+    font-family: 'Poppins',sans-serif;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    outline: none;
+    border: none;
+}
 form h3{
-    font-size: 25px;
-    font-weight: 500;
+    font-size: 28px;
+    font-weight: 400;
     line-height: 42px;
     text-align: center;
 }
-form h{
-    font-size: 40px;
-    font-weight: 500;
-    text-align: center;
-}
+
 label{
     display: block;
     margin-top: 30px;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 500;
 }
 input{
@@ -87,25 +66,21 @@ button{
     margin-top: 50px;
     width: 100%;
     background-color: #ffffff;
-    color: black;
+    color: #080710;
     padding: 15px 0;
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 590;
     border-radius: 5px;
     cursor: pointer;
 }
-form *{
-    font-family: 'Poppins',sans-serif;
-    color: darkgrey;
-    letter-spacing: 0.5px;
-    outline: none;
-    border: none;
+button:hover {
+  background-color: lightgrey;
 }
-.social{
+.other{
   margin-top: 30px;
   display: flex;
 }
-.social div{
+.other div{
   background: red;
   width: 150px;
   border-radius: 3px;
@@ -114,12 +89,11 @@ form *{
   color: #eaf0fb;
   text-align: center;
 }
-.social div:hover{
-  background-color: rgba(255,255,255,0.47);
+.other div:hover{
+  background-color: grey;
 }
-.social .fp{
+.other .fp{
   margin-left: 25px;
+  padding-right: 10px;
 }
-.social i{
-  margin-right: 4px;
-}
+
