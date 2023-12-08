@@ -39,6 +39,7 @@ if(isset($_SESSION['loggedin'])) {
 <head>
     <title>Login | SpaceTech</title>
     <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="master-style.css">
 </head>
 <body>
 
@@ -49,8 +50,7 @@ if(isset($_SESSION['loggedin'])) {
         <div class="shape"></div>
     </div>
     <form>
-        <h>SpaceTech</h>
-        <h3>Login Here</h3>
+        <h>Login Here</h>
 
         <label for="email">Email</label>
         <input type="email" placeholder="Email Address" id="email">

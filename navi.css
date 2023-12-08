@@ -65,7 +65,7 @@ header .navbar a:hover{
 
 }
   
-.nav-icons img {
+.nav-icons img a {
     cursor: pointer;
     margin-right: 20px;
     width: calc(11% - 20px); /* Adjust the width as needed with margin */
