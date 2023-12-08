@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+<?php echo '
     <link rel="stylesheet" href="foot.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us</title>
-</head>
 <footer>
     <div class="foot">
         <div class="footing">
         <img src="images/logo.png" class="footImg">
     <!-- <div class="info"> -->
-    <p>Explore the virtual universe of SpaceTech and travel on a cosmic adventure of invention. We're more than simply an e-commerce platform, we are your ticket to the latest technological marvels.</p>
+    <p>Explore the virtual universe of SpaceTech and travel on a cosmic adventure of invention. We\'re more than simply an e-commerce platform, we are your ticket to the latest technological marvels.</p>
     <!-- </div> -->
 </div>
     <!-- <div class="Office"> -->
@@ -51,5 +45,4 @@
         <p>FAQ</p>
     </div>
 </div>
-</footer>
-</html>
+</footer>';
