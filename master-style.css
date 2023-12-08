@@ -210,10 +210,11 @@ header .fa-bars{
     padding: 2rem;
     display: flex;
     align-items: center;
-    flex: 1 1 25rem;
+    flex: 1 1 calc(50% - 50px);
     width: 20%;
     height: 20%;
 }
+
 
 .icons-container .icons img{
     height: 5rem;

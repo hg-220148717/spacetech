@@ -10,33 +10,13 @@
         <link rel="stylesheet" a href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
         <!-- custom css file link -->
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="master-style.css">
     </head>
     <body>
 
         <!-- header section starts -->
 
-        <header>
-
-            <input type="checkbox" name="" id="toggler">
-            <label for="toggler" class="fa fa-bars"></label>
-
-            <a href="#" class="logo">SpaceTech<span>.</span></a>
-
-            <nav class="navbar">
-            <a href="#home">home</a>
-            <a href="#about">about</a>
-            <a href="#products">products</a>
-            <a href="#contact us">contact us</a>
-        </nav>
-
-        <div class="icons">
-            <a href="#" class="fa fa-heart"></a>
-            <a href="#" class="fa fa-shopping-cart"></a>
-            <a href="#" class="fa fa-user"></a>
-        </div>
-
-        </header>
+        <?php include_once("header.php"); ?>
 
         <!-- header scetion ends -->
 
