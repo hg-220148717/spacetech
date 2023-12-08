@@ -5,72 +5,6 @@ html {
     font-size: 62.5%;
 }
 
-body {
-    background-color: white !important;
-}
-header{
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-image:linear-gradient(rgba(100, 117, 183, 0.7), rgba(100, 117, 183,0.7)), url(images/top.jpg);
-    background-position: center;
-    background-size: cover;
-    position: relative;
-    padding: 2rem 9%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 1000;
-    box-shadow: 0 .5rem 1rem rgba(0,0,0, .1);
-
-}
-
-header .logo{
-    font-size: 3rem;
-    color: #333;
-    font-weight: bolder;
-}
-
-header .logo span{
-    color:#5f275a;
-}
-
-header .navbar a{
-    font-size: 2rem;
-    padding: 0 1.5rem;
-    color: #eee;
-}
-
-header .navbar a:hover{
-    color:#5f275a;
-}
-
-header .icons a{
-    font-size: 2.5rem;
-    color: #eee;
-    margin-left: 1.5rem;
-}
-
-header .icons a:hover{
-    color:#560562;
-}
-
-header #toggler{
-    display: none;
-}
-
-header .fa-bars{
-    font-size: 3rem;
-    color:#130101;
-    border-radius: .5rem;
-    padding: .5rem 1.5rem;
-    cursor: pointer;
-    border: .1rem solid rgba(0, 0, 0, .3);
-    display: none;
-}
-/* nav bar*/
-
 
 
 body {
@@ -79,6 +13,7 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    background: white !important;
 }
 
 #myimage{
