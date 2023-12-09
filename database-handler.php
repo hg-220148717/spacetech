@@ -285,7 +285,7 @@ Class Database {
               $category["category_isdisabled"] = $row["category_isdisabled"];
               $category["category_image"] = $row["category_image"];
             
-              $output = $output + $category;
+              $output[] = $output + $category;
 
             } else {
               break;
@@ -300,7 +300,7 @@ Class Database {
         return $output;
       }
     }
-  
+
     public function getProductByID($id) {
       if(is_int($id)) {
         if($this->createDatabaseConnection() == "OK") {
@@ -355,7 +355,7 @@ Class Database {
                 $product["product_stockcount"] = $row["product_stockcount"];
                 $product["product_isdisabled"] = $row["product_isdisabled"];
               
-                $output = $output + $product;
+                $output[] = $output + $product;
   
               } else {
                 return "Error - No results found.";
@@ -389,7 +389,7 @@ Class Database {
                 $product["product_stockcount"] = $row["product_stockcount"];
                 $product["product_isdisabled"] = $row["product_isdisabled"];
               
-                $output = $output + $product;
+                $output[] = $output + $product;
   
               } else {
                 return "Error - No results found.";
@@ -503,6 +503,100 @@ Class Database {
     }
   }
 
+  public function removeFromBasket($entry_id, $user_id) {
+    if(is_int($user_id) && is_int($entry_id) ) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $result = $this->db_connection->execute_query("DELETE FROM basket_entries WHERE `basket_entry_id` = ? AND basket_userid = ?", [$entry_id, $user_id]);
+          return "Removed from cart.";
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
+        }
+      }
+    } else {
+      return "Error - user id or entry id is not a number.";
+    }
+  }
+
+  public function getBasketCount($user_id) {
+    if(is_int($user_id)) {
+      if($this->createDatabaseConnection() == "OK") {
+        try{
+          $result = $this->db_connection->execute_query("SELECT COUNT(`basket_userid`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+              return $row["COUNT(`basket_userid`)"];
+            } else {
+              return 0;
+            }
+          }
+        } catch(Exception $e) {
+          return "An error occurred - stack trace: " . $e;
+        }
+      }
+    } else {
+      return "Error - used id is not a number.";
+    }
+  }
+
+  public function getBasketTotal($user_id) {
+    if(is_int($user_id)) {
+      if($this->createDatabaseConnection() == "OK") {
+        try{
+          $result = $this->db_connection->execute_query("SELECT SUM(`entry_subtotal`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+              return $row["SUM(`entry_subtotal`)"];
+            } else {
+              return 0.00;
+            }
+          }
+        } catch(Exception $e) {
+          return "An error occurred - stack trace: " . $e;
+        }
+      }
+    } else {
+      return "Error - used id is not a number.";
+    }
+  }
+
+  public function getBasketContents($user_id) {
+    if(is_int($user_id)) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $result = $this->db_connection->execute_query("SELECT * FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+
+          $basket = array();
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+             
+              $basket_entry = array();
+
+              $basket_entry["entry_id"] = $row["basket_entry_id"];
+              $basket_entry["product_id"] = $row["basket_productid"];
+              $basket_entry["qty"] = $row["entry_quanitity"];
+              $basket_entry["subtotal"] = $row["entry_subtotal"];
+
+              $basket[] = $basket + $basket_entry;
+
+            }
+          }
+
+          return $basket;
+
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace - ". $e;
+        }
+      } else {
+        return "An error occurred.";
+      }
+    } else {
+      return "Error - user ID must be an int.";
+    }
+  }
 
     
 }
