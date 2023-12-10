@@ -18,10 +18,10 @@
     <!-- <div class="Links"> -->
         <div class="footing">
     <h3>Pages</h3>
-    <p><a href="#home">Home</a></p>
-    <p><a href="#about">About Us</a></p>
-    <p><a href="#products">Products</a></p>
-    <p><a href="#contactus">ContactUs</a></p>    
+    <p><a href="index.php">Home</a></p>
+    <p><a href="about.php">About Us</a></p>
+    <p><a href="products.php">Products</a></p>
+    <p><a href="contact.php">ContactUs</a></p>    
     </div>
     <div class="footing">
         <h3>Subscribe</h3>
@@ -29,7 +29,7 @@
             <input type="email" placeholder="Your Email Address" required>
             <button type="submit">Subscribe</button>
         </form>
-    <div class="icons">
+    <div class="foot-icons">
         <h3>Follow Us</h3>
         <img src="images/facebook.png">
         <img src="images/twitter.png">

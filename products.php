@@ -171,6 +171,6 @@ $db_handler->checkSetup();
 
 
 <script src="products.js"></script>
-
+<?php include_once("footer.php"); ?>
 </body>
 </html>

@@ -62,5 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button>Sign Up</button>
         
     </form>
+    <?php include_once("footer.php"); ?>
 </body>
 </html>

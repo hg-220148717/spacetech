@@ -4,15 +4,17 @@ include "database-handler.php";
 
 session_start(); // Start the session
 
+// check if user already logged in
+if(isset($_SESSION['user_id'])) {
+    $error = "User already logged in.";
+    header("Location: index.php");
+}
+
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
-// check if user already logged in
-if(isset($_SESSION['loggedin'])) {
-    $error = "User already logged in.";
-    echo "<div style='color:red'>" . htmlspecialchars($error, ENT_QUOTES) . "</div>";
-}
+
 
 
     // Get the form data
