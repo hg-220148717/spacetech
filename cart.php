@@ -17,6 +17,8 @@ $name = $db_handler->getNameFromUserID($_SESSION["user_id"]);
 $basket_count = $db_handler->getBasketCount($_SESSION["user_id"]);
 $basket_total = $db_handler->getBasketTotal($_SESSION["user_id"]);
 
+if($basket_total == null) $basket_total = 0.00;
+
 $basket_contents = $db_handler->getBasketContents($_SESSION["user_id"]);
 
 ?>
@@ -33,57 +35,58 @@ $basket_contents = $db_handler->getBasketContents($_SESSION["user_id"]);
 <?php include_once("header.php"); ?>
 
 <body>
+    <form action="submit_order.php" method="POST">
     <div class="checkingout">
         <div class="mainb">
             <h2>Checkout</h2>
         </div>
         <div class="boxes">
         <div class="cart form ">
+        
         <h3>Card Details</h3>
-
         <div class="basic">
             <span>Full Name:</span>
-            <input type="text" placeholder="John Doe" <?php echo "value='" . htmlspecialchars($name, ENT_QUOTES) . "'"; ?> disabled required>
+            <input name="name" type="text" placeholder="John Doe" <?php echo "value='" . htmlspecialchars($name, ENT_QUOTES) . "'"; ?> disabled required>
         </div>
 
         <div class="basic">
             <span>Email</span>
-            <input type="text" placeholder="johndoe@gmail.com"  <?php echo "value='" . htmlspecialchars($email, ENT_QUOTES) . "'"; ?> disabled required>
+            <input name="email" type="email" placeholder="johndoe@gmail.com"  <?php echo "value='" . htmlspecialchars($email, ENT_QUOTES) . "'"; ?> disabled required>
         </div>
 
         <div class="basic">
             <span>Address:</span>
-            <input type="text" placeholder="Number-Street Name"required>
+            <input name="address_line1" type="text" placeholder="Number-Street Name"required>
         </div>
 
         <div class="basic">
             <span>City:</span>
-            <input type="text" placeholder="Birmingham"required>
+            <input name="address_line2" type="text" placeholder="Birmingham"required>
         </div>
 
         <div class="basic">
             <span>Postcode:</span>
-            <input type="text" placeholder="B4 7ET"required>
+            <input name="address_line3" type="text" placeholder="B4 7ET"required>
         </div>
 
         <div class="basic">
                 <span>Card Number:</span>
-                <input type="text" placeholder="0000 0000 0000 0000" required>
+                <input name="card_no" type="text" placeholder="0000 0000 0000 0000" required>
             </div>
 
             <div class="basic">
                 <span>Expiry Date:</span>
-                <input type="text" placeholder="MM/YY" required>
+                <input name="card_expiry" type="text" placeholder="MM/YY" required>
             </div>
 
             <div class="basic">
                 <span>CVV:</span>
-                <input type="text" placeholder="123" required>
+                <input name="card_cvv" type="text" placeholder="123" required>
             </div>
 
             <div class="basic">
                 <span>Cardholder Name:</span>
-                <input type="text" placeholder="John Doe" required>
+                <input name="card_name" type="text" placeholder="John Doe" required>
             </div>
         
             <div class="basic">

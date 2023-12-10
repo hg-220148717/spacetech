@@ -518,6 +518,35 @@ Class Database {
     }
   }
 
+  public function submitOrder($user_id, $address, $comments, $total, $is_paid) {
+    if(is_int($user_id)) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+
+          $result = $this->db_connection->execute_query("INSERT INTO `orders` (`order_userid`, `order_address`, `order_comments`, `order_total`, `order_ispaid`, `order_status`) VALUES (?, ?, ?, ?, ?, '1');", [$user_id, $address, $comments, $total, $is_paid]);
+          if($result === TRUE) {
+            $order_no = $this->db_connection->insert_id;
+          } else {
+            return "An error occurred creating the order.";
+          }
+
+          $basket_contents = $this->getBasketContents($user_id);
+          foreach ($basket_contents as $item) {
+            $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $item["product_id"], $item["qty"], $item["subtotal"]]);
+            $this->removeFromBasket($item["entry_id"], $user_id);
+          }
+
+        } catch(Exception $e) {
+          return "An error ocurred. Stack trace - " . $e;
+        }
+      } else {
+        return "An error occurred.";
+      }
+    } else {
+      return "Error - user id must be an int";
+    }
+  }
+
   public function getBasketCount($user_id) {
     if(is_int($user_id)) {
       if($this->createDatabaseConnection() == "OK") {
