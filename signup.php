@@ -23,7 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Redirect to a Home Page, login successful
 
         // may want to autologin/redirect to login page in future?
+<<<<<<< Updated upstream
         header("Location: index.html");
+=======
+        header("Location: login.php");
+>>>>>>> Stashed changes
         exit();
     } else {
         echo "User already exists. Please log in.";
