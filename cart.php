@@ -123,8 +123,9 @@ $basket_contents = $db_handler->getBasketContents($_SESSION["user_id"]);
         
 
         } else {
-            echo "<h3>Your basket is empty!</h3>";
+            if(isset($_GET["success"])) { echo "<h3>Order submitted.</h3>"; } else {echo "<h3>Your basket is empty!</h3>";
         }
+    }
 
         ?>
 
