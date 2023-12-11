@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="shape"></div>
     </div>
     <form>
-        <h3>Join us to get some Amazing deals!</h3>
+        <h3>Sign Up</h3>
 
         <label for="First Name">First Name</label>
         <input type="text" id="fname" placeholder="First Name">
@@ -62,6 +62,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button>Sign Up</button>
         
     </form>
-    <?php include_once("footer.php"); ?>
 </body>
 </html>
