@@ -40,20 +40,6 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
     <div class ="proimage">
         <?php echo '<img src="images/products/'. htmlspecialchars($product["product_id"], ENT_QUOTES) . '.jpg" width="100%" id="bigimage"  alt="">';?>
        
-        <div class="multipleimage">
-            <div class="multipleimagecolumn">
-                <img src="img/products img/productdetails/acer nitro 1.jpg" width="100%" class="miniimage" alt="">
-            </div>
-            <div class="multipleimagecolumn">
-                <img src="img/products img/productdetails/acer nitro 2.jpg" width="100%" class="miniimage" alt="">
-            </div>
-            <div class="multipleimagecolumn">
-                <img src="img/products img/productdetails/acer nitro 3.jpg" width="100%" class="miniimage" alt="">
-            </div>
-            <div class="multipleimagecolumn">
-                <img src="img/products img/productdetails/acer nitro 4.jpg" width="100%" class="miniimage" alt="">
-            </div>
-        </div>
     </div>
 
     <div class="proimagedetails">
@@ -72,7 +58,7 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
     </div>
 </section>
 
-<script>
+<!--<script>
     var bigimage = document.getElementById("bigimage");
     var miniimage = document.getElementsByClassName("miniimage");
 
@@ -88,7 +74,7 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
     miniimage[3].onclick = function(){
         bigimage.src = miniimage[3].src;
     }
-</script>
+</script>-->
 
 <script src="products.js"></script>
 <?php include_once("footer.php"); ?>
