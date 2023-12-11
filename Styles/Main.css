@@ -1,3 +1,18 @@
+.carousel-caption.caption-top-left {
+  position: absolute;
+  top: 20%; /* Position from the top */
+  left: 10%; /* Position from the left */
+  padding: 20px;
+  text-align: left;
+}
+
+
+
+
+.captitle{
+  font-size: 140px;
+}
+
 .option-selector_colour input[type="radio"]{
   width: 18px;
   height: 25px;

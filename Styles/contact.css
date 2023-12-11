@@ -1,0 +1,21 @@
+.contact-container {
+    display: flex;
+    background-color: rgb(248, 249, 250);
+    justify-content: space-evenly;
+    border-radius: 25px;
+    padding: 20px;
+}
+
+.contact-form {
+    flex: 1;
+    max-width: 600px;
+}
+
+.contact-info {
+    flex: 1;
+    max-width: 400px;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light gray background */
+    border: 1px solid #d3d9de; /* Light border */
+    border-radius: 5px;
+}
