@@ -58,7 +58,7 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
     </div>
 </section>
 
-<script>
+<!--<script>
     var bigimage = document.getElementById("bigimage");
     var miniimage = document.getElementsByClassName("miniimage");
 
@@ -74,7 +74,7 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
     miniimage[3].onclick = function(){
         bigimage.src = miniimage[3].src;
     }
-</script>
+</script>-->
 
 <script src="products.js"></script>
 <?php include_once("footer.php"); ?>
