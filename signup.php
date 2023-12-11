@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve user input
     $email = $_POST["email"];
     $password = $_POST["password"];
-    $name = $_POST["fname"] . " " . $POST["sname"];
+    $name = $_POST["fname"] . " " . $_POST["sname"];
 
     // Validate password requirements
     if (!preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/", $password)) {
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Redirect to a Home Page, login successful
 
         // may want to autologin/redirect to login page in future?
-        header("Location: index.html");
+        header("Location: index.php");
         exit();
     } else {
         echo "User already exists. Please log in.";
@@ -44,22 +44,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form>
+    <form action="signup.php" method="POST">
         <h3>Sign Up</h3>
-
         <label for="First Name">First Name</label>
-        <input type="text" id="fname" placeholder="First Name">
+        <input type="text" name="fname" placeholder="First Name">
 
         <label for="Last Name">Last Name</label>
-        <input type="Last Name" id="sname" placeholder="Last Name">
+        <input type="Last Name" name="sname" placeholder="Last Name">
 
         <label for="Email">Email</label>
-        <input type="Email" placeholder="Email">
+        <input type="Email" name="email" placeholder="Email">
         <label for="Password">Password</label>
-        <input type="Password" placeholder="Password">
+        <input type="Password" name="password" placeholder="Password">
         <label for="Confirm Password"> Confirm Password</label>
         <input type="Password" placeholder="Confirm Password">
-        <button>Sign Up</button>
+        <button type="submit">Sign Up</button>
         
     </form>
 </body>
