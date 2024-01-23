@@ -99,23 +99,7 @@
 
         <!-- icon section ends -->
 
-
-
-
         <?php include_once("footer.php"); ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     </body>
 </html>
