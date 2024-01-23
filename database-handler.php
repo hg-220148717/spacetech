@@ -604,25 +604,36 @@ Class Database {
   }
 
   public function getBasketTotal($user_id) {
-    if(is_int($user_id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try{
-          $result = $this->db_connection->execute_query("SELECT SUM(`entry_subtotal`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
 
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-              return $row["SUM(`entry_subtotal`)"];
-            } else {
-              return 0.00;
-            }
-          }
-        } catch(Exception $e) {
-          return "An error occurred - stack trace: " . $e;
-        }
-      }
-    } else {
-      return "Error - used id is not a number.";
+    // input validation - check if supplied user ID is an integer
+    if(!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
     }
+
+    // check connection to database
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    // atempt to obtain sum of subtotals in user's basket
+    try {
+      $result = $this->db_connection->execute_query("SELECT SUM(`entry_subtotal`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+
+      // if user's basket is empty, return a total of £0.00
+      if($result->num_rows <= 0) {
+        return 0.00; 
+      }
+
+      // loop through returned rows from DB
+      while ($row = $result->fetch_assoc() ) {
+        // return sum of all basket entry subtotals, giving the total of the basket contents
+        return  $row["SUM(`entry_subtotal`)"];
+      }
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
   }
 
   public function getBasketContents($user_id) {
