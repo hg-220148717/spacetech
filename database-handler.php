@@ -442,26 +442,36 @@ Class Database {
 }
 
   public function getEmailFromUserID($id) {
-    if(is_int($id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("SELECT `user_email` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$id]);
 
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-              return $row["user_email"];
-            } else {
-              return "Error - No results found.";
-            }
-          }
-
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
-
-      }
-    } else {
+    // check if supplied user ID is an integer
+    if(!is_int($id)) {
       return "Error - ID must be an integer";
+    }
+
+    // check db connection is active, error if not
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection failure.";
+    }
+
+    try {
+      // query the users table for the supplied user ID, limiting results to 1 entry to prevent errors
+      $result = $this->db_connection->execute_query(
+        "SELECT `user_email` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$id]
+      );
+    
+      // check if the db returned at least 1 user entry
+      if($result->num_rows <= 0) {
+        return "Error - user ID not found.";
+      }
+
+      // loop through returned data from db
+      while($row = $result->fetch_assoc()) {
+        // return user's email address from queried user ID
+        return $row["user_email"];
+      }
+
+    } catch(Exception $e) {
+      return "Error - database query failure.";
     }
   }
 
