@@ -30,23 +30,32 @@ Class Database {
     }
 
     private function destroyDatabaseConnection() {
-        if($this->db_connection !== null) {
-            $this->db_connection -> close();
-        }
-        $this->db_connection == null;
+
+      // check if database connection is active, close if currently active
+      if($this->db_connection !== null) {
+          $this->db_connection->close();
+      }
+
+      // set variable to null 
+      // TODO - check if variable is exists / is not currently set to null
+      $this->db_connection == null;
     }
 
     public function testDatabaseConnection() {
+      // check if database connection has been established yet
         if($this->db_connection === null) {
             $this->createDatabaseConnection();
         }
+        // set default placeholder for connection check
+        $msg = "Checking connection...";
 
         if($this->db_connection->connect_error) {
             $msg = "Connection Error: " . htmlspecialchars($this->db_connection->connect_error, ENT_QUOTES);
         } else {
             $msg = "OK";
         }
-        //$this->destroyDatabaseConnection();
+
+        // return connection status
         return $msg;
     }
 
