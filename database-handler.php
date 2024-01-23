@@ -500,17 +500,40 @@ Class Database {
   }
 
   public function addToBasket($user_id, $product_id, $qty, $subtotal) {
-    if(is_int($user_id) && is_int($product_id) && is_int($qty)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("INSERT INTO `basket_entries` (`basket_userid`, `basket_productid`, `entry_quanitity`, `entry_subtotal`) VALUES (?,?,?,?);", [$user_id, $product_id, $qty, $subtotal]);
-          return "Added to cart.";
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
-      }
-    } else {
-      return "Error - user id, product id or qty is not a number.";
+
+    // input validation - check if supplied user ID is an integer
+    if(!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    // input validation - check if supplied product ID is an integer
+    if(!is_int($product_id)) {
+      return "Error - Product ID must be an integer.";
+    }
+    
+    // input validation - check if supplied quantity is an integer
+    if(!is_int($qty)) {
+      return "Error - Quantity must be an integer.";
+    }
+
+    // TODO - validate subtotal input     
+
+    // check connection to database
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    // attempt to add item to basket
+    try {
+      $this->db_connection->execute_query(
+        "INSERT INTO `basket_entries` (`basket_userid`, `basket_productid`, `entry_quanitity`, `entry_subtotal`) VALUES (?,?,?,?);", [$user_id, $product_id, $qty, $subtotal]
+      );
+      
+      // output success message
+      return "Added to cart.";
+    } catch(Exception $e) {
+      // catch any errors outputted whilst executing the query
+      return "Error - database query error.";
     }
   }
 
