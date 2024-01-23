@@ -582,25 +582,40 @@ Class Database {
   }
 
   public function getBasketCount($user_id) {
-    if(is_int($user_id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try{
-          $result = $this->db_connection->execute_query("SELECT COUNT(`basket_userid`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
 
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-              return $row["COUNT(`basket_userid`)"];
-            } else {
-              return 0;
-            }
-          }
-        } catch(Exception $e) {
-          return "An error occurred - stack trace: " . $e;
-        }
-      }
-    } else {
-      return "Error - used id is not a number.";
+    // input validation - check if supplied user ID is an integer
+    if(!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
     }
+
+    // check connection to database
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    // attempt to query database for basket entries count 
+    // (not including quantities, this only outputs the number of unique entries in the basket)
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT COUNT(`basket_userid`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+
+      // check if basket is empty, if so, return a count of 0
+      if($result->num_rows <= 0) {
+        return 0;
+      }
+
+      // loop through data returned from db
+      while ($row = $result->fetch_assoc() ) {
+        // return count of basket items
+        return $row["COUNT(`basket_userid`)"];
+      }
+
+
+    } catch(Exception $e) {
+      // something went wrong when executing the database query
+      return "Error - database query error.";
+    }
+
   }
 
   public function getBasketTotal($user_id) {
