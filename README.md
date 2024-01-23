@@ -1,6 +1,20 @@
 # SpaceTech
 SpaceTech eCommerce Website (Team Project - Group 35)
 
+## Group Members
+The group is made up of the following members:
+
+| GitHub Username | Name |
+| --------------- | ---- |
+| @hg-220148717   | Harrison Green |
+| @IsmailDahir    | Ismail Dahir |
+| @jasica-sethi17 | Jasica Sethi |
+| @KiranRai1      | Gurkiran Rai |
+| @MujtabahAhmed  | Mujtabah Ahmed |
+| @preet-kaur02   | Jaskiranpreet Jassal | 
+| @shawn-j123     | Shawn Johnson | 
+| @sufiyanshaikh07 | Sufiyan Shaikh |
+
 ## Database Handling
 The database is handled using functions to carry out specific operations, rather than allowing user requests & other PHP files to directly access the database.
 
