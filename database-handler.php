@@ -410,16 +410,19 @@ Class Database {
     }
 
     public function createCategory($name, $is_disabled, $image_path) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
+
+      // check database connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+
+      // attempt to insert new category info into database
+      try {
+        $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
           return "Category created successfully.";
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
-    } else {
-      return "An error occurred.";
-    }
+      } catch(Exception $e) {
+        return "Error - database query error.";
+      }
   }
 
   public function createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled) {
