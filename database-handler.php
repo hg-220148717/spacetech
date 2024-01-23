@@ -51,18 +51,19 @@ Class Database {
     }
 
     public function checkSetup() {
-        if($this->createDatabaseConnection() == "OK") {
-            try {
-                $this->db_connection->execute_query("SELECT 1 FROM `users` LIMIT 1");
-            } catch(mysqli_sql_exception $e) {
-                // setup has not occurred, users table does not exist
-                // trigger creation of database tables
-                $this->runSetup();
-                return true;
-            }
-        } else {
-            return true; // setup has already occurred
+        if($this->createDatabaseConnection() !== "OK") {
+          return true; // setup has already occurred
         }
+
+        try{
+          $this->db_connection->execute_query("SELECT 1 FROM `users` LIMIT 1;");
+        } catch(mysqli_sql_exception $e) {
+          // setup has not occurred, users table does not exist
+          // trigger creation of database tables
+          $this->runSetup();
+          return true;
+        }
+        
     }
         
     private function generatePasswordHash($password) {
