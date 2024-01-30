@@ -263,6 +263,11 @@ Class Database {
 
           while ($row = $result->fetch_assoc() ) {
             if($result->num_rows > 0) {
+              
+              // Refactored the below. Copied the resulting $row from the db,
+              // rather than iterating through each key, making a temp array and then appending temp array.
+              /*
+              
               $product = array();
               $product["product_id"] = $row["product_id"];
               $product["category_id"] = $row["category_id"];
@@ -271,7 +276,9 @@ Class Database {
               $product["product_price"] = $row["product_price"];
               $product["product_stockcount"] = $row["product_stockcount"];
               $product["product_isdisabled"] = $row["product_isdisabled"];
-              $output[] = $output + $product;
+              
+              */
+              $output[] = $output + $row;
 
             } else {
               break;
