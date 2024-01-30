@@ -44,7 +44,9 @@ Class Database {
     public function testDatabaseConnection() {
       // check if database connection has been established yet
         if($this->db_connection === null) {
-            $this->createDatabaseConnection();
+          // this would have caused an infinite loop if ever there was an error creating the database connection
+          // $this->createDatabaseConnection();
+          return "Database error.";
         }
         // set default placeholder for connection check
         $msg = "Checking connection...";
