@@ -692,6 +692,19 @@ Class Database {
 
   }
 
+  /**
+   * Submits an order for a user
+   * 
+   * @param int $user_id - ID of user placing order
+   * @param string $address - Address lines concatenated into 1 string
+   * @param string $comments - Any comments added to the order
+   * @param int $total - Total order amount
+   * @param boolean $is_paid - Has the order been paid?
+   * 
+   * @return string - Returns a status message depending on if an error occurred
+   * or if the order was successful.
+   * 
+   */
   public function submitOrder($user_id, $address, $comments, $total, $is_paid) {
 
     // input validation
@@ -726,12 +739,22 @@ Class Database {
         $this->removeFromBasket($item["entry_id"], $user_id);
       }
   
+      return "Order submitted successfully.";
+
     }catch(Exception $e) {
       return "Error - database query error.";
     }
 
   }
 
+  /**
+   * Gets count of amount of basket entries a user has.
+   * 
+   * @param int $user_id - User ID
+   * 
+   * @return int|string - Returns count of items if successful, returns error if unsuccessful.
+   * 
+   */
   public function getBasketCount($user_id) {
 
     // input validation - check if supplied user ID is an integer
@@ -761,6 +784,8 @@ Class Database {
         return $row["COUNT(`basket_userid`)"];
       }
 
+      // if this is returned, something has gone very wrong somewhere...
+      return "Error - database query error.";
 
     } catch(Exception $e) {
       // something went wrong when executing the database query
