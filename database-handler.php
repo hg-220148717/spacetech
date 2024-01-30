@@ -435,22 +435,32 @@ Class Database {
   }
 
   public function createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled) {
-    if($this->createDatabaseConnection() == "OK") {
-      try {
-        $result = $this->db_connection->execute_query("SELECT `category_id` FROM `categories` WHERE `category_id` LIKE ?", [$category_id]);
-        if($result->num_rows <= 0) {
-          return "Category ID invalid.";
-        }
 
-        $this->db_connection->execute_query("INSERT INTO `products` (`product_name`, `category_id`, `product_desc`, `product_price`, `product_stockcount`, `product_isdisabled`) VALUES (?,?,?,?,?,?);", [$name, $category_id, $desc, $price, $stockcount, $is_disabled]);
-        return "Product created successfully.";
+    // validate function input
+    if(is_string($name) && is_int($category_id) && is_string($desc) && !is_nan($price) && is_int($stockcount) && is_bool($is_disabled)) {
+      return "Error - input validation failed";
+    }
 
-      } catch(Exception $e) {
-        return "An error occurred. Stack trace: " . $e;
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    // validate category ID, and attempt to add product
+    try{
+      $result = $this->db_connection->execute_query("SELECT `category_id` FROM `categories` WHERE `category_id` LIKE ?", [$category_id]);
+      // check if supplied category ID found in DB
+      if($result->num_rows <= 0) {
+        return "Category ID invalid.";
       }
-  } else {
-    return "An error occurred.";
-  }
+
+      $this->db_connection->execute_query("INSERT INTO `products` (`product_name`, `category_id`, `product_desc`, `product_price`, `product_stockcount`, `product_isdisabled`) VALUES (?,?,?,?,?,?);", [$name, $category_id, $desc, $price, $stockcount, $is_disabled]);
+      return "Product created successfully.";
+
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
 }
 
   public function getEmailFromUserID($id) {
