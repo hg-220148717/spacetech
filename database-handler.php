@@ -41,6 +41,18 @@ Class Database {
       $this->db_connection == null;
     }
 
+
+    /**
+     * Tests the connection to the database.
+     * 
+     * `Database error.` - database has not been initialised
+     * 
+     * `Connection Error.` - connection has been initialised but an error has occurred.
+     * 
+     * `OK` - database is initialised, connection is good & is ready to use.
+     * 
+     * @return string - Returns a string indicating the connection status.
+     */
     public function testDatabaseConnection() {
       // check if database connection has been established yet
         if($this->db_connection === null) {
@@ -61,6 +73,12 @@ Class Database {
         return $msg;
     }
 
+    /**
+     * Check the database is correctly setup.
+     * 
+     * @return boolean status - returns `true` if database is correctly setup.
+     * 
+     */
     public function checkSetup() {
         if($this->createDatabaseConnection() !== "OK") {
           return true; // setup has already occurred
@@ -68,6 +86,7 @@ Class Database {
 
         try{
           $this->db_connection->execute_query("SELECT 1 FROM `users` LIMIT 1;");
+          return true;
         } catch(mysqli_sql_exception $e) {
           // setup has not occurred, users table does not exist
           // trigger creation of database tables
@@ -77,14 +96,36 @@ Class Database {
         
     }
         
+    /**
+     * Generates a password hash for a desired password.
+     * 
+     * @param string $password Input password to be hashed.
+     * 
+     * @return string - Returns the password hash 
+     * 
+     */
     private function generatePasswordHash($password) {
       return password_hash($password, PASSWORD_DEFAULT);
     }
 
+    /**
+     * Checks an inputted password against a hash to confirm if it matches.
+     * 
+     * @param string $input - Inputted password to check against hash
+     * @param string $hash - Hash to compare password to
+     * 
+     * @return boolean - Returns `true` if password matches, returns `false` if doesn't match.
+     */
     private function checkPassword($input, $hash) {
       return password_verify($input, $hash);
     }
 
+    /**
+     * Runs setup procedure of creating necessary tables & sets up required relationships.
+     * 
+     * @return void
+     * 
+     */
     private function runSetup() {
         $sql_setup_commands = ["CREATE TABLE `users` (
             `user_id` integer PRIMARY KEY,
@@ -195,16 +236,32 @@ Class Database {
         }
     }
 
+    /**
+     * Creates a user given an email address, desired password & name.
+     * Stores the user data in the database.
+     * 
+     * @param string $email - User's email address
+     * @param string $password - User's desired password
+     * @param string $name - User's name
+     * 
+     * @return string - Returns an error if there was an issue creating the user,
+     * or returns a confirmation message if created successfully.
+     * 
+     */
     public function createUser($email, $password, $name) {
       if($this->createDatabaseConnection() == "OK") {
         try {
           $result = $this->db_connection->execute_query("SELECT user_email FROM `users` WHERE `user_email` LIKE ?", [$email]);
           if($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc() ) {
-              if(strtolower($row["user_email"]) == $email) {
+            /**
+             * While loop & if statement redundant. Check occurs at database level, so additional checking not required.
+             * 
+             */
+            //while ($row = $result->fetch_assoc() ) {
+              //if(strtolower($row["user_email"]) == $email) {
                 return "Error - supplied email address already in use.";
-              }
-            }
+             // }
+            //}
           } else {
               $passhash = $this->generatePasswordHash($password);
               $this->db_connection->execute_query("INSERT INTO `users` (`user_email`, `user_passwordhash`, `user_name`) VALUES (?,?,?);", [$email, $passhash, $name]);
@@ -213,9 +270,20 @@ Class Database {
         } catch (Exception $e) {
           return "An error occurred. Stack trace: " . $e;
         }
+      } else {
+        return "Database connection error.";
       }
     }
 
+    /**
+     * Checks & validates given credentials against database of users
+     * 
+     * @param string $email - User's inputted email
+     * @param string $password - User's inputted password
+     * 
+     * @return string|int - Returns user's ID if successful, returns error message if unsuccessful.
+     * 
+     */
     public function checkCredentials($email, $password) {
 
       // check db connection
@@ -295,6 +363,13 @@ Class Database {
     }
 
     public function getAllCategories($includeDisabledCategories) {
+      
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+
+
       if($this->createDatabaseConnection() == "OK") {
 
         $output = array();
@@ -526,6 +601,14 @@ Class Database {
     }
   }
 
+  /** 
+   * Get a user's name from a given user ID
+   * 
+   * @param int $id - User ID
+   * 
+   * @return string Returns the user's name or an error message.
+   * 
+   */
   public function getNameFromUserID($id) {
 
     // input validation
@@ -550,6 +633,9 @@ Class Database {
       while($row = $result->fetch_assoc()) {
         return $row["user_name"];
       }
+
+      // something has gone very wrong if this is returned.
+      return "Error - name not found.";
     }catch(Exception $e) {
       return "Error - database query error.";
     }
@@ -595,6 +681,15 @@ Class Database {
     }
   }
 
+  /**
+   * Removes an entry from a basket.
+   * 
+   * @param int $entry_id - basket entry ID to remove
+   * @param int $user_id - User ID to remove from
+   * 
+   * @return string Returns a message to indicate success or failure.
+   * 
+   */
   public function removeFromBasket($entry_id, $user_id) {
 
     // input validation
@@ -617,6 +712,19 @@ Class Database {
 
   }
 
+  /**
+   * Submits an order for a user
+   * 
+   * @param int $user_id - ID of user placing order
+   * @param string $address - Address lines concatenated into 1 string
+   * @param string $comments - Any comments added to the order
+   * @param int $total - Total order amount
+   * @param boolean $is_paid - Has the order been paid?
+   * 
+   * @return string - Returns a status message depending on if an error occurred
+   * or if the order was successful.
+   * 
+   */
   public function submitOrder($user_id, $address, $comments, $total, $is_paid) {
 
     // input validation
@@ -651,12 +759,22 @@ Class Database {
         $this->removeFromBasket($item["entry_id"], $user_id);
       }
   
+      return "Order submitted successfully.";
+
     }catch(Exception $e) {
       return "Error - database query error.";
     }
 
   }
 
+  /**
+   * Gets count of amount of basket entries a user has.
+   * 
+   * @param int $user_id - User ID
+   * 
+   * @return int|string - Returns count of items if successful, returns error if unsuccessful.
+   * 
+   */
   public function getBasketCount($user_id) {
 
     // input validation - check if supplied user ID is an integer
@@ -686,6 +804,8 @@ Class Database {
         return $row["COUNT(`basket_userid`)"];
       }
 
+      // if this is returned, something has gone very wrong somewhere...
+      return "Error - database query error.";
 
     } catch(Exception $e) {
       // something went wrong when executing the database query
