@@ -267,7 +267,7 @@ Class Database {
               // Refactored the below. Copied the resulting $row from the db,
               // rather than iterating through each key, making a temp array and then appending temp array.
               /*
-              
+
               $product = array();
               $product["product_id"] = $row["product_id"];
               $product["category_id"] = $row["category_id"];
@@ -308,13 +308,19 @@ Class Database {
 
           while ($row = $result->fetch_assoc() ) {
             if($result->num_rows > 0) {
+
+              // Refactored the below. Copied the resulting $row from the db,
+              // rather than iterating through each key, making a temp array and then appending temp array.
+              
+              /*
               $category = array();
               $category["category_id"] = $row["category_id"];
               $category["category_name"] = $row["category_name"];
               $category["category_isdisabled"] = $row["category_isdisabled"];
               $category["category_image"] = $row["category_image"];
+              */
             
-              $output[] = $output + $category;
+              $output[] = $output + $row;
 
             } else {
               break;
@@ -338,6 +344,10 @@ Class Database {
 
             while ($row = $result->fetch_assoc() ) {
               if($result->num_rows > 0) {
+                
+              // Refactored the below. Copied the resulting $row from the db,
+              // rather than iterating through each key, then returning an array.
+              /*  
                 $product = array();
                 $product["product_id"] = $row["product_id"];
                 $product["category_id"] = $row["category_id"];
@@ -346,8 +356,8 @@ Class Database {
                 $product["product_price"] = $row["product_price"];
                 $product["product_stockcount"] = $row["product_stockcount"];
                 $product["product_isdisabled"] = $row["product_isdisabled"];
-              
-                return $product;
+              */
+                return $row;
   
               } else {
                 return "Error - No results found.";
