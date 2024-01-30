@@ -566,18 +566,25 @@ Class Database {
   }
 
   public function removeFromBasket($entry_id, $user_id) {
-    if(is_int($user_id) && is_int($entry_id) ) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("DELETE FROM basket_entries WHERE `basket_entry_id` = ? AND basket_userid = ?", [$entry_id, $user_id]);
-          return "Removed from cart.";
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
-      }
-    } else {
-      return "Error - user id or entry id is not a number.";
+
+    // input validation
+    if(!is_int($user_id) || !is_int($entry_id)) {
+      return "Error - User ID & Basket Entry ID must be integers.";
     }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error";
+    }
+
+    try {
+      // remove item entry ID from basket
+      $this->db_connection->execute_query("DELETE FROM basket_entries WHERE `basket_entry_id` = ? AND basket_userid = ?", [$entry_id, $user_id]);
+      return "Removed from cart.";
+    }catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
   }
 
   public function submitOrder($user_id, $address, $comments, $total, $is_paid) {
