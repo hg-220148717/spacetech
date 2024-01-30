@@ -498,26 +498,32 @@ Class Database {
   }
 
   public function getNameFromUserID($id) {
-    if(is_int($id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("SELECT `user_name` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$id]);
 
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-              return $row["user_name"];
-            } else {
-              return "Error - No results found.";
-            }
-          }
+    // input validation
+    if(!is_int($id)) {
+      return "Error - ID must be an integer.";
+    }
 
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error";
+    }
 
+    try {
+      $result = $this->db_connection->execute_query("SELECT `user_name` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$id]);
+
+      // check if user found in db
+      if($result->num_rows <= 0) {
+        return "Error - no results found";
       }
-    } else {
-      return "Error - ID must be an integer";
+
+      // loop through db results
+      while($row = $result->fetch_assoc()) {
+        return $row["user_name"];
+      }
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
     }
   }
 
