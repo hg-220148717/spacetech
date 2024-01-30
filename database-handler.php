@@ -30,23 +30,32 @@ Class Database {
     }
 
     private function destroyDatabaseConnection() {
-        if($this->db_connection !== null) {
-            $this->db_connection -> close();
-        }
-        $this->db_connection == null;
+
+      // check if database connection is active, close if currently active
+      if($this->db_connection !== null) {
+          $this->db_connection->close();
+      }
+
+      // set variable to null 
+      // TODO - check if variable is exists / is not currently set to null
+      $this->db_connection == null;
     }
 
     public function testDatabaseConnection() {
+      // check if database connection has been established yet
         if($this->db_connection === null) {
             $this->createDatabaseConnection();
         }
+        // set default placeholder for connection check
+        $msg = "Checking connection...";
 
         if($this->db_connection->connect_error) {
             $msg = "Connection Error: " . htmlspecialchars($this->db_connection->connect_error, ENT_QUOTES);
         } else {
             $msg = "OK";
         }
-        //$this->destroyDatabaseConnection();
+
+        // return connection status
         return $msg;
     }
 
@@ -206,27 +215,37 @@ Class Database {
     }
 
     public function checkCredentials($email, $password) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("SELECT * FROM `users` WHERE `user_email` LIKE ?;", [$email]);
-          if($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc() ) {
-              if(strtolower($row["user_email"]) == $email) {
-                if($this->checkPassword($password, $row["user_passwordhash"])) {
-                  return $row["user_id"];
-                } else {
-                  return "Invalid username or password.";
-                }
-              }
-            }
-          } else {
-            return "Invalid username or password.";
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }   
+      
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `users` WHERE `user_email` LIKE ?;", [$email]);
+        
+        // check if user found in database
+        if($result->num_rows <= 0) {
+          return "Incorrect credentials.";
+        }
+
+        while ($row = $result->fetch_assoc() ) {
+
+          // check if email matches entry, if it doesn't, go to next element in list of results
+          if(strtolower($row["user_email"]) !== strtolower($email)) {
+            continue;
           }
-        } catch (Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
+
+          if($this->checkPassword($password, $row["user_passwordhash"])) {
+            return $row["user_id"];
+          }
+
+        }
+
+        // if no entries match, credentials are wrong, return error.
+        return "Incorrect credentials.";
         }
       }
-    }
 
     public function getAllProducts($includeDisabledProducts) {
       if($this->createDatabaseConnection() == "OK") {
@@ -410,35 +429,48 @@ Class Database {
     }
 
     public function createCategory($name, $is_disabled, $image_path) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
+
+      // check database connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+
+      // attempt to insert new category info into database
+      try {
+        $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
           return "Category created successfully.";
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
-    } else {
-      return "An error occurred.";
-    }
+      } catch(Exception $e) {
+        return "Error - database query error.";
+      }
   }
 
   public function createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled) {
-    if($this->createDatabaseConnection() == "OK") {
-      try {
-        $result = $this->db_connection->execute_query("SELECT `category_id` FROM `categories` WHERE `category_id` LIKE ?", [$category_id]);
-        if($result->num_rows <= 0) {
-          return "Category ID invalid.";
-        }
 
-        $this->db_connection->execute_query("INSERT INTO `products` (`product_name`, `category_id`, `product_desc`, `product_price`, `product_stockcount`, `product_isdisabled`) VALUES (?,?,?,?,?,?);", [$name, $category_id, $desc, $price, $stockcount, $is_disabled]);
-        return "Product created successfully.";
+    // validate function input
+    if(is_string($name) && is_int($category_id) && is_string($desc) && !is_nan($price) && is_int($stockcount) && is_bool($is_disabled)) {
+      return "Error - input validation failed";
+    }
 
-      } catch(Exception $e) {
-        return "An error occurred. Stack trace: " . $e;
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    // validate category ID, and attempt to add product
+    try{
+      $result = $this->db_connection->execute_query("SELECT `category_id` FROM `categories` WHERE `category_id` LIKE ?", [$category_id]);
+      // check if supplied category ID found in DB
+      if($result->num_rows <= 0) {
+        return "Category ID invalid.";
       }
-  } else {
-    return "An error occurred.";
-  }
+
+      $this->db_connection->execute_query("INSERT INTO `products` (`product_name`, `category_id`, `product_desc`, `product_price`, `product_stockcount`, `product_isdisabled`) VALUES (?,?,?,?,?,?);", [$name, $category_id, $desc, $price, $stockcount, $is_disabled]);
+      return "Product created successfully.";
+
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
 }
 
   public function getEmailFromUserID($id) {
@@ -476,27 +508,34 @@ Class Database {
   }
 
   public function getNameFromUserID($id) {
-    if(is_int($id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("SELECT `user_name` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$id]);
 
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-              return $row["user_name"];
-            } else {
-              return "Error - No results found.";
-            }
-          }
-
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
-
-      }
-    } else {
-      return "Error - ID must be an integer";
+    // input validation
+    if(!is_int($id)) {
+      return "Error - ID must be an integer.";
     }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT `user_name` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$id]);
+
+      // check if user found in db
+      if($result->num_rows <= 0) {
+        return "Error - no results found";
+      }
+
+      // loop through db results
+      while($row = $result->fetch_assoc()) {
+        return $row["user_name"];
+      }
+    }catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
+
   }
 
   public function addToBasket($user_id, $product_id, $qty, $subtotal) {
@@ -538,91 +577,135 @@ Class Database {
   }
 
   public function removeFromBasket($entry_id, $user_id) {
-    if(is_int($user_id) && is_int($entry_id) ) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("DELETE FROM basket_entries WHERE `basket_entry_id` = ? AND basket_userid = ?", [$entry_id, $user_id]);
-          return "Removed from cart.";
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
-      }
-    } else {
-      return "Error - user id or entry id is not a number.";
+
+    // input validation
+    if(!is_int($user_id) || !is_int($entry_id)) {
+      return "Error - User ID & Basket Entry ID must be integers.";
     }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error";
+    }
+
+    try {
+      // remove item entry ID from basket
+      $this->db_connection->execute_query("DELETE FROM basket_entries WHERE `basket_entry_id` = ? AND basket_userid = ?", [$entry_id, $user_id]);
+      return "Removed from cart.";
+    }catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
   }
 
   public function submitOrder($user_id, $address, $comments, $total, $is_paid) {
-    if(is_int($user_id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
 
-          $result = $this->db_connection->execute_query("INSERT INTO `orders` (`order_userid`, `order_address`, `order_comments`, `order_total`, `order_ispaid`, `order_status`) VALUES (?, ?, ?, ?, ?, '1');", [$user_id, $address, $comments, $total, $is_paid]);
-          if($result === TRUE) {
-            $order_no = $this->db_connection->insert_id;
-          } else {
-            return "An error occurred creating the order.";
-          }
-
-          $basket_contents = $this->getBasketContents($user_id);
-          foreach ($basket_contents as $item) {
-            $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $item["product_id"], $item["qty"], $item["subtotal"]]);
-            $this->removeFromBasket($item["entry_id"], $user_id);
-          }
-
-        } catch(Exception $e) {
-          return "An error ocurred. Stack trace - " . $e;
-        }
-      } else {
-        return "An error occurred.";
-      }
-    } else {
-      return "Error - user id must be an int";
+    // input validation
+    if(!is_int($user_id)) {
+      return "Error - user ID must be an integer.";
     }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+
+      $result = $this->db_connection->execute_query("INSERT INTO `orders` (`order_userid`, `order_address`, `order_comments`, `order_total`, `order_ispaid`, `order_status`) VALUES (?, ?, ?, ?, ?, '1');", [$user_id, $address, $comments, $total, $is_paid]);
+      
+      // check order submitted successfully
+      if($result !== TRUE) {
+        return "Error - an error occurred creating the order.";
+      }
+      
+      // get order number from previous query
+      $order_no = $this->db_connection->insert_id;
+
+      $basket_contents = $this->getBasketContents($user_id);
+
+      // loop through each entry in the basket
+      foreach ($basket_contents as $item) {
+        // add item line to database and link to order ID
+        $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $item["product_id"], $item["qty"], $item["subtotal"]]);
+        // remove item from basket
+        $this->removeFromBasket($item["entry_id"], $user_id);
+      }
+  
+    }catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
   }
 
   public function getBasketCount($user_id) {
-    if(is_int($user_id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try{
-          $result = $this->db_connection->execute_query("SELECT COUNT(`basket_userid`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
 
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-              return $row["COUNT(`basket_userid`)"];
-            } else {
-              return 0;
-            }
-          }
-        } catch(Exception $e) {
-          return "An error occurred - stack trace: " . $e;
-        }
-      }
-    } else {
-      return "Error - used id is not a number.";
+    // input validation - check if supplied user ID is an integer
+    if(!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
     }
+
+    // check connection to database
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    // attempt to query database for basket entries count 
+    // (not including quantities, this only outputs the number of unique entries in the basket)
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT COUNT(`basket_userid`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+
+      // check if basket is empty, if so, return a count of 0
+      if($result->num_rows <= 0) {
+        return 0;
+      }
+
+      // loop through data returned from db
+      while ($row = $result->fetch_assoc() ) {
+        // return count of basket items
+        return $row["COUNT(`basket_userid`)"];
+      }
+
+
+    } catch(Exception $e) {
+      // something went wrong when executing the database query
+      return "Error - database query error.";
+    }
+
   }
 
   public function getBasketTotal($user_id) {
-    if(is_int($user_id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try{
-          $result = $this->db_connection->execute_query("SELECT SUM(`entry_subtotal`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
 
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-              return $row["SUM(`entry_subtotal`)"];
-            } else {
-              return 0.00;
-            }
-          }
-        } catch(Exception $e) {
-          return "An error occurred - stack trace: " . $e;
-        }
-      }
-    } else {
-      return "Error - used id is not a number.";
+    // input validation - check if supplied user ID is an integer
+    if(!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
     }
+
+    // check connection to database
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    // atempt to obtain sum of subtotals in user's basket
+    try {
+      $result = $this->db_connection->execute_query("SELECT SUM(`entry_subtotal`) FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+
+      // if user's basket is empty, return a total of £0.00
+      if($result->num_rows <= 0) {
+        return 0.00; 
+      }
+
+      // loop through returned rows from DB
+      while ($row = $result->fetch_assoc() ) {
+        // return sum of all basket entry subtotals, giving the total of the basket contents
+        return  $row["SUM(`entry_subtotal`)"];
+      }
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
   }
 
   public function getBasketContents($user_id) {
