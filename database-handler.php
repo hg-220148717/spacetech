@@ -215,27 +215,37 @@ Class Database {
     }
 
     public function checkCredentials($email, $password) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("SELECT * FROM `users` WHERE `user_email` LIKE ?;", [$email]);
-          if($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc() ) {
-              if(strtolower($row["user_email"]) == $email) {
-                if($this->checkPassword($password, $row["user_passwordhash"])) {
-                  return $row["user_id"];
-                } else {
-                  return "Invalid username or password.";
-                }
-              }
-            }
-          } else {
-            return "Invalid username or password.";
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }   
+      
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `users` WHERE `user_email` LIKE ?;", [$email]);
+        
+        // check if user found in database
+        if($result->num_rows <= 0) {
+          return "Incorrect credentials.";
+        }
+
+        while ($row = $result->fetch_assoc() ) {
+
+          // check if email matches entry, if it doesn't, go to next element in list of results
+          if(strtolower($row["user_email"]) !== strtolower($email)) {
+            continue;
           }
-        } catch (Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
+
+          if($this->checkPassword($password, $row["user_passwordhash"])) {
+            return $row["user_id"];
+          }
+
+        }
+
+        // if no entries match, credentials are wrong, return error.
+        return "Incorrect credentials.";
         }
       }
-    }
 
     public function getAllProducts($includeDisabledProducts) {
       if($this->createDatabaseConnection() == "OK") {
@@ -521,10 +531,11 @@ Class Database {
       while($row = $result->fetch_assoc()) {
         return $row["user_name"];
       }
-
-    } catch(Exception $e) {
+    }catch(Exception $e) {
       return "Error - database query error.";
     }
+
+
   }
 
   public function addToBasket($user_id, $product_id, $qty, $subtotal) {
