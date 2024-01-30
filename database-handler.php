@@ -670,6 +670,15 @@ Class Database {
     }
   }
 
+  /**
+   * Removes an entry from a basket.
+   * 
+   * @param int $entry_id - basket entry ID to remove
+   * @param int $user_id - User ID to remove from
+   * 
+   * @return string Returns a message to indicate success or failure.
+   * 
+   */
   public function removeFromBasket($entry_id, $user_id) {
 
     // input validation
