@@ -601,6 +601,14 @@ Class Database {
     }
   }
 
+  /** 
+   * Get a user's name from a given user ID
+   * 
+   * @param int $id - User ID
+   * 
+   * @return string Returns the user's name or an error message.
+   * 
+   */
   public function getNameFromUserID($id) {
 
     // input validation
@@ -625,6 +633,9 @@ Class Database {
       while($row = $result->fetch_assoc()) {
         return $row["user_name"];
       }
+
+      // something has gone very wrong if this is returned.
+      return "Error - name not found.";
     }catch(Exception $e) {
       return "Error - database query error.";
     }
