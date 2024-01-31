@@ -1,7 +1,6 @@
 
 *:after{
-    padding: 0;
-    margin: 0;
+    
     box-sizing: border-box;
 }
 body{
@@ -76,24 +75,15 @@ button{
 button:hover {
   background-color: lightgrey;
 }
-.other{
-  margin-top: 30px;
-  display: flex;
+.container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
 }
-.other div{
-  background: red;
-  width: 150px;
-  border-radius: 3px;
-  padding: 5px 10px 10px 5px;
-  background-color: rgba(255,255,255,0.27);
-  color: #eaf0fb;
-  text-align: center;
-}
-.other div:hover{
-  background-color: grey;
-}
-.other .fp{
-  margin-left: 25px;
-  padding-right: 10px;
+.left-link {
+    float: left;
 }
 
+.right-link {
+    float: right;
+}
