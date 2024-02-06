@@ -14,6 +14,11 @@ Class Database {
 
     private $db_connection = null;
 
+    private static $ERROR_MSG_INPUT_VALIDATION = "Input validation failed.";
+    private static $ERROR_MSG_DB_CONNECTION_FAILED = "Database connection error.";
+    private static $ERROR_MSG_DB_QUERY_EXCEPTION = "Database query error.";
+
+
     private function createDatabaseConnection() {
 
         // check if database connectoin is already established
@@ -550,40 +555,62 @@ Class Database {
       }
     }
 
+    /**
+     * Get an array of products belonging to a particular category from Category ID.
+     * @author H. Green (2024)
+     * @param $category_id Category ID
+     * @return null|string|array
+     * Returns null if no products found.
+     * Returns string (error message) if something went wrong
+     * Returns array of products if successful.
+     */
     public function getProductsByCategoryID($category_id) {
-      if(is_int($category_id)) {
-        if($this->createDatabaseConnection() == "OK") {
-          try {
-            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `category_id` = ?;", [$category_id]);
-            $output = array();
-            while ($row = $result->fetch_assoc() ) {
-              if($result->num_rows > 0) {
-                $product = array();
-                $product["product_id"] = $row["product_id"];
-                $product["category_id"] = $row["category_id"];
-                $product["product_name"] = $row["product_name"];
-                $product["product_desc"] = $row["product_desc"];
-                $product["product_price"] = $row["product_price"];
-                $product["product_stockcount"] = $row["product_stockcount"];
-                $product["product_isdisabled"] = $row["product_isdisabled"];
-              
-                $output[] = $output + $product;
-  
-              } else {
-                return "Error - No results found.";
-              }
-            }
 
-            return $output;
-
-          } catch(Exception $e) {
-            return "An error occurred. Stack trace: " . $e;
-          }
-
-        }
-      } else {
-        return "Error - ID must be an integer";
+      // input validation
+      if(!is_int($category_id)) {
+        return $this->ERROR_MSG_INPUT_VALIDATION;
       }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return $this->ERROR_MSG_DB_CONNECTION_FAILED;
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `category_id` = ?;", [$category_id]);
+           
+        if($result->num_rows <= 0) {
+          // no results found, category contains no products, return null
+          return null;
+        }
+
+        $products_array = array();
+
+        while($row = $result->fetch_assoc() ) {
+
+          // Refactored this mess again.
+          /*
+          $product = array();
+          $product["product_id"] = $row["product_id"];
+          $product["category_id"] = $row["category_id"];
+          $product["product_name"] = $row["product_name"];
+          $product["product_desc"] = $row["product_desc"];
+          $product["product_price"] = $row["product_price"];
+          $product["product_stockcount"] = $row["product_stockcount"];
+          $product["product_isdisabled"] = $row["product_isdisabled"];
+          $output[] = $output + $product;
+  
+          */
+
+          $products_array[] = $products_array + $row;
+        
+        }
+
+        return $products_array;
+      } catch(Exception $e) {
+        return $this->ERROR_MSG_DB_QUERY_EXCEPTION;
+      }
+
     }
 
     /**
