@@ -865,43 +865,61 @@ Class Database {
     }
 
     return "Error - something went wrong";
-    
+
   }
 
+  /** Returns the content's of a user's basket
+   * @param $user_id - User ID 
+   * @return array|string Returns array of user's basket contents, or error message.
+   */
   public function getBasketContents($user_id) {
-    if(is_int($user_id)) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("SELECT * FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
 
-          $basket = array();
-
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-             
-              $basket_entry = array();
-
-              $basket_entry["entry_id"] = $row["basket_entry_id"];
-              $basket_entry["product_id"] = $row["basket_productid"];
-              $basket_entry["qty"] = $row["entry_quanitity"];
-              $basket_entry["subtotal"] = $row["entry_subtotal"];
-
-              $basket[] = $basket + $basket_entry;
-
-            }
-          }
-
-          return $basket;
-
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace - ". $e;
-        }
-      } else {
-        return "An error occurred.";
-      }
-    } else {
-      return "Error - user ID must be an int.";
+    // validate user ID supplied is an integer
+    if(!is_int($user_id)) {
+      return "Error - User ID is not an integer.";
     }
+
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT * FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+
+      $users_basket = array();
+
+      if($result->num_rows <= 0) {
+        // basket is empty, return blank array
+        return $users_basket;
+      }
+
+      while($row = $result->fetch_assoc()) {
+        // append all rows of basket entries to array to return from function
+        $users_basket[] = $users_basket + $row;
+
+        // previously used to be:
+        /*
+          basket_entry = array();
+
+          $basket_entry["entry_id"] = $row["basket_entry_id"];
+          $basket_entry["product_id"] = $row["basket_productid"];
+          $basket_entry["qty"] = $row["entry_quanitity"];
+          $basket_entry["subtotal"] = $row["entry_subtotal"];
+
+          $basket[] = $basket + $basket_entry;
+      
+         */
+      }
+
+      // return basket once all rows added to output array
+      return $users_basket;
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
+    
   }
 
     
