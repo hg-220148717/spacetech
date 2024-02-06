@@ -362,6 +362,11 @@ Class Database {
       }
     }
 
+    /**
+     * Return information about all categories
+     * @param $includeDisabledCategories - Include disabled categories in results? (Y/N)
+     * @return array|string Returns array of categories if sucessful, or error message if unsuccessful
+     */
     public function getAllCategories($includeDisabledCategories) {
       
       // check db connection
@@ -369,46 +374,49 @@ Class Database {
         return "Error - database connection error.";
       }
 
+      /** inline if statement to modify SQL query executed to add additional
+       * `where` clause subject to status of var $includeDisabledCategories
+       * --
+       * if true - does not include where statement which excludes disabled categories
+       * if false - includes where statement to exclude disabled categories
+       */
+      $sql_query = "SELECT * FROM `categories`" . (($includeDisabledCategories) ? "" : " WHERE `category_isdisabled` = FALSE") . ";";
 
-      if($this->createDatabaseConnection() == "OK") {
+      try {
+        $result = $this->db_connection->execute_query($sql_query);
+        
+        $categories_array = array();
 
-        $output = array();
-
-        try {
-          if($includeDisabledCategories) {
-            $result = $this->db_connection->execute_query("SELECT * FROM `categories`;");
-          } else { 
-            $result = $this->db_connection->execute_query("SELECT * FROM `categories` WHERE `category_isdisabled` = FALSE;");
-          }
-
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-
-              // Refactored the below. Copied the resulting $row from the db,
-              // rather than iterating through each key, making a temp array and then appending temp array.
-              
-              /*
-              $category = array();
-              $category["category_id"] = $row["category_id"];
-              $category["category_name"] = $row["category_name"];
-              $category["category_isdisabled"] = $row["category_isdisabled"];
-              $category["category_image"] = $row["category_image"];
-              */
-            
-              $output[] = $output + $row;
-
-            } else {
-              break;
-            }
-          }
-
-
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
+        if($result->num_rows <= 0) {
+          // no categories found, return blank array
+          return $categories_array; 
         }
 
-        return $output;
+        // loop through results
+        while ($row = $result->fetch_assoc() ) {
+      
+          // Refactored the below. Copied the resulting $row from the db,
+          // rather than iterating through each key, making a temp array and then appending temp array.
+          
+          /*
+          $category = array();
+          $category["category_id"] = $row["category_id"];
+          $category["category_name"] = $row["category_name"];
+          $category["category_isdisabled"] = $row["category_isdisabled"];
+          $category["category_image"] = $row["category_image"];
+          */
+        
+          $categories_array[] = $categories_array + $row;
+        }
+
+        // return array with all category data returned from database
+        return $categories_array;
+
+      } catch(Exception $e) {
+        return "Error - Database query error.";
       }
+
+
     }
 
     public function getProductByID($id) {
