@@ -538,6 +538,18 @@ Class Database {
       }
   }
 
+  /**
+   * Create a product from given information
+   * @param $name Product Name
+   * @param $category_id Category ID product belongs to
+   * @param $desc Product Description
+   * @param $price Product Price
+   * @param $stockcount Current Stock Count
+   * @param $is_disabled Is the product currently disabled?
+   * 
+   * @return string Status message (success or error).
+   * 
+   */
   public function createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled) {
 
     // validate function input
