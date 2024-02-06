@@ -522,6 +522,15 @@ Class Database {
       }
     }
 
+    /**
+     * Create a new category from supplied parameters
+     * @param $name Product name
+     * @param $is_disabled Is the category disabled?
+     * @param $image_path Local path to category cover image
+     * 
+     * @return string Status message (error or success).
+     * 
+     */
     public function createCategory($name, $is_disabled, $image_path) {
 
       // check database connection
