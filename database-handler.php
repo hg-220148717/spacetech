@@ -492,77 +492,61 @@ Class Database {
         return "Error - database query error.";
       }
 
-      if(is_int($id)) {
-        if($this->createDatabaseConnection() == "OK") {
-          try {
-            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_id` = ? LIMIT 1;", [$id]);
-
-            while ($row = $result->fetch_assoc() ) {
-              if($result->num_rows > 0) {
-                
-              // Refactored the below. Copied the resulting $row from the db,
-              // rather than iterating through each key, then returning an array.
-              /*  
-                $product = array();
-                $product["product_id"] = $row["product_id"];
-                $product["category_id"] = $row["category_id"];
-                $product["product_name"] = $row["product_name"];
-                $product["product_desc"] = $row["product_desc"];
-                $product["product_price"] = $row["product_price"];
-                $product["product_stockcount"] = $row["product_stockcount"];
-                $product["product_isdisabled"] = $row["product_isdisabled"];
-              */
-                return $row;
-  
-              } else {
-                return "Error - No results found.";
-              }
-            }
-
-          } catch(Exception $e) {
-            return "An error occurred. Stack trace: " . $e;
-          }
-
-        }
-      } else {
-        return "Error - ID must be an integer";
-      }
+      
     }
 
-    public function getProductsByName($inputted_name) {
-      if(is_string($inputted_name)) {
-        if($this->createDatabaseConnection() == "OK") {
+    /**
+     * Get product details by name.
+     * @param $inputted_name Inputted name to search for.
+     * @return null|string|array
+     * Returns null if product not found.
+     * Returns string if something went wrong (error message).
+     * Returns array of products if successful, ordered by product name.
+     */
+     public function getProductsByName($inputted_name) {
 
-          $output = array();
+      // input validation
+      if(!is_string($inputted_name)) {
+        return "Error - inputted name must be a string.";
+      }
 
-          try {
-            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_name` = '%?%' ORDER BY `product_name`;", [$inputted_name]);
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
 
-            while ($row = $result->fetch_assoc() ) {
-              if($result->num_rows > 0) {
-                $product = array();
-                $product["product_id"] = $row["product_id"];
-                $product["category_id"] = $row["category_id"];
-                $product["product_name"] = $row["product_name"];
-                $product["product_desc"] = $row["product_desc"];
-                $product["product_price"] = $row["product_price"];
-                $product["product_stockcount"] = $row["product_stockcount"];
-                $product["product_isdisabled"] = $row["product_isdisabled"];
-              
-                $output[] = $output + $product;
-  
-              } else {
-                return "Error - No results found.";
-              }
-            }
+      $products_array = array();
 
-          } catch(Exception $e) {
-            return "An error occurred. Stack trace: " . $e;
-          }
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_name` = '%?%' ORDER BY `product_name`;", [$inputted_name]);
 
+        if($result->num_rows <= 0) {
+          // no products found, return null.
+          return null;
         }
-      } else {
-        return "Error - input must be a string";
+
+        while ($row = $result->fetch_assoc() ) {
+          // Refactored this mess.
+          /*
+          $product = array();
+          $product["product_id"] = $row["product_id"];
+          $product["category_id"] = $row["category_id"];
+          $product["product_name"] = $row["product_name"];
+          $product["product_desc"] = $row["product_desc"];
+          $product["product_price"] = $row["product_price"];
+          $product["product_stockcount"] = $row["product_stockcount"];
+          $product["product_isdisabled"] = $row["product_isdisabled"];
+        
+          $output[] = $output + $product;
+          */
+          $products_array[] = $products_array + $row;
+        }
+
+        return $products_array;
+
+
+      } catch(Exception $e) {
+        return "Error - database query error.";
       }
     }
 
