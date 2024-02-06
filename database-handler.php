@@ -254,29 +254,31 @@ Class Database {
      * 
      */
     public function createUser($email, $password, $name) {
-      if($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("SELECT user_email FROM `users` WHERE `user_email` LIKE ?", [$email]);
-          if($result->num_rows > 0) {
-            /**
-             * While loop & if statement redundant. Check occurs at database level, so additional checking not required.
-             * 
-             */
-            //while ($row = $result->fetch_assoc() ) {
-              //if(strtolower($row["user_email"]) == $email) {
-                return "Error - supplied email address already in use.";
-             // }
-            //}
-          } else {
-              $passhash = $this->generatePasswordHash($password);
-              $this->db_connection->execute_query("INSERT INTO `users` (`user_email`, `user_passwordhash`, `user_name`) VALUES (?,?,?);", [$email, $passhash, $name]);
-              return "User account created successfully.";
-          }
-        } catch (Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
+
+      // input validation
+      if(!is_string($email) || !is_string($password) || !is_string($name)) {
+        return $this->ERROR_MSG_INPUT_VALIDATION;
+      }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return $this->ERROR_MSG_DB_CONNECTION_FAILED;
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT user_email FROM `users` WHERE `user_email` LIKE ?", [$email]);
+        
+        if($result->num_rows > 0) {
+          // email already exists in users table
+          return "Error - email already in use.";
         }
-      } else {
-        return "Database connection error.";
+
+        $passhash = $this->generatePasswordHash($password);
+        $this->db_connection->execute_query("INSERT INTO `users` (`user_email`, `user_passwordhash`, `user_name`) VALUES (?,?,?);", [$email, $passhash, $name]);
+        return "User account created successfully.";
+
+      } catch(Exception $e) {
+        return $this->ERROR_MSG_DB_QUERY_EXCEPTION;
       }
     }
 
