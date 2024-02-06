@@ -317,49 +317,67 @@ Class Database {
         }
       }
 
+    /**
+     * Return information about all products
+     * @param $includeDisabledProducts - Include disabled products in results? (Y/N)
+     * @return array|string Returns array of products if sucessful, or error message if unsuccessful
+     */
     public function getAllProducts($includeDisabledProducts) {
-      if($this->createDatabaseConnection() == "OK") {
 
-        $output = array();
+      // input validation
+      if(!is_bool($includeDisabledProducts)) {
+        return "Error - parameter must be a boolean.";
+      }
 
-        try {
-          if($includeDisabledProducts) {
-            $result = $this->db_connection->execute_query("SELECT * FROM `products`;");
-          } else { 
-            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_isdisabled` = FALSE;");
-          }
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+      
+      /** inline if statement to modify SQL query executed to add additional
+       * `where` clause subject to status of var $includeDisabledCategories
+       * --
+       * if true - does not include where statement which excludes disabled categories
+       * if false - includes where statement to exclude disabled categories
+       */
+      $sql_query = "SELECT * FROM `products`" . (($includeDisabledProducts) ? "" : " WHERE `product_isdisabled` = FALSE") . ";";
 
-          while ($row = $result->fetch_assoc() ) {
-            if($result->num_rows > 0) {
-              
-              // Refactored the below. Copied the resulting $row from the db,
-              // rather than iterating through each key, making a temp array and then appending temp array.
-              /*
+      $products_array = array();
 
-              $product = array();
-              $product["product_id"] = $row["product_id"];
-              $product["category_id"] = $row["category_id"];
-              $product["product_name"] = $row["product_name"];
-              $product["product_desc"] = $row["product_desc"];
-              $product["product_price"] = $row["product_price"];
-              $product["product_stockcount"] = $row["product_stockcount"];
-              $product["product_isdisabled"] = $row["product_isdisabled"];
-              
-              */
-              $output[] = $output + $row;
+      try {
+        $result = $this->db_connection->execute_query($sql_query);
 
-            } else {
-              break;
-            }
-          }
-
-
-        } catch(Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
+        if($result->num_rows <= 0) {
+          // no products found, return empty array
+          return $products_array;
         }
 
-        return $output;
+        while ($row = $result->fetch_assoc() ) {
+
+          // Refactored the below. Copied the resulting $row from the db,
+          // rather than iterating through each key, making a temp array and then appending temp array.
+          /*
+
+          $product = array();
+          $product["product_id"] = $row["product_id"];
+          $product["category_id"] = $row["category_id"];
+          $product["product_name"] = $row["product_name"];
+          $product["product_desc"] = $row["product_desc"];
+          $product["product_price"] = $row["product_price"];
+          $product["product_stockcount"] = $row["product_stockcount"];
+          $product["product_isdisabled"] = $row["product_isdisabled"];
+          
+          */
+          $products_array[] = $products_array + $row;
+
+        }
+
+        return $products_array;
+
+      } catch(Exception $e) {
+        return "Error - database query error";
       }
+
     }
 
     /**
@@ -369,6 +387,11 @@ Class Database {
      */
     public function getAllCategories($includeDisabledCategories) {
       
+      // input validation
+      if(!is_bool($includeDisabledCategories)) {
+        return "Error - parameter must be a boolean.";
+      }
+
       // check db connection
       if($this->createDatabaseConnection() !== "OK") {
         return "Error - database connection error.";
