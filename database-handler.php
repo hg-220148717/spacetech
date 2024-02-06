@@ -442,7 +442,56 @@ Class Database {
 
     }
 
+    /**
+     * Get product details from product ID.
+     * @param $id Product ID
+     * @return null|string|array
+     * Returns null if product not found.
+     * Returns error message if something went wrong.
+     * Returns array of product details if successful.
+     */
     public function getProductByID($id) {
+
+      // input validation
+      if(!is_int($id)) {
+        return "Error - ID must be an integer";
+      }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+
+      try {
+
+        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_id` = ? LIMIT 1;", [$id]);
+
+        if($result->num_rows <= 0) {
+          // product not found, return null.
+          return null;
+        }
+
+        while ($row = $result->fetch_assoc() ) {
+          // Refactored the below. Copied the resulting $row from the db,
+          // rather than iterating through each key, then returning an array.
+          /*  
+            $product = array();
+            $product["product_id"] = $row["product_id"];
+            $product["category_id"] = $row["category_id"];
+            $product["product_name"] = $row["product_name"];
+            $product["product_desc"] = $row["product_desc"];
+            $product["product_price"] = $row["product_price"];
+            $product["product_stockcount"] = $row["product_stockcount"];
+            $product["product_isdisabled"] = $row["product_isdisabled"];
+          */
+          return $row;
+
+        }
+
+      } catch(Exception $e) {
+        return "Error - database query error.";
+      }
+
       if(is_int($id)) {
         if($this->createDatabaseConnection() == "OK") {
           try {
