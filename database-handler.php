@@ -567,6 +567,12 @@ Class Database {
     }
 }
 
+  /**
+   * Get a user's email address from their User ID
+   * @param $id - User ID
+   * @return string Returns email address or error message
+   * 
+   */
   public function getEmailFromUserID($id) {
 
     // check if supplied user ID is an integer
@@ -599,6 +605,9 @@ Class Database {
     } catch(Exception $e) {
       return "Error - database query failure.";
     }
+
+    return "Error - unexpected error occurred.";
+
   }
 
   /** 
