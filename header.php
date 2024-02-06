@@ -11,7 +11,7 @@ echo '
     <a class="link" href="index.php">Home</a>
     <a class="link" href="about.php">About</a>
     <a class="link" href="products.php">Products</a>
-    <a class="link" href="contact.php">ContactUs</a>
+    <a class="link" href="contact.php">Contact Us</a>
 </div>
 
 <div class="nav-icons">
