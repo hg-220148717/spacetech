@@ -643,6 +643,17 @@ Class Database {
 
   }
 
+  /**
+   * Adds an item entry to a user's basket. Includes quantity & order line subtotal
+   * 
+   * @param $user_id User ID
+   * @param $product_id Product ID
+   * @param $qty Quantity of Product
+   * @param $subtotal Order line subtotal
+   * 
+   * @return string Status message.
+   * 
+   */
   public function addToBasket($user_id, $product_id, $qty, $subtotal) {
 
     // input validation - check if supplied user ID is an integer
@@ -814,6 +825,14 @@ Class Database {
 
   }
 
+  /** Returns monetary total of all items in basket
+   * 
+   * @param $user_id User ID
+   * 
+   * @return float|string Returns error message or floating point number of 
+   * monetary total of all items in basket.
+   * 
+   */
   public function getBasketTotal($user_id) {
 
     // input validation - check if supplied user ID is an integer
@@ -845,6 +864,8 @@ Class Database {
       return "Error - database query error.";
     }
 
+    return "Error - something went wrong";
+    
   }
 
   public function getBasketContents($user_id) {
