@@ -14,11 +14,6 @@ Class Database {
 
     private $db_connection = null;
 
-    private static $ERROR_MSG_INPUT_VALIDATION = "Input validation failed.";
-    private static $ERROR_MSG_DB_CONNECTION_FAILED = "Database connection error.";
-    private static $ERROR_MSG_DB_QUERY_EXCEPTION = "Database query error.";
-
-
     private function createDatabaseConnection() {
 
         // check if database connectoin is already established
@@ -31,7 +26,6 @@ Class Database {
         // that connection object is successfully connected
 
         return $this->testDatabaseConnection();
-
     }
 
     private function destroyDatabaseConnection() {
@@ -99,8 +93,7 @@ Class Database {
           return true;
         }
         
-    }
-        
+    }        
     /**
      * Generates a password hash for a desired password.
      * 
@@ -254,31 +247,29 @@ Class Database {
      * 
      */
     public function createUser($email, $password, $name) {
-
-      // input validation
-      if(!is_string($email) || !is_string($password) || !is_string($name)) {
-        return $this->ERROR_MSG_INPUT_VALIDATION;
-      }
-
-      // check db connection
-      if($this->createDatabaseConnection() !== "OK") {
-        return $this->ERROR_MSG_DB_CONNECTION_FAILED;
-      }
-
-      try {
-        $result = $this->db_connection->execute_query("SELECT user_email FROM `users` WHERE `user_email` LIKE ?", [$email]);
-        
-        if($result->num_rows > 0) {
-          // email already exists in users table
-          return "Error - email already in use.";
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $result = $this->db_connection->execute_query("SELECT user_email FROM `users` WHERE `user_email` LIKE ?", [$email]);
+          if($result->num_rows > 0) {
+            /**
+             * While loop & if statement redundant. Check occurs at database level, so additional checking not required.
+             * 
+             */
+            //while ($row = $result->fetch_assoc() ) {
+              //if(strtolower($row["user_email"]) == $email) {
+                return "Error - supplied email address already in use.";
+             // }
+            //}
+          } else {
+              $passhash = $this->generatePasswordHash($password);
+              $this->db_connection->execute_query("INSERT INTO `users` (`user_email`, `user_passwordhash`, `user_name`) VALUES (?,?,?);", [$email, $passhash, $name]);
+              return "User account created successfully.";
+          }
+        } catch (Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
         }
-
-        $passhash = $this->generatePasswordHash($password);
-        $this->db_connection->execute_query("INSERT INTO `users` (`user_email`, `user_passwordhash`, `user_name`) VALUES (?,?,?);", [$email, $passhash, $name]);
-        return "User account created successfully.";
-
-      } catch(Exception $e) {
-        return $this->ERROR_MSG_DB_QUERY_EXCEPTION;
+      } else {
+        return "Database connection error.";
       }
     }
 
@@ -320,310 +311,206 @@ Class Database {
         }
 
         // if no entries match, credentials are wrong, return error.
-        return "Incorrect credentials.";
+        } catch (Exception $e) {
+          return "Incorrect credentials.";
         }
       }
 
-    /**
-     * Return information about all products
-     * @param $includeDisabledProducts - Include disabled products in results? (Y/N)
-     * @return array|string Returns array of products if sucessful, or error message if unsuccessful
-     */
-    public function getAllProducts($includeDisabledProducts) {
-
-      // input validation
-      if(!is_bool($includeDisabledProducts)) {
-        return "Error - parameter must be a boolean.";
-      }
-
-      // check db connection
-      if($this->createDatabaseConnection() !== "OK") {
-        return "Error - database connection error.";
-      }
-      
-      /** inline if statement to modify SQL query executed to add additional
-       * `where` clause subject to status of var $includeDisabledCategories
-       * --
-       * if true - does not include where statement which excludes disabled categories
-       * if false - includes where statement to exclude disabled categories
-       */
-      $sql_query = "SELECT * FROM `products`" . (($includeDisabledProducts) ? "" : " WHERE `product_isdisabled` = FALSE") . ";";
-
-      $products_array = array();
-
-      try {
-        $result = $this->db_connection->execute_query($sql_query);
-
-        if($result->num_rows <= 0) {
-          // no products found, return empty array
-          return $products_array;
+      public function getAllProducts($includeDisabledProducts) {
+         // Check if the database connection is successfully established
+        if(!$this->createDatabaseConnection()) {
+            throw new Exception("Database connection failed.");
         }
-
-        while ($row = $result->fetch_assoc() ) {
-
-          // Refactored the below. Copied the resulting $row from the db,
-          // rather than iterating through each key, making a temp array and then appending temp array.
-          /*
-
-          $product = array();
-          $product["product_id"] = $row["product_id"];
-          $product["category_id"] = $row["category_id"];
-          $product["product_name"] = $row["product_name"];
-          $product["product_desc"] = $row["product_desc"];
-          $product["product_price"] = $row["product_price"];
-          $product["product_stockcount"] = $row["product_stockcount"];
-          $product["product_isdisabled"] = $row["product_isdisabled"];
-          
-          */
-          $products_array[] = $products_array + $row;
-
+    
+        // Array to hold results
+        $output = [];
+    
+        try {
+            // Query the products and whether disabled products should be included
+            $query = $includeDisabledProducts 
+                     ? "SELECT * FROM `products`;" 
+                     : "SELECT * FROM `products` WHERE `product_isdisabled` = FALSE;";
+    
+            // Execute Query and store result
+            $result = $this->db_connection->execute_query($query);
+    
+            // Check if there was any results
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    // Add current row to array
+                    $output[] = $row;
+                }
+            }
+    
+        } catch(Exception $e) {
+            throw new Exception("Stack trace: " . $e->getMessage());
         }
-
-        return $products_array;
-
-      } catch(Exception $e) {
-        return "Error - database query error";
-      }
-
+        
+        // Return Array
+        return $output;
     }
+    
 
-    /**
-     * Return information about all categories
-     * @param $includeDisabledCategories - Include disabled categories in results? (Y/N)
-     * @return array|string Returns array of categories if sucessful, or error message if unsuccessful
-     */
     public function getAllCategories($includeDisabledCategories) {
       
-      // input validation
-      if(!is_bool($includeDisabledCategories)) {
-        return "Error - parameter must be a boolean.";
-      }
-
       // check db connection
       if($this->createDatabaseConnection() !== "OK") {
         return "Error - database connection error.";
       }
 
-      /** inline if statement to modify SQL query executed to add additional
-       * `where` clause subject to status of var $includeDisabledCategories
-       * --
-       * if true - does not include where statement which excludes disabled categories
-       * if false - includes where statement to exclude disabled categories
-       */
-      $sql_query = "SELECT * FROM `categories`" . (($includeDisabledCategories) ? "" : " WHERE `category_isdisabled` = FALSE") . ";";
 
-      try {
-        $result = $this->db_connection->execute_query($sql_query);
-        
-        $categories_array = array();
+      if($this->createDatabaseConnection() == "OK") {
 
-        if($result->num_rows <= 0) {
-          // no categories found, return blank array
-          return $categories_array; 
+        $output = array();
+
+        try {
+          if($includeDisabledCategories) {
+            $result = $this->db_connection->execute_query("SELECT * FROM `categories`;");
+          } else { 
+            $result = $this->db_connection->execute_query("SELECT * FROM `categories` WHERE `category_isdisabled` = FALSE;");
+          }
+
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+
+              // Refactored the below. Copied the resulting $row from the db,
+              // rather than iterating through each key, making a temp array and then appending temp array.
+              
+              /*
+              $category = array();
+              $category["category_id"] = $row["category_id"];
+              $category["category_name"] = $row["category_name"];
+              $category["category_isdisabled"] = $row["category_isdisabled"];
+              $category["category_image"] = $row["category_image"];
+              */
+            
+              $output[] = $output + $row;
+
+            } else {
+              break;
+            }
+          }
+
+
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace: " . $e;
         }
 
-        // loop through results
-        while ($row = $result->fetch_assoc() ) {
-      
-          // Refactored the below. Copied the resulting $row from the db,
-          // rather than iterating through each key, making a temp array and then appending temp array.
-          
-          /*
-          $category = array();
-          $category["category_id"] = $row["category_id"];
-          $category["category_name"] = $row["category_name"];
-          $category["category_isdisabled"] = $row["category_isdisabled"];
-          $category["category_image"] = $row["category_image"];
-          */
-        
-          $categories_array[] = $categories_array + $row;
-        }
-
-        // return array with all category data returned from database
-        return $categories_array;
-
-      } catch(Exception $e) {
-        return "Error - Database query error.";
+        return $output;
       }
-
-
     }
 
-    /**
-     * Get product details from product ID.
-     * @param $id Product ID
-     * @return null|string|array
-     * Returns null if product not found.
-     * Returns error message if something went wrong.
-     * Returns array of product details if successful.
-     */
     public function getProductByID($id) {
+      if(is_int($id)) {
+        if($this->createDatabaseConnection() == "OK") {
+          try {
+            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_id` = ? LIMIT 1;", [$id]);
 
-      // input validation
-      if(!is_int($id)) {
+            while ($row = $result->fetch_assoc() ) {
+              if($result->num_rows > 0) {
+                
+              // Refactored the below. Copied the resulting $row from the db,
+              // rather than iterating through each key, then returning an array.
+              /*  
+                $product = array();
+                $product["product_id"] = $row["product_id"];
+                $product["category_id"] = $row["category_id"];
+                $product["product_name"] = $row["product_name"];
+                $product["product_desc"] = $row["product_desc"];
+                $product["product_price"] = $row["product_price"];
+                $product["product_stockcount"] = $row["product_stockcount"];
+                $product["product_isdisabled"] = $row["product_isdisabled"];
+              */
+                return $row;
+  
+              } else {
+                return "Error - No results found.";
+              }
+            }
+
+          } catch(Exception $e) {
+            return "An error occurred. Stack trace: " . $e;
+          }
+
+        }
+      } else {
         return "Error - ID must be an integer";
       }
-
-      // check db connection
-      if($this->createDatabaseConnection() !== "OK") {
-        return "Error - database connection error.";
-      }
-
-      try {
-
-        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_id` = ? LIMIT 1;", [$id]);
-
-        if($result->num_rows <= 0) {
-          // product not found, return null.
-          return null;
-        }
-
-        while ($row = $result->fetch_assoc() ) {
-          // Refactored the below. Copied the resulting $row from the db,
-          // rather than iterating through each key, then returning an array.
-          /*  
-            $product = array();
-            $product["product_id"] = $row["product_id"];
-            $product["category_id"] = $row["category_id"];
-            $product["product_name"] = $row["product_name"];
-            $product["product_desc"] = $row["product_desc"];
-            $product["product_price"] = $row["product_price"];
-            $product["product_stockcount"] = $row["product_stockcount"];
-            $product["product_isdisabled"] = $row["product_isdisabled"];
-          */
-          return $row;
-
-        }
-
-      } catch(Exception $e) {
-        return "Error - database query error.";
-      }
-
-      
     }
 
-    /**
-     * Get product details by name.
-     * @param $inputted_name Inputted name to search for.
-     * @return null|string|array
-     * Returns null if product not found.
-     * Returns string if something went wrong (error message).
-     * Returns array of products if successful, ordered by product name.
-     */
-     public function getProductsByName($inputted_name) {
+    public function getProductsByName($inputted_name) {
+      if(is_string($inputted_name)) {
+        if($this->createDatabaseConnection() == "OK") {
 
-      // input validation
-      if(!is_string($inputted_name)) {
-        return "Error - inputted name must be a string.";
-      }
+          $output = array();
 
-      // check db connection
-      if($this->createDatabaseConnection() !== "OK") {
-        return "Error - database connection error.";
-      }
+          try {
+            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_name` = '%?%' ORDER BY `product_name`;", [$inputted_name]);
 
-      $products_array = array();
-
-      try {
-        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_name` = '%?%' ORDER BY `product_name`;", [$inputted_name]);
-
-        if($result->num_rows <= 0) {
-          // no products found, return null.
-          return null;
-        }
-
-        while ($row = $result->fetch_assoc() ) {
-          // Refactored this mess.
-          /*
-          $product = array();
-          $product["product_id"] = $row["product_id"];
-          $product["category_id"] = $row["category_id"];
-          $product["product_name"] = $row["product_name"];
-          $product["product_desc"] = $row["product_desc"];
-          $product["product_price"] = $row["product_price"];
-          $product["product_stockcount"] = $row["product_stockcount"];
-          $product["product_isdisabled"] = $row["product_isdisabled"];
-        
-          $output[] = $output + $product;
-          */
-          $products_array[] = $products_array + $row;
-        }
-
-        return $products_array;
-
-
-      } catch(Exception $e) {
-        return "Error - database query error.";
-      }
-    }
-
-    /**
-     * Get an array of products belonging to a particular category from Category ID.
-     * @author H. Green (2024)
-     * @param $category_id Category ID
-     * @return null|string|array
-     * Returns null if no products found.
-     * Returns string (error message) if something went wrong
-     * Returns array of products if successful.
-     */
-    public function getProductsByCategoryID($category_id) {
-
-      // input validation
-      if(!is_int($category_id)) {
-        return $this->ERROR_MSG_INPUT_VALIDATION;
-      }
-
-      // check db connection
-      if($this->createDatabaseConnection() !== "OK") {
-        return $this->ERROR_MSG_DB_CONNECTION_FAILED;
-      }
-
-      try {
-        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `category_id` = ?;", [$category_id]);
-           
-        if($result->num_rows <= 0) {
-          // no results found, category contains no products, return null
-          return null;
-        }
-
-        $products_array = array();
-
-        while($row = $result->fetch_assoc() ) {
-
-          // Refactored this mess again.
-          /*
-          $product = array();
-          $product["product_id"] = $row["product_id"];
-          $product["category_id"] = $row["category_id"];
-          $product["product_name"] = $row["product_name"];
-          $product["product_desc"] = $row["product_desc"];
-          $product["product_price"] = $row["product_price"];
-          $product["product_stockcount"] = $row["product_stockcount"];
-          $product["product_isdisabled"] = $row["product_isdisabled"];
-          $output[] = $output + $product;
+            while ($row = $result->fetch_assoc() ) {
+              if($result->num_rows > 0) {
+                $product = array();
+                $product["product_id"] = $row["product_id"];
+                $product["category_id"] = $row["category_id"];
+                $product["product_name"] = $row["product_name"];
+                $product["product_desc"] = $row["product_desc"];
+                $product["product_price"] = $row["product_price"];
+                $product["product_stockcount"] = $row["product_stockcount"];
+                $product["product_isdisabled"] = $row["product_isdisabled"];
+              
+                $output[] = $output + $product;
   
-          */
+              } else {
+                return "Error - No results found.";
+              }
+            }
 
-          $products_array[] = $products_array + $row;
-        
+          } catch(Exception $e) {
+            return "An error occurred. Stack trace: " . $e;
+          }
+
         }
-
-        return $products_array;
-      } catch(Exception $e) {
-        return $this->ERROR_MSG_DB_QUERY_EXCEPTION;
+      } else {
+        return "Error - input must be a string";
       }
-
     }
 
-    /**
-     * Create a new category from supplied parameters
-     * @param $name Product name
-     * @param $is_disabled Is the category disabled?
-     * @param $image_path Local path to category cover image
-     * 
-     * @return string Status message (error or success).
-     * 
-     */
+    public function getProductsByCategoryID($category_id) {
+      if(is_int($category_id)) {
+        if($this->createDatabaseConnection() == "OK") {
+          try {
+            $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `category_id` = ?;", [$category_id]);
+            $output = array();
+            while ($row = $result->fetch_assoc() ) {
+              if($result->num_rows > 0) {
+                $product = array();
+                $product["product_id"] = $row["product_id"];
+                $product["category_id"] = $row["category_id"];
+                $product["product_name"] = $row["product_name"];
+                $product["product_desc"] = $row["product_desc"];
+                $product["product_price"] = $row["product_price"];
+                $product["product_stockcount"] = $row["product_stockcount"];
+                $product["product_isdisabled"] = $row["product_isdisabled"];
+              
+                $output[] = $output + $product;
+  
+              } else {
+                return "Error - No results found.";
+              }
+            }
+
+            return $output;
+
+          } catch(Exception $e) {
+            return "An error occurred. Stack trace: " . $e;
+          }
+
+        }
+      } else {
+        return "Error - ID must be an integer";
+      }
+    }
+
     public function createCategory($name, $is_disabled, $image_path) {
 
       // check database connection
@@ -640,18 +527,6 @@ Class Database {
       }
   }
 
-  /**
-   * Create a product from given information
-   * @param $name Product Name
-   * @param $category_id Category ID product belongs to
-   * @param $desc Product Description
-   * @param $price Product Price
-   * @param $stockcount Current Stock Count
-   * @param $is_disabled Is the product currently disabled?
-   * 
-   * @return string Status message (success or error).
-   * 
-   */
   public function createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled) {
 
     // validate function input
@@ -681,12 +556,6 @@ Class Database {
     }
 }
 
-  /**
-   * Get a user's email address from their User ID
-   * @param $id - User ID
-   * @return string Returns email address or error message
-   * 
-   */
   public function getEmailFromUserID($id) {
 
     // check if supplied user ID is an integer
@@ -719,9 +588,6 @@ Class Database {
     } catch(Exception $e) {
       return "Error - database query failure.";
     }
-
-    return "Error - unexpected error occurred.";
-
   }
 
   /** 
@@ -766,17 +632,6 @@ Class Database {
 
   }
 
-  /**
-   * Adds an item entry to a user's basket. Includes quantity & order line subtotal
-   * 
-   * @param $user_id User ID
-   * @param $product_id Product ID
-   * @param $qty Quantity of Product
-   * @param $subtotal Order line subtotal
-   * 
-   * @return string Status message.
-   * 
-   */
   public function addToBasket($user_id, $product_id, $qty, $subtotal) {
 
     // input validation - check if supplied user ID is an integer
@@ -948,14 +803,6 @@ Class Database {
 
   }
 
-  /** Returns monetary total of all items in basket
-   * 
-   * @param $user_id User ID
-   * 
-   * @return float|string Returns error message or floating point number of 
-   * monetary total of all items in basket.
-   * 
-   */
   public function getBasketTotal($user_id) {
 
     // input validation - check if supplied user ID is an integer
@@ -987,62 +834,42 @@ Class Database {
       return "Error - database query error.";
     }
 
-    return "Error - something went wrong";
-
   }
 
-  /** Returns the content's of a user's basket
-   * @param $user_id - User ID 
-   * @return array|string Returns array of user's basket contents, or error message.
-   */
   public function getBasketContents($user_id) {
+    if(is_int($user_id)) {
+      if($this->createDatabaseConnection() == "OK") {
+        try {
+          $result = $this->db_connection->execute_query("SELECT * FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
 
-    // validate user ID supplied is an integer
-    if(!is_int($user_id)) {
-      return "Error - User ID is not an integer.";
-    }
+          $basket = array();
 
-    // check database connection
-    if($this->createDatabaseConnection() !== "OK") {
-      return "Error - database connection error.";
-    }
+          while ($row = $result->fetch_assoc() ) {
+            if($result->num_rows > 0) {
+             
+              $basket_entry = array();
 
-    try {
-      $result = $this->db_connection->execute_query("SELECT * FROM `basket_entries` WHERE `basket_userid` = ?;", [$user_id]);
+              $basket_entry["entry_id"] = $row["basket_entry_id"];
+              $basket_entry["product_id"] = $row["basket_productid"];
+              $basket_entry["qty"] = $row["entry_quanitity"];
+              $basket_entry["subtotal"] = $row["entry_subtotal"];
 
-      $users_basket = array();
+              $basket[] = $basket + $basket_entry;
 
-      if($result->num_rows <= 0) {
-        // basket is empty, return blank array
-        return $users_basket;
+            }
+          }
+
+          return $basket;
+
+        } catch(Exception $e) {
+          return "An error occurred. Stack trace - ". $e;
+        }
+      } else {
+        return "An error occurred.";
       }
-
-      while($row = $result->fetch_assoc()) {
-        // append all rows of basket entries to array to return from function
-        $users_basket[] = $users_basket + $row;
-
-        // previously used to be:
-        /*
-          basket_entry = array();
-
-          $basket_entry["entry_id"] = $row["basket_entry_id"];
-          $basket_entry["product_id"] = $row["basket_productid"];
-          $basket_entry["qty"] = $row["entry_quanitity"];
-          $basket_entry["subtotal"] = $row["entry_subtotal"];
-
-          $basket[] = $basket + $basket_entry;
-      
-         */
-      }
-
-      // return basket once all rows added to output array
-      return $users_basket;
-
-    } catch(Exception $e) {
-      return "Error - database query error.";
+    } else {
+      return "Error - user ID must be an int.";
     }
-
-    
   }
 
     

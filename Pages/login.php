@@ -1,21 +1,17 @@
 <?php
 
-include "database-handler.php";
+include "../PHP/database-handler.php";
 
 session_start(); // Start the session
 
 // check if user already logged in
 if(isset($_SESSION['user_id'])) {
     $error = "User already logged in.";
-    header("Location: index.php");
+    header("Location: ..\Pages\index.php");
 }
 
 // Check if the form was submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-
-
-
 
     // Get the form data
     $email = $_POST['email'];
@@ -40,12 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="en">
 <head>
     <title>Login | SpaceTech</title>
-    <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="master-style.css">
+    <link rel="stylesheet" href="../Styles/login.css">
+    <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
 <body>
 
-<?php include_once("header.php"); ?>
+<?php include_once("../PHP/header.php"); ?>
 
     <div class="background">
         <div class="shape"></div>
