@@ -20,5 +20,3 @@ echo '
     <a href="../Pages/login.php"><img src="../images/profile.jpg" alt="Profile"></a>
 </div>
 </header>';
-
-?>
