@@ -29,122 +29,194 @@ $basket_contents = $db_handler->getBasketContents($_SESSION["user_id"]);
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../Styles/design.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
 
-<?php include_once("../PHP/header.php"); ?>
-
 <body>
-    <form action="../PHP/submit_order.php" method="POST">
-        <div class="checkingout">
-            <div class="mainb">
+
+    <!-- Navbar -->
+    <?php include_once("../PHP/navbar.php"); ?>
+
+    <!-- Checkout -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-7">
                 <h2>Checkout</h2>
+                <form class="row g-3 needs-validation" novalidate>
+                    <!-- Full Name/Username -->
+                    <div class="col-md-6">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" name="name" placeholder="John Doe"
+                            value="<?= htmlspecialchars($name, ENT_QUOTES); ?>" disabled required>
+                    </div>
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="johndoe@gmail.com"
+                            value="<?= htmlspecialchars($email, ENT_QUOTES); ?>" disabled required>
+                    </div>
+                    <!-- Address -->
+                    <div class="col-12">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address_line1"
+                            placeholder="1234 Main St" required>
+                        <div class="invalid-feedback">
+                            Please provide an address.
+                        </div>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <!-- City -->
+                    <div class="col-md-6">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" name="address_line2" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid city.
+                        </div>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <!-- Postcode -->
+                    <div class="col-md-6">
+                        <label for="postcode" class="form-label">Postcode</label>
+                        <input type="text" class="form-control" id="postcode" pattern="^\s*?\d{5}(?:[-\s]\d{4})?\s*?$" name="address_line3" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid postcode.
+                        </div>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <!-- Card Number -->
+                    <div class="col-md-6">
+                        <label for="cardNumber" class="form-label">Card Number</label>
+                        <input type="text" class="form-control" id="cardNumber" name="card_no"
+                            placeholder="0000 0000 0000 0000" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid card number.
+                        </div>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <!-- Expiry Date -->
+                    <div class="col-md-3">
+                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                        <input type="text" class="form-control" id="expiryDate" name="card_expiry" placeholder="MM/YY"
+                            required>
+                        <div class="invalid-feedback">
+                            Please provide a valid expiry date.
+                        </div>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <!-- CVV -->
+                    <div class="col-md-3">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="text" class="form-control" id="cvv" name="card_cvv" placeholder="123" required>
+                        <div class="invalid-feedback">
+                            Please provide a valid CVV.
+                        </div>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <!-- Cardholder -->
+                    <div class="col-12">
+                        <label for="cardName" class="form-label">Cardholder Name</label>
+                        <input type="text" class="form-control" id="cardName" name="card_name" placeholder="John Doe"
+                            required>
+                        <div class="invalid-feedback">
+                            Please provide a valid cardholder name.
+                        </div>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Checkout</button>
+                </form>
             </div>
-            <div class="boxes">
-                <div class="cart form ">
 
-                    <h3>Card Details</h3>
-                    <div class="basic">
-                        <span>Full Name:</span>
-                        <input name="name" type="text" placeholder="John Doe" <?php echo "value='" . htmlspecialchars($name, ENT_QUOTES) . "'"; ?> disabled required>
+            <!-- Shopping Cart Summary -->
+            <div class="col-md-5">
+                <h3 class="mb-3">Shopping Cart</h3>
+                <?php if ($basket_count > 0): ?>
+                    <div class="list-group mb-3">
+                        <?php foreach ($basket_contents as $item): ?>
+                            <?php $product = $db_handler->getProductByID($item["product_id"]); ?>
+                            <div class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0">
+                                        <?= htmlspecialchars($product["product_name"], ENT_QUOTES); ?>
+                                    </h6>
+                                    <small class="text-muted">Quantity:
+                                        <?= htmlspecialchars($item["qty"], ENT_QUOTES); ?>
+                                    </small>
+                                </div>
+                                <span class="text-muted">£
+                                    <?= htmlspecialchars($item["subtotal"], ENT_QUOTES); ?>
+                                </span>
+                                <form action="remove_from_cart.php" method="POST" class="d-inline">
+                                    <input type="hidden" name="entry_id"
+                                        value="<?= htmlspecialchars($item["entry_id"], ENT_QUOTES); ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                                </form>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
+                <?php else: ?>
+                    <?php if (isset($_GET["success"])): ?>
+                        <div class="alert alert-success" role="alert">
+                            Order submitted.
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-warning" role="alert">
+                            Your basket is empty!
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
 
-                    <div class="basic">
-                        <span>Email</span>
-                        <input name="email" type="email" placeholder="johndoe@gmail.com" <?php echo "value='" . htmlspecialchars($email, ENT_QUOTES) . "'"; ?> disabled required>
-                    </div>
-
-                    <div class="basic">
-                        <span>Address:</span>
-                        <input name="address_line1" type="text" placeholder="Number-Street Name" required>
-                    </div>
-
-                    <div class="basic">
-                        <span>City:</span>
-                        <input name="address_line2" type="text" placeholder="Birmingham" required>
-                    </div>
-
-                    <div class="basic">
-                        <span>Postcode:</span>
-                        <input name="address_line3" type="text" placeholder="B4 7ET" required>
-                    </div>
-
-                    <div class="basic">
-                        <span>Card Number:</span>
-                        <input name="card_no" type="text" placeholder="0000 0000 0000 0000" required>
-                    </div>
-
-                    <div class="basic">
-                        <span>Expiry Date:</span>
-                        <input name="card_expiry" type="text" placeholder="MM/YY" required>
-                    </div>
-
-                    <div class="basic">
-                        <span>CVV:</span>
-                        <input name="card_cvv" type="text" placeholder="123" required>
-                    </div>
-
-                    <div class="basic">
-                        <span>Cardholder Name:</span>
-                        <input name="card_name" type="text" placeholder="John Doe" required>
-                    </div>
-
-                    <div class="basic">
-                        <input type="submit" value="Checkout">
-                    </div>
-                </div>
-    </form>
+                <h3 class="mb-3">Summary</h3>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <h6 class="my-0">Products</h6>
+                        </div>
+                        <span>
+                            <?= htmlspecialchars($basket_count, ENT_QUOTES); ?>
+                        </span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between lh-condensed">
+                        <div>
+                            <h6 class="my-0">Shipping</h6>
+                        </div>
+                        <span>FREE</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (GBP)</span>
+                        <strong>£
+                            <?= htmlspecialchars($basket_total, ENT_QUOTES); ?>
+                        </strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-    </div>
-    <div class="other">
-        <h2>Shopping Cart</h2><br>
 
-
-        <?php
-
-        if ($basket_count > 0) {
-            foreach ($basket_contents as $item) {
-
-                $product = $db_handler->getProductByID($item["product_id"]);
-
-
-                echo '<div class="basic">
-                        <h4>' . htmlspecialchars($product["product_name"], ENT_QUOTES) . ' (£' . htmlspecialchars($product["product_price"], ENT_QUOTES) . ')</h4>
-                        <p>Quantity: ' . htmlspecialchars($item["qty"], ENT_QUOTES) . '</p>
-                        <p>Subtotal: £' . htmlspecialchars($item["subtotal"], ENT_QUOTES) . '</p>
-
-                        <form action="remove_from_cart.php" method="POST">
-                        <input hidden name="entry_id" value="' . htmlspecialchars($item["entry_id"], ENT_QUOTES) . '">
-                        <button type="submit">Remove</button>
-                        </form>
-
-                    </div>';
-            }
-
-
-        } else {
-            if (isset($_GET["success"])) {
-                echo "<h3>Order submitted.</h3>";
-            } else {
-                echo "<h3>Your basket is empty!</h3>";
-            }
-        }
-
-        ?>
-
-    </div>
-    <div class="side">
-        <h2>Summary</h2><br>
-        <p>Products:
-            <?php echo htmlspecialchars($basket_count, ENT_QUOTES); ?>
-        </p>
-        <p>Shipping: FREE</p>
-        <p>Total Amount: £
-            <?php echo htmlspecialchars($basket_total, ENT_QUOTES); ?><br>(including VAT)
-        </p>
-    </div>
     <?php include_once("../PHP/footer.php"); ?>
+
+    <script src="../Scripts/check.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
