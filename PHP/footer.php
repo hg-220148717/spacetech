@@ -1,6 +1,6 @@
 <?php echo '
     <link rel="stylesheet" href="../Styles/foot.css">
-    <footer class="bg-dark text-white pt-5 pb-4">
+    <footer class="bg-dark text-white pt-1 pb-2">
         <div class="container text-center text-md-left">
             <div class="row text-center text-md-left">
                 <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">

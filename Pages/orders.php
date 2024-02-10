@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once("../PHP/database-handler.php");
+require_once("..\PHP\database-handler.php");
 
 $db_handler = new Database();
 $setupStatus = $db_handler->checkSetup();
@@ -25,11 +25,18 @@ $orders = $db_handler->getAllOrders();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orders</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
 
 <body>
-
+    <!-- Navigation -->
+    <?php include("../PHP/navbar.php") ?>
+    <!-- Main -->
     <div class="container mt-5">
         <h2>Orders List</h2>
         <table class="table">
@@ -38,7 +45,6 @@ $orders = $db_handler->getAllOrders();
                     <th scope="col">Order ID</th>
                     <th scope="col">Status</th>
                     <th scope="col">Total</th>
-                    <!-- Add other columns as needed -->
                 </tr>
             </thead>
             <tbody>
@@ -59,8 +65,11 @@ $orders = $db_handler->getAllOrders();
         </table>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Footer -->
+    <?php include_once("../PHP/footer.php"); ?>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

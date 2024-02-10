@@ -1,24 +1,26 @@
+.d-flex.flex-column.min-vh-100 {
+    min-height: 100vh;
+    /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+}
+
+main.flex-grow-1 {
+    flex-grow: 1;
+    /* Allows content area to expand */
+}
+
 footer {
     overflow-x: hidden;
 }
 
-footer, footer * {
+footer,
+footer * {
     max-width: 100%;
     box-sizing: border-box;
 }
 
-.footertext {
-    color: rgb(231, 54, 231);
-}
-
-.icon-red {
-    color: red;
-}
-
-.navicon {
-    color:black
-}
-
+/* Responsive adjustments for footing within the footer */
 @media (max-width: 768px) {
     footer .footing {
         width: 100%;
