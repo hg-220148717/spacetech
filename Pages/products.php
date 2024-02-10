@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status() == PHP_SESSION_NONE) { session_start(); }
 require_once("../PHP/database-handler.php");
 
 $db_handler = new Database();
@@ -9,15 +9,13 @@ if (!$setupStatus) {
     die("Error setting up the database.");
 }
 
-// Define variables for pagination
-$productsPerPage = 10; // Number of products per page
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page number
-$start = ($page - 1) * $productsPerPage; // Calculate starting point
+$productsPerPage = 10;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start = ($page - 1) * $productsPerPage;
 
-// Fetch products with pagination
-$totalProducts = $db_handler->getAllProducts(true); // Assume this method returns the total number of products
-$totalPages = ceil(sizeof($totalProducts)/ $productsPerPage);
-$products_list = $totalProducts; // Assume this method fetches products for the page
+$totalProducts = $db_handler->getAllProducts(true); // This returns the total number of products as an array for demo purposes.
+$totalPages = ceil(count($totalProducts) / $productsPerPage);
+$products_list = array_slice($totalProducts, $start, $productsPerPage);
 ?>
 
 <!DOCTYPE html>
@@ -25,42 +23,58 @@ $products_list = $totalProducts; // Assume this method fetches products for the 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products | SpaceTech</title>
+    <title>Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../Styles/products.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
 <body>
-    <?php include_once("../PHP/header.php"); ?>
-    <section id="hero">
-        <h2>Product Deals</h2>
+    <!-- Navigation Bar -->
+    <?php include '../PHP/navbar.php'; ?>
+
+    <!-- Main -->
+    <div class="container mt-5">
+        <h2 class="mb-4">Product Deals</h2>
         <p>List of Products</p>
-    </section>
-    <section id="products1" class="section-p1">
-        <div class="products-container">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
             <?php if (!empty($products_list)): ?>
                 <?php foreach ($products_list as $product): ?>
-                    <div class="pro" onclick="window.location.href='product.php?id=<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>'">
-                        <img src="images/products/<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>.jpg" alt="<?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?>">
-                        <div class="description">
-                            <span><?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?></span>
-                            <h5><?= htmlspecialchars($product["product_desc"], ENT_QUOTES) ?></h5>
-                            <h4>£<?= htmlspecialchars($product["product_price"], ENT_QUOTES) ?></h4>
+                    <div class="col">
+                        <div class="card h-100" onclick="window.location.href='product.php?id=<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>';">
+                            <img src="images/products/<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>.jpg" class="card-img-top" alt="<?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?>">
+                            <div class="card-body">
+                                <h5 class="card-title"><?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?></h5>
+                                <p class="card-text"><?= htmlspecialchars($product["product_desc"], ENT_QUOTES) ?></p>
+                                <div class="card-footer">
+                                    <h4>£<?= htmlspecialchars($product["product_price"], ENT_QUOTES) ?></h4>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p>No products found.</p>
+                <div class="col">
+                    <p>No products found.</p>
+                </div>
             <?php endif; ?>
         </div>
-    </section>
+    </div>
 
-    <section id="pagination" class="section-p1">
-        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-            <a href="?page=<?= $i ?>" class="<?= $page === $i ? 'active' : '' ?>"><?= $i ?></a>
-        <?php endfor; ?>
-    </section>
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                    <li class="page-item <?= $page === $i ? 'active' : '' ?>">
+                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+        </nav>
+    </div>
 
-    <script src="../Scripts/products.js"></script>
     <?php include_once("../PHP/footer.php"); ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

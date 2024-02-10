@@ -1,105 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SpaceTech</title>
 
-        <!-- font awesome link -->
-        <link rel="stylesheet" a href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceTech</title>
 
-        <!-- custom css file link -->
-        <link rel="stylesheet" href="../Styles/master-style.css">
-    </head>
-    <body>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../Styles/master-style.css">
+</head>
 
-        <!-- header section starts -->
+<body>
+    <!-- Navigation Bar -->
+    <?php include '../PHP/navbar.php'; ?>
 
-        <?php include_once("../PHP/header.php"); ?>
-
-        <!-- header scetion ends -->
-
-        <!-- home section starts -->
-
-        <section class="home" id="home">
-
-            <div class="content">
-                <h3>Welcome to SPACETECH</h3>
-                <span>Where technology meets commerce!</span>
-                <p>Explore the virtual universe of SPACETECH and travel on a cosmic adventure of invention. We're more than simply an e-commerce platform; we're your ticket to the latest technological marvels. Our carefully picked assortment features cutting-edge gadgets, smart devices, and futuristic technologies to keep you at the forefront of technological innovation.</p>
-                <a href="../Pages/products.php" class="btn">shop now</a>
-            </div>
-
-        </section>
-
-        <!-- home section ends -->
-
-        <!-- about section starts -->
-
-        <section class="about" id="about">
-
-            <h1 class="heading"> <span> about </span> us </h1>
-
-            <div class="row">
-
-                <div class="video-container">
-                    <video src="../images/about-video.mp4" loop autoplay muted></video>
-                    <h3>Best E-Commerce</h3>
-                </div>
-
-                <div class="content">
-                    <h3>why choose us?</h3>
-                    <p>At Spacetech, our mission is to revolutionize the accessibility of cutting-edge electronics by providing top-quality devices and accessories to all individuals, catering to their diverse needs and technological aspirations. We aim to create a seamless and reliable online platform where customers can explore, select, and purchase the latest in electronic innovation, ensuring a stellar shopping experience backed by exceptional service</p>
-                    <a href="../Pages/about.php" class="btn">learn more</a>
+    <!-- Home Section -->
+    <section class="home vh-100 d-flex align-items-center" style="background: linear-gradient(rgba(4,9,30, 0.7), rgba(4,9,30, 0.7)), url('../images/background.png') no-repeat center center; background-size: cover;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-white">
+                    <h1>Welcome to SPACETECH</h1>
+                    <p class="lead">Where technology meets commerce! Explore the virtual universe of SPACETECH and embark on a cosmic adventure of invention.</p>
+                    <a href="../Pages/products.php" class="btn btn-primary">Shop Now</a>
                 </div>
             </div>
+        </div>
+    </section>
 
-        </section>
-
-        <!-- about section ends -->
-
-        <!-- icon section starts -->
-
-        <section class="icons-container">
-
-            <div class="icons">
-                <img src = "../images/icon-1.jpg" alt="">
-                <div class="info">
-                    <h3>free delivery</h3>
-                    <span>on all orders</span>
+    <!-- About Section -->
+    <section class="about py-5" id="about">
+        <div class="container">
+            <h2 class="heading mb-4"> <span>About</span> Us </h2>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="video-container position-relative">
+                        <video src="../images/about-video.mp4" loop autoplay muted class="w-100 rounded-3"></video>
+                        <div class="overlay d-flex justify-content-center align-items-center position-absolute w-100 h-100">
+                            <h3 class="text-white">Best E-Commerce</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-flex flex-column justify-content-center">
+                    <h3>Why choose us?</h3>
+                    <p>At Spacetech, our mission is to revolutionize the accessibility of cutting-edge electronics. Explore, select, and purchase the latest in electronic innovation.</p>
+                    <a href="../Pages/about.php" class="btn btn-outline-primary mt-3">Learn More</a>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="icons">
-                <img src="../images/icon-2.png" alt="">
-                <div class="info">
-                    <h3>10 days returns</h3>
-                    <span>moneyback guarantee</span>
+    <!-- Icon Section -->
+    <section class="icons-container py-5 bg-light">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-6 col-md-3 mb-4">
+                    <img src="../images/icon-1.jpg" alt="" class="mb-2" style="width: 80px;">
+                    <h3>Free Delivery</h3>
+                    <span>On all orders</span>
+                </div>
+                <div class="col-6 col-md-3 mb-4">
+                    <img src="../images/icon-2.png" alt="" class="mb-2" style="width: 80px;">
+                    <h3>10 Days Returns</h3>
+                    <span>Moneyback guarantee</span>
+                </div>
+                <div class="col-6 col-md-3 mb-4">
+                    <img src="../images/icon-3.png" alt="" class="mb-2" style="width: 80px;">
+                    <h3>Offer & Gifts</h3>
+                    <span>On all orders</span>
+                </div>
+                <div class="col-6 col-md-3 mb-4">
+                    <img src="../images/icon-4.png" alt="" class="mb-2" style="width: 80px;">
+                    <h3>Secure Payments</h3>
+                    <span>Protected by PayPal</span>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="icons">
-                <img src="../images/icon-3.png" alt="">
-                <div class="info">
-                    <h3>offer & gifts</h3>
-                    <span>on all orders</span>
-                </div>
-            </div>
+    <!-- Footer -->
+    <?php include_once("../PHP/footer.php"); ?>
 
-            <div class="icons">
-                <img src="../images/icon-4.png" alt="">
-                <div class="info">
-                    <h3>secure payments</h3>
-                    <span>protected by paypal</span>
-                </div>
-            </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
-        </section>
-
-        <!-- icon section ends -->
-
-        <?php include_once("../PHP/footer.php"); ?>
-
-    </body>
 </html>

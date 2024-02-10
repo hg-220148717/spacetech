@@ -831,6 +831,41 @@ class Database
 
   }
 
+
+  public function getAllOrders()
+  {
+    // Ensure the database connection is established
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    $orders = array(); // Initialize an empty array to hold the orders
+
+    try {
+      // Prepare the query to fetch orders along with their status
+      $query = "SELECT o.order_id, o.order_total, os.status_name, os.status_colour 
+                  FROM orders o 
+                  INNER JOIN order_status os ON o.order_status = os.status_id
+                  ORDER BY o.order_id DESC"; 
+
+      // Execute the query
+      $result = $this->db_connection->query($query);
+
+      // Check if the query was successful and returned rows
+      if ($result && $result->num_rows > 0) {
+        // Fetch each row and add it to the $orders array
+        while ($row = $result->fetch_assoc()) {
+          $orders[] = $row;
+        }
+      }
+
+      return $orders; // Return the array of orders
+    } catch (Exception $e) {
+      // Handle any errors, such as query failures
+      return "An error occurred: " . $e->getMessage();
+    }
+  }
+
   /**
    * Gets count of amount of basket entries a user has.
    * 
@@ -962,5 +997,3 @@ $db_handler->getAllProducts(true);
 //echo $db_handler->createUser("220148717@aston.ac.uk", "password", "Harrison");
 
 
-
-?>

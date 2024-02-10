@@ -1,9 +1,7 @@
 <?php
-
+if (session_status() == PHP_SESSION_NONE) { session_start(); }
 include "../PHP/database-handler.php";
 $db_handler = new Database(); // setup database handler
-
-session_start(); // Start the session
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

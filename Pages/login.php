@@ -1,8 +1,6 @@
 <?php
-
+if (session_status() == PHP_SESSION_NONE) { session_start(); }
 include "../PHP/database-handler.php";
-
-session_start(); // Start the session
 
 // check if user already logged in
 if(isset($_SESSION['user_id'])) {
