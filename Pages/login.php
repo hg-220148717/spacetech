@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <button type="submit">Log In</button>
         <div class="social">
           <div class="fp"><a href="fp.html"> Forgot Password?</a></div>
-          <div class="fp"><a href="signup.php"> New User?Sign Up</a></div>
+          <div class="fp"><a href="../Pages/signup.php"> New User?Sign Up</a></div>
         </div>
     </form>
 </body>

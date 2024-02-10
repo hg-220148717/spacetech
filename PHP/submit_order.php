@@ -1,14 +1,14 @@
 <?php
 
 session_start();
-include_once("database-handler.php");
+include_once("../PHP/database-handler.php");
 
 $db_handler = new Database();
 $db_handler->testDatabaseConnection();
 $db_handler->checkSetup();
 
 if(!isset($_SESSION["user_id"])) {
-    header("Location: login.php");
+    header("Location: ../Pages/login.php");
 }
 
 $address = $_POST["address_line1"] . "\n" . $_POST["address_line2"] . "\n" . $_POST["address_line3"];
@@ -18,9 +18,9 @@ $is_paid = handlePayment($order_total, $_POST["card_no"], $_POST["card_expiry"],
 
 if($is_paid) {
     $db_handler->submitOrder($_SESSION["user_id"], $address, $comments, $order_total, true);
-    header("Location: cart.php?success=true");
+    header("Location: ../Pages/cart.php?success=true");
 } else {
-    header("Location: cart.php?error=An+error+occurred+taking+payment.");
+    header("Location: ../Pages/cart.php?error=An+error+occurred+taking+payment.");
 }
 
 
@@ -29,5 +29,3 @@ function handlePayment($amount, $card_no, $card_expiry, $card_cvv, $card_name) {
     // As this is to be implemented as a dummy system, this will always return true.
     return true;
 }
-
-?>

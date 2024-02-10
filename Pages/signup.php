@@ -1,6 +1,6 @@
 <?php
 
-include "database-handler.php";
+include "../PHP/database-handler.php";
 $db_handler = new Database(); // setup database handler
 
 session_start(); // Start the session
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // may want to autologin/redirect to login page in future?
 
-        header("Location: login.php");
+        header("Location: ../Pages/login.php");
 
         exit();
     } else {
@@ -39,14 +39,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <title>Sign Up | SpaceTech</title>
-    <link rel="stylesheet" href="signup.css">
+    <link rel="stylesheet" href="../Styles/signup.css">
 </head>
 <body>
     <div class="background">
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    <form action="signup.php" method="POST">
+    <form action="../Pages/signup.php" method="POST">
         <h3>Sign Up</h3>
         <label for="First Name">First Name</label>
         <input type="text" name="fname" placeholder="First Name">
@@ -61,7 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="Confirm Password"> Confirm Password</label>
         <input type="Password" placeholder="Confirm Password">
         <button type="submit">Sign Up</button>
-        
     </form>
 </body>
 </html>

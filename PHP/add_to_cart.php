@@ -1,14 +1,14 @@
 <?php
 
 session_start();
-include_once("database-handler.php");
+include_once("../PHP/database-handler.php");
 
 $db_handler = new Database();
 $db_handler->testDatabaseConnection();
 $db_handler->checkSetup();
 
 if(!isset($_POST["product_id"]) || !isset($_SESSION["user_id"])) {
-    header("Location: products.php");
+    header("Location: ../Pages/products.php");
 }
 
 $product_id = intval($_POST["product_id"]);
@@ -22,7 +22,4 @@ $subtotal = $db_handler->getProductByID($product_id)["product_price"] * $qty;
 
 $db_handler->addToBasket($_SESSION["user_id"], $product_id, $qty, $subtotal);
 
-header("Location: cart.php");
-
-
-?>
+header("Location: ../Pages/cart.php");
