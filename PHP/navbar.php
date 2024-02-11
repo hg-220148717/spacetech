@@ -32,7 +32,7 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
                 <a class="nav-link" aria-current="page" href="../Pages/contact.php" target="_self">Contact Us</a>
             </div>
             <div class="navbar-nav dropdown ms-auto">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="../Pages/cart.php">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                         class="bi bi-basket" viewBox="0 0 16 16">
                         <path

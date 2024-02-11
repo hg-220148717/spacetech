@@ -49,7 +49,7 @@ $basket_contents = $db_handler->getBasketContents($_SESSION["user_id"]);
         <div class="row">
             <div class="col-md-7">
                 <h2>Checkout</h2>
-                <form class="row g-3 needs-validation" novalidate>
+                <form class="row g-3 needs-validation" action="../PHP/submit_order.php" method ="POST" novalidate>
                     <!-- Full Name/Username -->
                     <div class="col-md-6">
                         <label for="fullName" class="form-label">Full Name</label>
@@ -207,7 +207,7 @@ $basket_contents = $db_handler->getBasketContents($_SESSION["user_id"]);
                         <strong>£
                             <?= htmlspecialchars($basket_total, ENT_QUOTES); ?>
                         </strong>
-                    </li>
+                    </li>   
                 </ul>
             </div>
         </div>

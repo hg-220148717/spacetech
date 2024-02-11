@@ -18,8 +18,8 @@
                 <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
                     <h5 class="text-uppercase mb-4 font-weight-bold footertext">Pages</h5>
                     <p><a href="../Pages/index.php" class="text-white" style="text-decoration: none;">Home</a></p>
+                    <p><a href="../Pages/products.php" class="text-white" style="text-decoration: none;">Shop</a></p>
                     <p><a href="../Pages/about.php" class="text-white" style="text-decoration: none;">About Us</a></p>
-                    <p><a href="../Pages/products.php" class="text-white" style="text-decoration: none;">Products</a></p>
                     <p><a href="../Pages/contact.php" class="text-white" style="text-decoration: none;">Contact Us</a></p>
                 </div>
 
