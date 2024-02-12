@@ -14,7 +14,7 @@ $isStaff = $loggedin ? $db_handler->isUserStaff($_SESSION["user_id"]) : false;
 $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Guest";
 ?>
 
-<!-- navbar.php -->
+<!-- Navbar -->
 <nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light">
     <div class="container">
         <a class="navbar-brand" href="../Pages/index.php" target="_self">
@@ -52,17 +52,12 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
                 <ul class="dropdown-menu">
                     <?php if ($loggedin): ?>
                         <!-- Display for logged-in users -->
+                        <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <?php if ($isStaff): ?>
                             <!-- Additional option for staff members -->
                             <li><a class="dropdown-item" href="admin.php">Staff Panel</a></li>
                         <?php endif; ?>
-                        <li><a class="dropdown-item" href="logout.php">Logout</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><span class="dropdown-item-text">
-                                <?= htmlspecialchars($name) ?>
-                            </span></li>
                     <?php else: ?>
                         <!-- Display for guests -->
                         <li><a class="dropdown-item" href="login.php">Log In</a></li>
@@ -73,3 +68,5 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
         </div>
     </div>
 </nav>
+
+<!-- Login Modal -->

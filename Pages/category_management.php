@@ -1,3 +1,23 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+require_once("../PHP/database-handler.php");
+
+$db_handler = new Database();
+$setupStatus = $db_handler->checkSetup();
+
+if (!$setupStatus) {
+    die("Error setting up the database.");
+}
+
+if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id"])) {
+    header("Location: ../Pages/index.php");
+}
+
+$categories = $db_handler->getAllCategories(true);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,8 +25,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Category Management</title>
-     <!-- Bootstrap CSS -->
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Custom CSS -->
@@ -29,17 +49,50 @@
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Products</th>
+                        <th scope="col">Disabled</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Dynamic rows will be populated here with PHP -->
+                    <?php foreach ($categories as $index => $category): ?>
+                        <tr>
+                            <th scope="row">
+                                <?php echo $category["category_id"]; ?>
+                            </th>
+                            <td>
+                                <?= htmlspecialchars($category["category_name"], ENT_QUOTES); ?>
+                            </td>
+                            <td>
+                                <?= htmlspecialchars(count($db_handler->getProductsByCategoryID($category['category_id'])), ENT_QUOTES); ?>
+                            </td>
+                            <td>
+                                <?php if ($category["category_isdisabled"]): ?>
+                                    <i class="fas fa-check-circle"></i>
+                                <?php else: ?>
+                                    <i class="fas fa-times-circle"></i>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#editCategoryModal">Edit</button>
+                                <?php if ($category["category_isdisabled"]): ?>
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#enableCategoryModal">Enable</button>
+                                <?php else: ?>
+                                    <button class="btn btn-warning- btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#disableCategoryModal">Disable</button>
+                                <?php endif; ?>
+                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deteCategoryModal">Delete</button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Create Product Modal -->
+    <!-- Create Category Modal -->
     <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModal"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -48,49 +101,36 @@
                     <h5 class="modal-title" id="createProductModalLabel">Create New Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="row">
+                <form class="row" action="../PHP/create_category.php" method="POST">
                     <div class="modal-body">
                         <!-- Form fields -->
                         <div class="mb-3">
-                            <label for="productName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="productName" name="name" required>
+                            <label for="categoryName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="categoryName" name="name" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="productDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="productDescription" name="description"
-                                required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productPrice" class="form-label">Price</label>
-                            <input type="number" step="0.01" class="form-control" id="productPrice" name="price"
-                                required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productCategory" class="form-label">Category</label>
-                            <select class="form-select" id="productCategory" name="category" required>
-                               <?php 
-                                    
-                               
-                               ?>
-                            </select>
+                        <div class="mb-3 form-check">
+                            <input class="form-check-input" type="checkbox" id="categoryDisable" name="is_disabled">
+                            <label class="form-check-label" for="categoryDisable">Disable</label>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Category</button>
+                    </div>
                 </form>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create Product</button>
-                </div>
+
             </div>
         </div>
     </div>
 
-    <!-- Edit -->
+    <!-- Edit Modal -->
 
-    <!-- Delete -->
+    <!-- Delete Modal -->
 
     <!-- Footer -->
     <?php include '../PHP/footer.php'; ?>
     <!-- Bootstrap JS -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

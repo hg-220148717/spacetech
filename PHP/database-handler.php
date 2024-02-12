@@ -593,6 +593,37 @@ class Database
       return "Error - database query error.";
     }
   }
+  public function editCategory($category_id, $new_name, $new_is_disabled, $new_image_path)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "UPDATE `categories` SET `category_name` = ?, `category_isdisabled` = ?, `category_image` = ? WHERE `category_id` = ?";
+      $this->db_connection->execute_query($query, [$new_name, $new_is_disabled, $new_image_path, $category_id]);
+      return "Category updated successfully.";
+    } catch (Exception $e) {
+      return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
+  public function deleteCategory($category_id)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "DELETE FROM `categories` WHERE `category_id` = ?";
+      $this->db_connection->execute_query($query, [$category_id]);
+      return "Category deleted successfully.";
+    } catch (Exception $e) {
+      // If there are foreign key constraints that prevent deletion, handle it here
+      return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
 
   public function createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled)
   {
@@ -846,7 +877,7 @@ class Database
       $query = "SELECT o.order_id, o.order_total, os.status_name, os.status_colour 
                   FROM orders o 
                   INNER JOIN order_status os ON o.order_status = os.status_id
-                  ORDER BY o.order_id DESC"; 
+                  ORDER BY o.order_id DESC";
 
       // Execute the query
       $result = $this->db_connection->query($query);
