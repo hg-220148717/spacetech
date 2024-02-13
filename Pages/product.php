@@ -39,7 +39,7 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
     <?php include_once("header.php"); ?>
     <section id="productsdetails" class="section-p1">
         <div class="proimage">
-            <?php echo '<img src="images/products/' . htmlspecialchars($product["product_id"], ENT_QUOTES) . '.jpg" width="100%" id="bigimage"  alt="">'; ?>
+            <?php echo '<img src="/images/products/' . htmlspecialchars($product["product_id"], ENT_QUOTES) . '.jpg" width="100%" id="bigimage"  alt="">'; ?>
         </div>
         <div class="proimagedetails">
             <h1>
