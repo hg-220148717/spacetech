@@ -36,7 +36,7 @@ $product = $db_handler->getProductByID(intval($_GET["id"]));
 </head>
 
 <body>
-    <?php include_once("header.php"); ?>
+    <?php include_once("navbar.php"); ?>
     <section id="productsdetails" class="section-p1">
         <div class="proimage">
             <?php echo '<img src="images/products/' . htmlspecialchars($product["product_id"], ENT_QUOTES) . '.jpg" width="100%" id="bigimage"  alt="">'; ?>
