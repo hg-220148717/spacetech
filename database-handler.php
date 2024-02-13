@@ -149,6 +149,8 @@ Class Database {
             `category_isdisabled` boolean NOT NULL DEFAULT false,
             `category_image` varchar(255)
           );",
+
+          "ALTER TABLE `categories` CHANGE `category_id` `category_id` INT(11) NOT NULL AUTO_INCREMENT;",
           
           "CREATE TABLE `products` (
             `product_id` integer PRIMARY KEY,
