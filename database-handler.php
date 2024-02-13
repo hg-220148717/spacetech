@@ -81,12 +81,12 @@ Class Database {
     /**
      * Check the database is correctly setup.
      * 
-     * @return boolean status - returns `true` if database is correctly setup.
+     * @return boolean|null status - returns `true` if database is correctly setup. Returns `null` if there is no connection to the database.
      * 
      */
     public function checkSetup() {
         if($this->createDatabaseConnection() !== "OK") {
-          return true; // setup has already occurred
+          return null; // no connection to db, cannot check setup
         }
 
         try{
