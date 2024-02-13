@@ -145,11 +145,11 @@ class Database
       "ALTER TABLE `users` CHANGE `user_id` `user_id` INT(11) NOT NULL AUTO_INCREMENT;",
 
       "CREATE TABLE `categories` (
-            `category_id` integer PRIMARY KEY,
-            `category_name` varchar(50) NOT NULL,
-            `category_isdisabled` boolean NOT NULL DEFAULT false,
-            `category_image` varchar(255)
-          );",
+        `category_id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        `category_name` VARCHAR(50) NOT NULL,
+        `category_isdisabled` BOOLEAN NOT NULL DEFAULT false,
+        `category_image` VARCHAR(255)
+      );",
 
       "CREATE TABLE `products` (
             `product_id` integer PRIMARY KEY,
@@ -590,7 +590,7 @@ class Database
       $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
       return "Category created successfully.";
     } catch (Exception $e) {
-      return "Error - database query error.";
+      return $e;
     }
   }
   public function editCategory($category_id, $new_name, $new_is_disabled, $new_image_path)
@@ -624,6 +624,23 @@ class Database
     }
   }
 
+  public function categoryExists($name)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "SELECT 1 FROM `categories` WHERE `category_name` = ? LIMIT 1;";
+      $execution = $this->db_connection->execute_query($query, [$name]);
+      $exists = $execution->num_rows > 0;
+      $execution->free_result();
+
+      return $exists;
+    } catch (Exception $e) {
+      return false;
+    }
+  }
 
   public function createProduct($name, $category_id, $desc, $price, $stockcount, $is_disabled)
   {
@@ -1020,8 +1037,7 @@ class Database
 }
 
 $db_handler = new Database();
-
-$db_handler->getAllProducts(true);
+$db_handler->checkSetup();
 
 //echo $db_handler->testDatabaseConnection();
 //echo $db_handler->checkSetup();
