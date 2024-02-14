@@ -10,8 +10,8 @@
        
       .testimonials{
         padding: 40px 0;
-        background: linear-gradient(90deg, #0005a0 0%, #160c43 30%, #160c43 30%, #6c00c4 100%); /* outline around the tesimonials bit*/
-        color: white;
+        background: white; /* outline around the tesimonials bit*/
+        color: black;
         text-align: center;
       }
       .inner{
@@ -34,6 +34,7 @@
       }
       .testimonial{
         padding: 30px;
+        border: 1px;
       }
       .testimonial img{
         width: 100px;
