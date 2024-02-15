@@ -1,39 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <link rel="stylesheet" href="tester.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="tester.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<div class="container">
-  <h1>Leave us a review!</h1>
-  <div class="star-widget">
-    <input type="radio" name="rating" id="star-5">
-    <label for="star-5" class="fas fa-star"></label>
-    <input type="radio" name="rating" id="star-4">
-    <label for="star-4" class="fas fa-star"></label>
-    <input type="radio" name="rating" id="star-3">
-    <label for="star-3" class="fas fa-star"></label>
-    <input type="radio" name="rating" id="star-2">
-    <label for="star-2" class="fas fa-star"></label>
-    <input type="radio" name="rating" id="star-1">
-    <label for="star-1" class="fas fa-star"></label>
-    <div class="name">
-      <br>
-      <input type="text" id="first-name" placeholder="First Name">
-      <input type="text" id="last-name" placeholder="Last Name">
-    </div>
-    <div class="textarea">
-      <br>
-      <textarea placeholder="Share your experience"></textarea>
-    </div>
-  </div>
-  <input type="file" id="photo" accept="image/*">
-  <div class="btn">
-    <br>
-    <button type="submit">Submit</button>
-  </div>
-</div>
+    <div class="container">
+        <h1>Leave us a review!</h1>
+        <div class="star-widget">
+          <input type="radio" name="rating" id="star-5">
+          <label for="star-5" class="fas fa-star"></label>
+          <input type="radio" name="rating" id="star-4">
+          <label for="star-4" class="fas fa-star"></label>
+          <input type="radio" name="rating" id="star-3">
+          <label for="star-3" class="fas fa-star"></label>
+          <input type="radio" name="rating" id="star-2">
+          <label for="star-2" class="fas fa-star"></label>
+          <input type="radio" name="rating" id="star-1">
+          <label for="star-1" class="fas fa-star"></label>
+          <div class="name">
+            <br>
+            <input type="text" id="first-name" placeholder="First Name">
+            <input type="text" id="last-name" placeholder="Last Name">
+          </div>
+          <div class="textarea">
+            <br>
+            <textarea placeholder="Share your experience"></textarea>
+          </div>
+        </div>
+        <input type="file" id="photo" accept="image/*">
+        <br><br>
+        <button id="myButton">
+            Submit
+        </button>
+      <div id="myPopup" class="popup">
+          <div class="popup-content">
+              <h3>Thanks! Your feedback is highly valued and appreciated by us.</h3>
+              <br>
+              <button id="closePopup">
+                    Close
+                </button>
+          </div>
+      </div>
+   
+      <script>
+          myButton.addEventListener("click", function () {
+              myPopup.classList.add("show");
+          });
+          closePopup.addEventListener("click", function () {
+              myPopup.classList.remove("show");
+          });
+          window.addEventListener("click", function (event) {
+              if (event.target == myPopup) {
+                  myPopup.classList.remove("show");
+              }
+          });
+      </script>
+      </div>
 </body>
 </html>
