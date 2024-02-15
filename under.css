@@ -4,7 +4,7 @@ body {
     padding: 0;
 }
 
-.product-reviews {
+.review-box {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
@@ -21,7 +21,7 @@ body {
     margin-bottom: 0;
 }
 
-.review-header {
+.header {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
@@ -29,13 +29,13 @@ body {
 }
 
 
-.review-author {
+.person {
     margin-left: 10px;
     font-style: italic;
     color: black;
 }
 
-.review-content {
+.text {
     line-height: 1.5;
 }
 
