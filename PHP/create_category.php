@@ -14,12 +14,11 @@ if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = trim($_POST['name']); // Trim whitespace
+    $name = trim($_POST['name']); 
+    $image = trim($_POST['image']);
     $is_disabled = isset($_POST['is_disabled']) ? (bool)$_POST['is_disabled'] : false;
 
-    // Validate category name (e.g., ensure it's not empty)
     if (empty($name)) {
-        // Redirect with an error parameter
         header("Location: ../Pages/category_management.php?error=emptyname");
         exit;
     }
@@ -31,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Attempt to create the category
-    $result = $db_handler->createCategory($name, $is_disabled, $name); 
+    $result = $db_handler->createCategory($name, $is_disabled, $image); 
     
     // Check the result of the creation attempt
     echo $result;

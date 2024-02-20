@@ -117,6 +117,10 @@ $categories = $db_handler->getAllCategories(true);
                             <label for="categoryName" class="form-label">Name</label>
                             <input type="text" class="form-control" id="categoryName" name="name" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="categoryImage" class="form-label">Image</label>
+                            <input type="text" class="form-control" id="categoryImage" name="image" required>
+                        </div>
                         <div class="mb-3 form-check">
                             <input class="form-check-input" type="checkbox" id="categoryDisable" name="is_disabled">
                             <label class="form-check-label" for="categoryDisable">Disable</label>
