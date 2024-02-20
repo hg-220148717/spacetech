@@ -1,0 +1,49 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Franklin Gothic Medium', 'Times', Arial, sans-serif;
+    box-sizing:border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    }
+
+.d-flex.flex-column.min-vh-100 {
+    min-height: 100vh;
+    /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+}
+
+main.flex-grow-1 {
+    flex-grow: 1;
+    /* Allows content area to expand */
+}
+
+
+footer {
+    overflow-x: hidden;
+}
+
+footer,
+footer * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-content{
+    overflow-x: hidden;
+}
+
+.product-img {
+    width: 80%; /* makes the image fill the container */
+    height: 280px; /* specify a fixed height */
+}
+
+/* Responsive adjustments for footing within the footer */
+@media (max-width: 768px) {
+    footer .footing {
+        width: 100%;
+        padding: 0 15px;
+    }
+}
