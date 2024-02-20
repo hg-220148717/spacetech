@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Management</title>
+    <link rel="stylesheet" type="text/css" href="stock.css">
+</head>
+<body>
+    <h1>Stock Management</h1>
+    <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Search for a product...">
+    <table>
+        <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Current Stock</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            <tr>
+                <td>1</td>
+                <td>Intel® Core™ i5, RTX 4060, 1 TB SSD</td>
+                <td><input type="number" id="product_a_stock" value="0"></td>
+                <td><input type="number" id="product_a_price" value="899"></td>
+                <td><button onclick="updateStock('product_a_stock', 1)">Update Stock</button></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Intel® Core™ i9, RTX 4080, 1 TB SSD</td>
+                <td><input type="number" id="product_b_stock" value="0"></td>
+                <td><input type="number" id="product_b_price" value="2749"></td>
+                <td><button onclick="updateStock('product_b_stock', 2)">Update Stock</button></td>
+            </tr>
+            <!-- Add more product rows as needed -->
+        </tbody>
+    </table>
+    <br>
+    <h2>Add New Product</h2>
+    <label for="newProductName">Product Name:</label>
+    <input type="text" id="newProductName">
+    <label for="newProductStock">Initial Stock:</label>
+    <input type="number" id="newProductStock" value="0">
+    <label for="newProductPrice">Price:</label>
+    <input type="number" id="newProductPrice">
+    <button onclick="addNewProduct()">Add Product</button>
+
+    <script src="stock.js"></script>
+</body>
+</html>
