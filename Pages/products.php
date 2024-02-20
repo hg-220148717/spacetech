@@ -8,8 +8,6 @@ $setupStatus = $db_handler->checkSetup();
 if (!$setupStatus) {
     die("Error setting up the database.");
 }
-<<<<<<< Updated upstream
-=======
 /** FILTERS - MINIMUM PRICE **/
 
 // check if min price get param is set
@@ -23,7 +21,6 @@ if($filter_min_price_active) {
     // extract price from submitted parameter
     $filter_min_price = floatval($_GET["min_price"]);
 }
->>>>>>> Stashed changes
 
 $productsPerPage = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -32,8 +29,6 @@ $start = ($page - 1) * $productsPerPage;
 $totalProducts = $db_handler->getAllProducts(true); // This returns the total number of products as an array for demo purposes.
 $totalPages = ceil(count($totalProducts) / $productsPerPage);
 $products_list = array_slice($totalProducts, $start, $productsPerPage);
-<<<<<<< Updated upstream
-=======
 
 
 // iterate through all products to apply filters
@@ -45,7 +40,6 @@ foreach($products_list as $index => $product) {
     }
 }
 
->>>>>>> Stashed changes
 ?>
 
 <!DOCTYPE html>
