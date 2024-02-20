@@ -33,8 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Attempt to create the category
     $result = $db_handler->createCategory($name, $is_disabled, $name); 
     
-    // Check the result of the creation attempt
-    echo $result;
     if ($result) {
         header("Location: ../Pages/category_management.php?success=true");
     } else {

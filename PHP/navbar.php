@@ -56,12 +56,12 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
                         <li><hr class="dropdown-divider"></li>
                         <?php if ($isStaff): ?>
                             <!-- Additional option for staff members -->
-                            <li><a class="dropdown-item" href="admin.php">Staff Panel</a></li>
+                            <li><a class="dropdown-item" href="../Pages/admin.php">Staff Panel</a></li>
                         <?php endif; ?>
                     <?php else: ?>
                         <!-- Display for guests -->
-                        <li><a class="dropdown-item" href="login.php">Log In</a></li>
-                        <li><a class="dropdown-item" href="signup.php">Register</a></li>
+                        <li><a class="dropdown-item" href="../Pages/login.php">Log In</a></li>
+                        <li><a class="dropdown-item" href="../Pages/signup.php">Register</a></li>
                     <?php endif; ?>
                 </ul>
             </div>
