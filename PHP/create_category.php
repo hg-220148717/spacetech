@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     // Check the result of the creation attempt
     echo $result;
-    if ($result === "Category created successfully.") {
+    if ($result) {
         header("Location: ../Pages/category_management.php?success=true");
     } else {
        // header("Location: ../Pages/category_management.php?error=creationfailed");

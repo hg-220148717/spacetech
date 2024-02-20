@@ -1,5 +1,7 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) { session_start(); }
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 require_once("../PHP/database-handler.php");
 
 $db_handler = new Database();
@@ -10,7 +12,7 @@ if (!$setupStatus) {
 }
 
 $productsPerPage = 10;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $start = ($page - 1) * $productsPerPage;
 
 $totalProducts = $db_handler->getAllProducts(true); // This returns the total number of products as an array for demo purposes.
@@ -20,6 +22,7 @@ $products_list = array_slice($totalProducts, $start, $productsPerPage);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +32,7 @@ $products_list = array_slice($totalProducts, $start, $productsPerPage);
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <?php include '../PHP/navbar.php'; ?>
@@ -41,14 +45,24 @@ $products_list = array_slice($totalProducts, $start, $productsPerPage);
             <?php if (!empty($products_list)): ?>
                 <?php foreach ($products_list as $product): ?>
                     <div class="col">
-                        <div class="card h-100" onclick="window.location.href='product.php?id=<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>';">
-                            <img src="images/products/<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>.jpg" class="card-img-top" alt="<?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?>">
+                        <div class="card h-100"
+                            onclick="window.location.href='product.php?id=<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>';">
+                            <img src="../images/products/<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>.jpg"
+                                class="card-img-top product-img"
+                                alt="<?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?>">
                             <div class="card-body">
-                                <h5 class="card-title"><?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?></h5>
-                                <p class="card-text"><?= htmlspecialchars($product["product_desc"], ENT_QUOTES) ?></p>
-                                <div class="card-footer">
-                                    <h4>£<?= htmlspecialchars($product["product_price"], ENT_QUOTES) ?></h4>
-                                </div>
+                                <h5 class="card-title">
+                                    <?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?>
+                                </h5>
+                                <p class="card-text">
+                                    <?= htmlspecialchars($product["product_desc"], ENT_QUOTES) ?>
+                                </p>
+
+                            </div>
+                            <div class="card-footer">
+                                <h4>£
+                                    <?= htmlspecialchars($product["product_price"], ENT_QUOTES) ?>
+                                </h4>
                             </div>
                         </div>
                     </div>
@@ -67,7 +81,9 @@ $products_list = array_slice($totalProducts, $start, $productsPerPage);
             <ul class="pagination">
                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                     <li class="page-item <?= $page === $i ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        <a class="page-link" href="?page=<?= $i ?>">
+                            <?= $i ?>
+                        </a>
                     </li>
                 <?php endfor; ?>
             </ul>
@@ -77,4 +93,5 @@ $products_list = array_slice($totalProducts, $start, $productsPerPage);
     <?php include_once("../PHP/footer.php"); ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

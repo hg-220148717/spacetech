@@ -1,5 +1,7 @@
 <?php
-if (session_status() == PHP_SESSION_NONE) { session_start(); }
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 include "../PHP/database-handler.php";
 $db_handler = new Database(); // setup database handler
 
@@ -17,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     }
 
-    if($db_handler->createUser($email, $password, $name) == "User account created successfully.") {
+    if ($db_handler->createUser($email, $password, $name) == "User account created successfully.") {
         // Redirect to a Home Page, login successful
 
         // may want to autologin/redirect to login page in future?
@@ -35,30 +37,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <title>Sign Up | SpaceTech</title>
-    <link rel="stylesheet" href="../Styles/signup.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="../Styles/backgroundimage.css">
 </head>
+
 <body>
-    <div class="background">
-        <div class="shape"></div>
-        <div class="shape"></div>
+    <?php include_once("../PHP/navbar.php"); ?>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Sign Up</h3>
+                        <form action="../Pages/signup.php" method="POST">
+                            <div class="mb-3">
+                                <label for="fname" class="form-label">First Name</label>
+                                <input type="text" class="form-control" name="fname" placeholder="First Name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="sname" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" name="sname" placeholder="Last Name" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" placeholder="Email" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" name="password" placeholder="Password"
+                                    required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" name="confirmPassword"
+                                    placeholder="Confirm Password" required>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">Sign Up</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <form action="../Pages/signup.php" method="POST">
-        <h3>Sign Up</h3>
-        <label for="First Name">First Name</label>
-        <input type="text" name="fname" placeholder="First Name">
 
-        <label for="Last Name">Last Name</label>
-        <input type="Last Name" name="sname" placeholder="Last Name">
-
-        <label for="Email">Email</label>
-        <input type="Email" name="email" placeholder="Email">
-        <label for="Password">Password</label>
-        <input type="Password" name="password" placeholder="Password">
-        <label for="Confirm Password"> Confirm Password</label>
-        <input type="Password" placeholder="Confirm Password">
-        <button type="submit">Sign Up</button>
-    </form>
+    <!-- Bootstrap JS with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
