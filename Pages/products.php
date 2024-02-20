@@ -22,6 +22,21 @@ if($filter_min_price_active) {
     $filter_min_price = floatval($_GET["min_price"]);
 }
 
+/** FILTERS - MAX PRICE **/
+
+// check if min price get param is set
+$filter_max_price_active = isset($_GET["max_price"]);
+
+// set a default min price of £0.00
+$filter_max_price = 0.00;
+
+// check if filter is active
+if($filter_max_price_active) {
+    // extract price from submitted parameter
+    $filter_max_price = floatval($_GET["max_price"]);
+}
+
+
 $productsPerPage = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page - 1) * $productsPerPage;
@@ -33,11 +48,19 @@ $products_list = array_slice($totalProducts, $start, $productsPerPage);
 
 // iterate through all products to apply filters
 foreach($products_list as $index => $product) {
+    
     // check if product price is less than min price
     if(floatval($product["product_price"]) < $filter_min_price) {
         // remove product if less than min price
         array_splice($products_list, $index, 1);
     }
+
+    // check if product price is more than max price
+    if(floatval($product["product_price"]) > $filter_max_price) {
+        // remove product if more than max price
+        array_splice($products_list, $index, 1);
+    }
+
 }
 
 ?>
