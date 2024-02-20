@@ -71,12 +71,9 @@ body{
 }
 .inner-box .testItem h3{
     font-size: 30px;
-    font-style: italic;
     padding: 7px;
 }
-.inner-box .testItem h4{
-    font-style: italic;
-}
+
 .inner-box .testItem p{
     font-size: 18px;
     letter-spacing: 1px;
