@@ -379,6 +379,21 @@ class Database
     }
   }
 
+  public function getRandomProducts($limit = 6)
+  {
+    $sql = "SELECT * FROM products ORDER BY RAND() LIMIT ?";
+    $stmt = $this->db_connection->prepare($sql);
+    $stmt->bind_param("i", $limit);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $products = [];
+    while ($row = $result->fetch_assoc()) {
+      $products[] = $row;
+    }
+    return $products;
+  }
+
+
   public function getAllProducts($includeDisabledProducts)
   {
     // Check if the database connection is successfully established
@@ -502,6 +517,30 @@ class Database
     }
   }
 
+  public function getProductPriceById($productId)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $sql = "SELECT product_price FROM products WHERE product_id = ?";
+      $stmt = $this->db_connection->prepare($sql);
+      $stmt->bind_param("i", $productId);
+      $stmt->execute();
+      $result = $stmt->get_result();
+
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['product_price'];
+      } else {
+        return "No product found with ID: " . $productId;
+      }
+    } catch (Exception $e) {
+      return "Error - " . $e->getMessage();
+    }
+  }
+
   public function getProductsByName($inputted_name)
   {
     if (is_string($inputted_name)) {
@@ -577,6 +616,59 @@ class Database
     }
   }
 
+  public function getCategoryNameByProductId($productId)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $sql = "SELECT c.category_name FROM categories c JOIN products p ON c.category_id = p.category_id WHERE p.product_id = ?";
+      $stmt = $this->db_connection->prepare($sql);
+      $stmt->bind_param("i", $productId);
+      $stmt->execute();
+      $result = $stmt->get_result();
+
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['category_name'];
+      } else {
+        return "No category found for product ID: " . $productId;
+      }
+    } catch (Exception $e) {
+      return "Error - " . $e->getMessage();
+    }
+  }
+
+  public function getCategoryIdByName($categoryName)
+  {
+    // Ensure the database connection is successfully established
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $sql = "SELECT category_id FROM categories WHERE category_name = ? LIMIT 1;";
+      $stmt = $this->db_connection->prepare($sql);
+
+      $stmt->bind_param("s", $categoryName);
+      $stmt->execute();
+
+      $result = $stmt->get_result();
+
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['category_id'];
+      } else {
+        return "null";
+      }
+    } catch (Exception $e) {
+      return "Error - " . $e->getMessage();
+    }
+  }
+
+
+
   public function createCategory($name, $is_disabled, $image_path)
   {
 
@@ -605,6 +697,19 @@ class Database
       return "Category updated successfully.";
     } catch (Exception $e) {
       return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
+  public function toggleCategoryStatus($categoryId, $isDisabled)
+  {
+    // SQL to toggle the status
+    $sql = "UPDATE categories SET category_isdisabled = ? WHERE category_id = ?";
+    $stmt = $this->db_connection->prepare($sql);
+    $stmt->bind_param("ii", $isDisabled, $categoryId);
+    if ($stmt->execute()) {
+      return true;
+    } else {
+      return false;
     }
   }
 

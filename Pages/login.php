@@ -36,37 +36,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="../Styles/login.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Your Custom CSS -->
     <link rel="stylesheet" href="../Styles/master-style.css">
+    <link rel="stylesheet" href="../Styles/backgroundimage.css">
 </head>
 
 <body>
 
-    <?php include_once("../PHP/header.php"); ?>
+    <?php include_once("../PHP/navbar.php"); ?>
 
-    <div class="background">
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-    <form action="login.php" method="POST">
-        <h>Login Here</h>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Login Here</h3>
+                        <form action="login.php" method="POST">
+                            <?php if (isset($error_msg))
+                                echo $error_msg; ?>
 
-        <label for="email">Email</label>
-        <input type="email" placeholder="Email Address" name="email">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" placeholder="Email Address" name="email"
+                                    required>
+                            </div>
 
-        <?php if (isset($error_msg))
-            echo $error_msg; ?>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" placeholder="Password" name="password"
+                                    required>
+                            </div>
 
-        <label for="password">Password</label>
-        <input type="password" placeholder="Password" name="password">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Log In</button>
+                            </div>
 
-        <button type="submit">Log In</button>
-        <div class="social">
-            <div class="fp"><a href="fp.html"> Forgot Password?</a></div>
-            <div class="fp"><a href="../Pages/signup.php"> New User?Sign Up</a></div>
+                            <div class="text-center mt-3">
+                                <a href="fp.html" class="btn btn-outline-secondary btn-sm">Forgot Password?</a>
+                                <a href="../Pages/signup.php" class="btn btn-outline-primary btn-sm">New User? Sign
+                                    Up</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
+    </div>
+
+    
+
+    <!-- Bootstrap JS with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
