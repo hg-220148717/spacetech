@@ -161,6 +161,9 @@ Class Database {
             `product_stockcount` integer NOT NULL DEFAULT 0,
             `product_isdisabled` boolean NOT NULL DEFAULT false
           );",
+
+          "ALTER TABLE `products` CHANGE `product_id` `product_id` INT(11) NOT NULL AUTO_INCREMENT;",
+          
           
           "CREATE TABLE `reviews` (
             `review_id` integer PRIMARY KEY,
@@ -170,6 +173,8 @@ Class Database {
             `review_text` text NOT NULL
           );",
           
+          "ALTER TABLE `reviews` CHANGE `review_id` `review_id` INT(11) NOT NULL AUTO_INCREMENT;",
+          
           "CREATE TABLE `basket_entries` (
             `basket_entry_id` integer PRIMARY KEY,
             `basket_userid` integer NOT NULL,
@@ -177,6 +182,8 @@ Class Database {
             `entry_quanitity` integer NOT NULL DEFAULT 1,
             `entry_subtotal` decimal(6,2) NOT NULL
           );",
+
+          "ALTER TABLE `basket_entries` CHANGE `basket_entry_id` `basket_entry_id` INT(11) NOT NULL AUTO_INCREMENT;",
           
           "CREATE TABLE `orders` (
             `order_id` integer PRIMARY KEY,
@@ -187,12 +194,15 @@ Class Database {
             `order_ispaid` boolean NOT NULL DEFAULT true,
             `order_status` integer NOT NULL
           );",
+          "ALTER TABLE `orders` CHANGE `order_id` `order_id` INT(11) NOT NULL AUTO_INCREMENT;",
           
           "CREATE TABLE `order_status` (
             `status_id` integer PRIMARY KEY,
             `status_name` varchar(20) NOT NULL,
             `status_colour` varchar(7) NOT NULL COMMENT 'Hex colour value'
           );",
+
+          "ALTER TABLE `order_status` CHANGE `status_id` `status_id` INT(11) NOT NULL AUTO_INCREMENT;",
           
           "CREATE TABLE `order_items` (
             `line_id` integer PRIMARY KEY,
@@ -202,6 +212,8 @@ Class Database {
             `line_subtotal` decimal(6,2) NOT NULL
           );",
           
+          "ALTER TABLE `order_items` CHANGE `line_id` `line_id` INT(11) NOT NULL AUTO_INCREMENT;",
+          
           "CREATE TABLE `returns` (
             `return_id` integer PRIMARY KEY,
             `return_customer_id` integer NOT NULL,
@@ -210,6 +222,8 @@ Class Database {
             `return_reason` text NOT NULL,
             `return_status` integer NOT NULL
           );",
+
+          "ALTER TABLE `returns` CHANGE `return_id` `return_id` INT(11) NOT NULL AUTO_INCREMENT;",
           
           "ALTER TABLE `products` ADD FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`);",
           
