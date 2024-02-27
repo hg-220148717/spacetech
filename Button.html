@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="butt.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+        <button id="myButton">
+              Post
+          </button>
+        <div id="myPopup" class="popup">
+            <div class="popup-content">
+                <h1>Thanks! You've been added to our email list.</h1>
+                <h5>You can unsubscribe at any time.</h5>
+                <button id="closePopup">
+                      Close
+                  </button>
+            </div>
+        </div>
+     
+        <script>
+            myButton.addEventListener("click", function () {
+                myPopup.classList.add("show");
+            });
+            closePopup.addEventListener("click", function () {
+                myPopup.classList.remove("show");
+            });
+            window.addEventListener("click", function (event) {
+                if (event.target == myPopup) {
+                    myPopup.classList.remove("show");
+                }
+            });
+        </script>
+</body>
+</html>
