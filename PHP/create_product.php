@@ -10,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $price = trim($_POST["price"]);
     $categoryName = trim($_POST["category"]);
 
-
     $result = $db_handler->createProduct($name, $categoryName, $description, $price, 0, true);
     if ($result == "Product created successfully") {
         header("Location: ../Pages/product_management.php?success=true");

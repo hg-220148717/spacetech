@@ -169,7 +169,6 @@ $categories = $db_handler->getAllCategories(true);
                             <label for="formFileSm" class="form-label">Image</label>
                             <input class="form-control form-control-sm" id="formFileSm" type="file"
                                 name="categoryImage" required>
-
                         </div>
                         <div class="mb-3 form-check">
                             <input class="form-check-input" type="checkbox" id="categoryDisable" name="is_disabled">

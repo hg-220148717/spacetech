@@ -38,30 +38,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (file_exists($target_file)) {
             $uploadOk = 0;
             header("Location: ../Pages/category_management.php?error=fileExists");
-            exit;
         }
 
         if ($_FILES["categoryImage"]["size"] > 2000000) {
             $uploadOk = 0;
             header("Location: ../Pages/category_management.php?error=largeSize");
-            exit;
         }
 
         $check = getimagesize($_FILES["categoryImage"]["tmp_name"]);
         if ($check == false) {
             $uploadOk = 0;
             header("Location: ../Pages/category_management.php?error=notImage");
-            exit;
         }
 
         if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
             $uploadOk = 0;
             header("Location: ../Pages/category_management.php?error=invalidType");
-            exit;
         }
 
         if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $target_file)) {
             $uploadOk = 1;
+        } else {
+            $uploadOk = 0;
         }
     }
 
@@ -72,8 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             header("Location: ../Pages/category_management.php?error=creationfailed");
         }
-        exit;
     } else {
         header("Location: ../Pages/category_management.php?error=uploadFailed");
     }
+    exit;
 }
