@@ -170,7 +170,7 @@ $categories = $db_handler->getAllCategories(true);
                         <div class="mb-3">
                             <label for="formFileSm" class="form-label">Image</label>
                             <input class="form-control form-control-sm" id="formFileSm" type="file"
-                                name="categoryImage">
+                                name="categoryImage" required>
 
                         </div>
 >>>>>>> Stashed changes
