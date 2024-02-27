@@ -17,28 +17,83 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $categoryId = intval($_POST["category_id"]);
     $newName = trim($_POST["name"]);
 
-    // Preparing the response array
     $response = [];
-
-    if ($db_handler->categoryExists($newName)) {
+    $categoryDetails = $db_handler->getCategoryById($categoryId);
+    if (!is_array($categoryDetails)) {
         $response = [
             'status' => 'error',
-            'message' => 'NameExists'
+            'message' => 'InvalidCategory'
         ];
     } else {
-        $result = $db_handler->editCategory($categoryId, $newName, null, null);
-        if ($result == "Category updated successfully.") {
-            $response = [
-                'status' => 'success',
-                'message' => 'Category updated successfully.',
-                'categoryId' => $categoryId,
-                'newName' => $newName
-            ];
-        } else {
+        $previousName = $categoryDetails['category_name'];
+        $previousImagePath = $categoryDetails['category_image'];
+
+        $target_dir = "../images/categories/";
+        $target_file = $target_dir . basename($_FILES["categoryImage"]["name"]);
+        $uploadOk = 0;
+
+        if (isset($_FILES['categoryImage']) && $_FILES['categoryImage']['error'] == UPLOAD_ERR_OK) {
+            $target_dir . basename($_FILES["categoryImage"]["name"]);
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+            if (file_exists($target_file)) {
+                $uploadOk = 0;
+                $response = [
+                    'status' => 'error',
+                    'message' => 'FileExists'
+                ];
+            }
+
+            if ($_FILES["categoryImage"]["size"] > 2000000) {
+                $uploadOk = 0;
+                $response = [
+                    'status' => 'error',
+                    'message' => 'SizeTooLarge'
+                ];
+            }
+
+            $check = getimagesize($_FILES["categoryImage"]["tmp_name"]);
+            if ($check == false) {
+                $uploadOk = 0;
+                $response = [
+                    'status' => 'error',
+                    'message' => 'NotImage'
+                ];
+            }
+
+            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+                $uploadOk = 0;
+                $response = [
+                    'status' => 'error',
+                    'message' => 'NotValidFormat'
+                ];
+            }
+
+            if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $target_file)) {
+                $uploadOk = 1;
+            }
+        }
+
+        if ($db_handler->categoryExists($newName)) {
             $response = [
                 'status' => 'error',
-                'message' => 'UpdateFailed'
+                'message' => 'NameExists'
             ];
+        } else {
+            $result = $db_handler->editCategory($categoryId, $newName or $previousName, $target_file or $previousImagePath);
+            if ($result == "Category updated successfully.") {
+                $response = [
+                    'status' => 'success',
+                    'message' => 'Category updated successfully.',
+                    'categoryId' => $categoryId,
+                    'newName' => $newName
+                ];
+            } else {
+                $response = [
+                    'status' => 'error',
+                    'message' => 'UpdateFailed'
+                ];
+            }
         }
     }
 

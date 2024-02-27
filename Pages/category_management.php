@@ -42,6 +42,53 @@ $categories = $db_handler->getAllCategories(true);
     <div class="container mt-5">
         <h2 class="mb-4">Category Management</h2>
         <div id="alertPlaceholder"></div>
+        <?php
+        if (isset($_GET['error'])) {
+            $error_message = '';
+            switch ($_GET['error']) {
+                case 'emptyName':
+                    $error_message = 'Please enter a name for the category.';
+                    break;
+                case 'nameExists':
+                    $error_message = 'Category name already exists.';
+                    break;
+                case 'fileExists':
+                    $error_message = 'File already exists.';
+                    break;
+                case 'largeSize':
+                    $error_message = 'The uploaded file is too large.';
+                    break;
+                case 'notImage':
+                    $error_message = 'The uploaded file is not an image.';
+                    break;
+                case 'invalidType':
+                    $error_message = 'Only JPG, JPEG, and PNG files are allowed.';
+                    break;
+                case 'creationfailed':
+                    $error_message = 'Failed to create the category.';
+                    break;
+                default:
+                    $error_message = 'An unknown error occurred.';
+            }
+            echo "<script>
+                var alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger';
+                var alertText = document.createTextNode('$error_message');
+                alertDiv.appendChild(alertText);
+                var alertPlaceholder = document.getElementById('alertPlaceholder');
+                alertPlaceholder.appendChild(alertDiv);
+            </script>";
+        } else if(isset($_GET["success"])) {
+            echo "<script>
+                var alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success';
+                var alertText = document.createTextNode('Category created!');
+                alertDiv.appendChild(alertText);
+                var alertPlaceholder = document.getElementById('alertPlaceholder');
+                alertPlaceholder.appendChild(alertDiv);
+            </script>";
+        }
+        ?>
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createCategoryModal">Create New
             Category</button>
         <!-- Table to display products -->
@@ -110,13 +157,23 @@ $categories = $db_handler->getAllCategories(true);
                     <h5 class="modal-title" id="createProductModalLabel">Create New Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="row" action="../PHP/create_category.php" method="POST">
+                <form class="row" action="../PHP/create_category.php" method="POST" enctype="multipart/form-data">
+
                     <div class="modal-body">
                         <!-- Form fields -->
                         <div class="mb-3">
                             <label for="categoryName" class="form-label">Name</label>
                             <input type="text" class="form-control" id="categoryName" name="name" required>
                         </div>
+<<<<<<< Updated upstream
+=======
+                        <div class="mb-3">
+                            <label for="formFileSm" class="form-label">Image</label>
+                            <input class="form-control form-control-sm" id="formFileSm" type="file"
+                                name="categoryImage">
+
+                        </div>
+>>>>>>> Stashed changes
                         <div class="mb-3 form-check">
                             <input class="form-check-input" type="checkbox" id="categoryDisable" name="is_disabled">
                             <label class="form-check-label" for="categoryDisable">Disable</label>
@@ -141,14 +198,22 @@ $categories = $db_handler->getAllCategories(true);
                     <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="row" id="editCategoryForm">
+                <form class="row" id="editCategoryForm" enctype="multipart/form-data">
+                    <!-- enctype added for file upload -->
                     <div class="modal-body">
-                        <!-- Hidden input for category ID -->
                         <input type="hidden" id="editCategoryId" name="category_id">
                         <!-- Category Name -->
                         <div class="mb-3">
                             <label for="editCategoryName" class="form-label">Name</label>
                             <input type="text" class="form-control" id="editCategoryName" name="name" required>
+                        </div>
+
+                        <!-- Image Upload -->
+                        <div class="mb-3">
+                            <label for="formFileSm" class="form-label">Image</label>
+                            <input class="form-control form-control-sm" id="formFileSm" type="file"
+                                name="categoryImage">
+
                         </div>
                     </div>
                     <div class="modal-footer">

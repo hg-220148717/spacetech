@@ -15,9 +15,19 @@ $productsPerPage = 10;
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $start = ($page - 1) * $productsPerPage;
 
-$totalProducts = $db_handler->getAllProducts(true); // This returns the total number of products as an array for demo purposes.
+$totalProducts = $db_handler->getAllProducts(true); 
 $totalPages = ceil(count($totalProducts) / $productsPerPage);
 $products_list = array_slice($totalProducts, $start, $productsPerPage);
+<<<<<<< Updated upstream
+=======
+
+foreach($products_list as $product) {
+    if(floatval($product["product_price"]) < $filter_min_price) {
+        unset($products_list[$product]);
+    }
+}
+
+>>>>>>> Stashed changes
 ?>
 
 <!DOCTYPE html>
