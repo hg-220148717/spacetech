@@ -93,7 +93,7 @@ $categories = $db_handler->getAllCategories(false);
                     <h5 class="modal-title" id="createProductModalLabel">Create New Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="row" action="../PHP/create_product.php" method="POST">
+                <form class="row" action="../PHP/create_product.php" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="productName" class="form-label">Name</label>
