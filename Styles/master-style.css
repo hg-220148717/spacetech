@@ -31,3 +31,23 @@ footer * {
         padding: 0 15px;
     }
 }
+
+.category-container {
+    padding: 5rem 2rem;
+    margin: 10px;
+    border-radius: 5px;
+    border: 2px solid lightgray;
+    background-size: contain;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    transition: all .5s ease;
+}
+
+.category-container:hover {
+    box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.category-title {
+    text-shadow: #fff 0px 0px 5px, #fff 0px 0px 5px, #fff 0px 0px 5px, #fff 0px 0px 5px;
+}

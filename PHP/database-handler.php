@@ -564,7 +564,6 @@ class Database
               return "Error - No results found.";
             }
           }
-
           return $output;
 
         } catch (Exception $e) {

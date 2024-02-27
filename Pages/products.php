@@ -36,12 +36,18 @@ if($filter_max_price_active) {
     $filter_max_price = floatval($_GET["max_price"]);
 }
 
+/** CATEGORY FILTER **/
+
+// check if filter is active
+$filter_category_active = isset($_GET["category"]);
+$filter_category_id = ($filter_category_active ? intval($_GET["category"]) : 0);
+
 
 $productsPerPage = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page - 1) * $productsPerPage;
 
-$totalProducts = $db_handler->getAllProducts(true); // This returns the total number of products as an array for demo purposes.
+$totalProducts = (!$filter_category_active ? $db_handler->getAllProducts(false) : $db_handler->getProductsByCategoryID($filter_category_id));
 $totalPages = ceil(count($totalProducts) / $productsPerPage);
 $unfiltered_products_list = array_slice($totalProducts, $start, $productsPerPage);
 
