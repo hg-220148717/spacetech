@@ -667,7 +667,32 @@ class Database
     }
   }
 
+  public function getCategoryById($categoryID)
+  {
+    // Ensure the database connection is successfully established
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
 
+    try {
+      $sql = "SELECT category_id FROM categories WHERE category_id = ? LIMIT 1;";
+      $stmt = $this->db_connection->prepare($sql);
+
+      $stmt->bind_param("i", $categoryID); 
+      $stmt->execute();
+
+      $result = $stmt->get_result();
+
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return $row['category_id'];
+      } else {
+        return "null";
+      }
+    } catch (Exception $e) {
+      return "Error - " . $e->getMessage();
+    }
+  }
 
   public function createCategory($name, $is_disabled, $image_path)
   {
@@ -685,15 +710,15 @@ class Database
       return $e;
     }
   }
-  public function editCategory($category_id, $new_name, $new_is_disabled, $new_image_path)
+  public function editCategory($category_id, $new_name, $new_image_path)
   {
     if ($this->createDatabaseConnection() !== "OK") {
       return "Error - database connection error.";
     }
 
     try {
-      $query = "UPDATE `categories` SET `category_name` = ?, `category_isdisabled` = ?, `category_image` = ? WHERE `category_id` = ?";
-      $this->db_connection->execute_query($query, [$new_name, $new_is_disabled, $new_image_path, $category_id]);
+      $query = "UPDATE `categories` SET `category_name` = ?, `category_image` = ? WHERE `category_id` = ?";
+      $this->db_connection->execute_query($query, [$new_name, $new_image_path, $category_id]);
       return "Category updated successfully.";
     } catch (Exception $e) {
       return "Error - database query error: " . $e->getMessage();
@@ -715,20 +740,20 @@ class Database
 
   public function deleteCategory($category_id)
   {
-    if ($this->createDatabaseConnection() !== "OK") {
-      return "Error - database connection error.";
-    }
-
-    try {
-      $query = "DELETE FROM `categories` WHERE `category_id` = ?";
-      $this->db_connection->execute_query($query, [$category_id]);
-      return "Category deleted successfully.";
-    } catch (Exception $e) {
-      // If there are foreign key constraints that prevent deletion, handle it here
-      return "Error - database query error: " . $e->getMessage();
-    }
+      if ($this->createDatabaseConnection() !== "OK") {
+          return "Error - database connection error.";
+      }
+  
+      try {
+          $query = "DELETE FROM `categories` WHERE `category_id` = ?";
+          $this->db_connection->execute_query($query, [$category_id]);
+          
+          return "Category deleted successfully.";
+      } catch (Exception $e) {
+          return "Error - database query error: " . $e->getMessage();
+      }
   }
-
+  
   public function categoryExists($name)
   {
     if ($this->createDatabaseConnection() !== "OK") {

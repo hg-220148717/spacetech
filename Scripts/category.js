@@ -35,7 +35,6 @@ $(document).ready(function(){
     $('.btn-danger[data-bs-target="#deleteCategoryModal"]').on('click', function() {
         var categoryId = $(this).data('category-id');
 
-        // When the confirm button is clicked
         $('#confirmDelete').off('click').on('click', function() {
             $.ajax({
                 type: "POST",
@@ -44,7 +43,8 @@ $(document).ready(function(){
                     category_id: categoryId,
                 },
                 success: function(response) {
-                    window.location.reload(true);
+                    console.log(response)
+                  //  window.location.reload(true);
                 },
                 error: function() {
                     alert('Error deleting category.');
@@ -64,6 +64,7 @@ $('#editCategoryForm').submit(function(event) {
         url: "../PHP/edit_category.php",
         data: formData,
         success: function(response) {
+            console.log(response)
             var alertHtml = '';
             if(response.status === 'success') {
                 window.location.reload(true);
@@ -73,16 +74,13 @@ $('#editCategoryForm').submit(function(event) {
                 alertHtml = '<div class="alert alert-danger" role="alert">Failed to update category.</div>';
             }
     
-            // Insert the alert
             $('#alertPlaceholder').html(alertHtml);
-    
-            // Optionally, remove the alert after a few seconds
             setTimeout(function() {
                 $('#alertPlaceholder').html('');
             }, 5000); // 5 seconds
         },
-        error: function() {
-            console.log("Bad!")
+        error: function(xhr, status, error) {
+            console.log("AJAX Error: " + status + " - " + error);
         }
     });
 });
