@@ -101,6 +101,16 @@ header .fa-bars{
 
 }
 
+.button-value {
+    border: 2px solid #6759ff;
+    padding: 1em 2.2em;
+    border-radius: 3em;
+    background-color: transparent;
+    color: #6759ff;
+    cursor: pointer;
+}
+
+
 /* search bar*/
 
 body {
