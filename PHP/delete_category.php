@@ -7,6 +7,11 @@ $db_handler = new Database();
 $db_handler->testDatabaseConnection();
 $db_handler->checkSetup();
 
+if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id"])) {
+    header("Location: ../Pages/index.php");
+    exit; // Ensure no further execution happens after a redirect
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['category_id'])) {
     $categoryId = intval($_POST['category_id']);
 

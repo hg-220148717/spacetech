@@ -53,7 +53,7 @@ foreach($products_list as $product) {
                 <?php foreach ($products_list as $product): ?>
                     <div class="col">
                         <div class="card h-100"
-                            onclick="window.location.href='product.php?id=<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>';">
+                            onclick="window.location.href='product.php?product_id=<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>';">
                             <img src="../images/products/<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>.jpg"
                                 class="card-img-top product-img"
                                 alt="<?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?>">
