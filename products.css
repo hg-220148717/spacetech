@@ -110,6 +110,10 @@ header .fa-bars{
     cursor: pointer;
 }
 
+.active {
+    background-color: #6759ff;
+    color: #ffffff;
+}
 
 /* search bar*/
 
