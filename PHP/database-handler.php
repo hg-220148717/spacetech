@@ -166,8 +166,11 @@ class Database
             `review_userid` integer NOT NULL,
             `review_productid` integer NOT NULL,
             `review_rating` integer NOT NULL COMMENT 'Constrain input to only allow 1 to 5 stars',
-            `review_text` text NOT NULL
+            `review_text` text NOT NULL,
+            `review_approved` boolean NOT NULL DEFAULT false,
           );",
+
+      
 
       "ALTER TABLE `reviews` ADD `review_approved` BOOLEAN NOT NULL DEFAULT FALSE;",
 

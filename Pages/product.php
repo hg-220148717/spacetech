@@ -15,7 +15,7 @@ $db_handler->testDatabaseConnection();
 $db_handler->checkSetup();
 
 $product = $db_handler->getProductByID(intval($_GET["product_id"]));
-$reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]), false);
+$reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]));
 
 ?>
 
@@ -56,7 +56,7 @@ $reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]), false
                 <p>
                     <?php echo htmlspecialchars($product["product_desc"], ENT_QUOTES); ?>
                 </p>
-                <form action="add_to_cart.php" method="POST" class="py-2">
+                <form action="../PHP/add_to_cart.php" method="POST" class="py-2">
                     <input type="number" name="product_id"
                         value="<?php echo htmlspecialchars($product["product_id"], ENT_QUOTES); ?>" hidden>
 
@@ -118,18 +118,18 @@ $reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]), false
                         <input type="hidden" name="product_id"
                             value="<?php echo htmlspecialchars($product["product_id"], ENT_QUOTES); ?>">
                         <div class="mb-3">
-                            <div class="rating">
-                                <input id="star5" name="rating" type="radio" value="5" class="radio-btn hide" />
-                                <label for="star5">☆</label>
-                                <input id="star4" name="rating" type="radio" value="4" class="radio-btn hide" />
-                                <label for="star4">☆</label>
-                                <input id="star3" name="rating" type="radio" value="3" class="radio-btn hide" />
-                                <label for="star3">☆</label>
-                                <input id="star2" name="rating" type="radio" value="2" class="radio-btn hide" />
-                                <label for="star2">☆</label>
-                                <input id="star1" name="rating" type="radio" value="1" class="radio-btn hide"
-                                    required />
+                            <div class="rating rating_modal">
+                                <input id="star1" name="rating" type="radio" value="1" class="radio-btn hide" required />
                                 <label for="star1">☆</label>
+                                <input id="star2" name="rating" type="radio" value="2" class="radio-btn hide" required />
+                                <label for="star2">☆</label>
+                                <input id="star3" name="rating" type="radio" value="3" class="radio-btn hide" required />
+                                <label for="star3">☆</label>
+                                <input id="star4" name="rating" type="radio" value="4" class="radio-btn hide" required />
+                                <label for="star4">☆</label>
+                                <input id="star5" name="rating" type="radio" value="5" class="radio-btn hide" required />
+                                <label for="star5">☆</label>
+                                
                                 <div class="clear"></div>
                             </div>
                         </div>

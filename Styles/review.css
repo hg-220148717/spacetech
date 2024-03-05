@@ -1,7 +1,14 @@
 .rating {
-    direction: rtl;
+    direction: ltr;
     unicode-bidi: bidi-override;
 }
+
+.rating_modal {
+    direction: rtl !important;
+    unicode-bidi: bidi-override;
+    text-align: center;
+}
+
 
 .rating > label {
     font-size: 30px;
