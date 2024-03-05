@@ -91,8 +91,8 @@ foreach($unfiltered_products_list as $index => $product) {
 
     <!-- Main -->
     <div class="container mt-5">
-        <h2 class="mb-4">Product Deals</h2>
-        <p>List of Products</p>
+        <h2 class="mb-4">Shop</h2>
+        <p>Browse our wide range of products!</p>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <?php if (!empty($products_list)): ?>
                 <?php foreach ($products_list as $product): ?>
