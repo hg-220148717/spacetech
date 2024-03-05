@@ -1,4 +1,5 @@
 <?php
+
 if (session_status() == PHP_SESSION_NONE) { session_start(); }
 require_once("../PHP/database-handler.php");
 
@@ -19,7 +20,7 @@ $filter_min_price = 0.00;
 // check if filter is active
 if($filter_min_price_active) {
     // extract price from submitted parameter
-    $filter_min_price = floatval($_GET["min_price"]);
+    $filter_min_price = floatval(str_replace("£","", $_GET["min_price"]));
 }
 
 /** FILTERS - MAX PRICE **/
@@ -33,7 +34,7 @@ $filter_max_price = 99999999999.00;
 // check if filter is active
 if($filter_max_price_active) {
     // extract price from submitted parameter
-    $filter_max_price = floatval($_GET["max_price"]);
+    $filter_max_price = floatval(str_replace("£","",$_GET["max_price"]));
 }
 
 /** CATEGORY FILTER **/
@@ -90,31 +91,52 @@ foreach($unfiltered_products_list as $index => $product) {
     <?php include '../PHP/navbar.php'; ?>
 
     <!-- Main -->
+    
     <div class="container mt-5">
         <h2 class="mb-4">Shop</h2>
         <p>Browse our wide range of products!</p>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            <?php if (!empty($products_list)): ?>
-                <?php foreach ($products_list as $product): ?>
-                    <div class="col">
-                        <div class="card h-100" onclick="window.location.href='product.php?id=<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>';">
-                            <img src="/images/products/<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>.jpg" class="card-img-top" alt="<?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?>">
-                            <div class="card-body">
-                                <h5 class="card-title"><?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?></h5>
-                                <p class="card-text"><?= htmlspecialchars($product["product_desc"], ENT_QUOTES) ?></p>
-                                <div class="card-footer">
-                                    <h4>£<?= htmlspecialchars($product["product_price"], ENT_QUOTES) ?></h4>
+        <div class="content row">
+        <div class="col g-5 sidebar">
+                <h3>Filter your search</h3>
+                <form method="GET" class="row row-cols-1">
+                    <div class="row g-6" style="margin-bottom: 15px;">
+                        <label for="min_price_filter">Minimum Price (£)</label>
+                        <input name="min_price" min=0 max=99999999999 placeholder="25.99" id="min_price_filter" <?= isset($_GET["min_price"]) ? "value='". number_format(floatval($_GET["min_price"]), 2) . "'": ""; ?>/>
+
+                    </div>
+                    <div class="row g-6" style="margin-bottom: 15px;">
+                        <label for="max_price_filter">Maximum Price (£)</label>
+                        <input name="max_price" min=0 max=99999999999 placeholder="5999.99" id="max_price_filter" <?= isset($_GET["max_price"]) ? "value='". number_format(floatval($_GET["max_price"]), 2) . "'": ""; ?>/>
+                    </div>
+                    <button type="submit">Filter Products</button>
+                </form> 
+
+                </div>
+            <div class="row row-cols-1 row-cols-md-3 w-75 g-4">
+                <?php if (!empty($products_list)): ?>
+                    <?php foreach ($products_list as $product): ?>
+                        <div class="col">
+                            <div class="card h-100" onclick="window.location.href='product.php?id=<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>';">
+                                <img src="/images/products/<?= htmlspecialchars($product["product_id"], ENT_QUOTES) ?>.jpg" class="card-img-top" alt="<?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?>">
+                                <div class="card-body">
+                                    <h5 class="card-title"><?= htmlspecialchars($product["product_name"], ENT_QUOTES) ?></h5>
+                                    <p class="card-text"><?= htmlspecialchars($product["product_desc"], ENT_QUOTES) ?></p>
+                                    <div class="card-footer">
+                                        <h4>£<?= htmlspecialchars($product["product_price"], ENT_QUOTES) ?></h4>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col">
+                        <p>No products found.</p>
                     </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="col">
-                    <p>No products found.</p>
+                <?php endif; ?>
                 </div>
-            <?php endif; ?>
-        </div>
+            </div>
+            
+            
     </div>
 
     <!-- Pagination -->
