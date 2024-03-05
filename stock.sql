@@ -14,4 +14,4 @@ VALUES
     ('Product C', 75.00, 80, 'Type 1'),
     ('Product D', 120.00, 200, 'Type 2');
 
-CREATE USER 'admin'@'localhost' IDENTIFIED BY 'spacetech';
+
