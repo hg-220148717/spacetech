@@ -162,12 +162,14 @@ class Database
           );",
 
       "CREATE TABLE `reviews` (
-            `review_id` integer PRIMARY KEY,
+            `review_id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
             `review_userid` integer NOT NULL,
             `review_productid` integer NOT NULL,
             `review_rating` integer NOT NULL COMMENT 'Constrain input to only allow 1 to 5 stars',
             `review_text` text NOT NULL
           );",
+
+      "ALTER TABLE `reviews` ADD `review_approved` BOOLEAN NOT NULL DEFAULT FALSE;",
 
       "CREATE TABLE `basket_entries` (
             `basket_entry_id` integer PRIMARY KEY,
@@ -393,6 +395,31 @@ class Database
     return $products;
   }
 
+  public function getAllReviews()
+  {
+    $reviews = [];
+    if ($this->createDatabaseConnection() == "OK") {
+      try {
+        $sql = "SELECT reviews.*, products.product_name, users.user_name 
+                    FROM `reviews` 
+                    JOIN `products` ON reviews.review_productid = products.product_id 
+                    JOIN `users` ON reviews.review_userid = users.user_id
+                    ORDER BY reviews.review_id DESC";
+        $result = $this->db_connection->query($sql);
+        if ($result && $result->num_rows > 0) {
+          while ($row = $result->fetch_assoc()) {
+            $reviews[] = $row;
+          }
+        }
+        return $reviews;
+      } catch (Exception $e) {
+        return "An error occurred: " . $e->getMessage();
+      }
+    } else {
+      return "Database connection error.";
+    }
+  }
+
 
   public function getAllProducts($includeDisabledProducts)
   {
@@ -477,6 +504,29 @@ class Database
       }
 
       return $output;
+    }
+  }
+
+  public function getReviewsByProductID($product_id)
+  {
+    $reviews = [];
+    if ($this->createDatabaseConnection() == "OK") {
+      try {
+
+        $stmt = $this->db_connection->prepare("SELECT * FROM `reviews` WHERE `review_productid` = ? AND `review_approved` = TRUE");
+
+        $stmt->bind_param("i", $product_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+          $reviews[] = $row;
+        }
+        return $reviews;
+      } catch (Exception $e) {
+        return "An error occurred: " . $e->getMessage();
+      }
+    } else {
+      return "Database connection error.";
     }
   }
 
@@ -678,7 +728,7 @@ class Database
       $sql = "SELECT category_id FROM categories WHERE category_id = ? LIMIT 1;";
       $stmt = $this->db_connection->prepare($sql);
 
-      $stmt->bind_param("i", $categoryID); 
+      $stmt->bind_param("i", $categoryID);
       $stmt->execute();
 
       $result = $stmt->get_result();
@@ -740,20 +790,20 @@ class Database
 
   public function deleteCategory($category_id)
   {
-      if ($this->createDatabaseConnection() !== "OK") {
-          return "Error - database connection error.";
-      }
-  
-      try {
-          $query = "DELETE FROM `categories` WHERE `category_id` = ?";
-          $this->db_connection->execute_query($query, [$category_id]);
-          
-          return "Category deleted successfully.";
-      } catch (Exception $e) {
-          return "Error - database query error: " . $e->getMessage();
-      }
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "DELETE FROM `categories` WHERE `category_id` = ?";
+      $this->db_connection->execute_query($query, [$category_id]);
+
+      return "Category deleted successfully.";
+    } catch (Exception $e) {
+      return "Error - database query error: " . $e->getMessage();
+    }
   }
-  
+
   public function categoryExists($name)
   {
     if ($this->createDatabaseConnection() !== "OK") {
@@ -800,6 +850,21 @@ class Database
     } catch (Exception $e) {
       return "Error - database query error.";
     }
+  }
+
+  public function createReview($userId, $productId, $rating, $reviewText)
+  {
+    if ($this->createDatabaseConnection() == "OK") {
+      try {
+        $stmt = $this->db_connection->prepare("INSERT INTO reviews (review_userid, review_productid, review_rating, review_text) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iiis", $userId, $productId, $rating, $reviewText);
+        $stmt->execute();
+        return true;
+      } catch (Exception $e) {
+        return false;
+      }
+    }
+    return false;
   }
 
   public function getEmailFromUserID($id)
@@ -1163,6 +1228,47 @@ class Database
     }
   }
 
+  public function approveReview($review_id)
+  {
+    if ($this->createDatabaseConnection() == "OK") {
+      try {
+        $stmt = $this->db_connection->prepare("UPDATE `reviews` SET `review_approved` = TRUE WHERE `review_id` = ?");
+        $stmt->bind_param("i", $review_id);
+        $success = $stmt->execute();
+
+        if ($success && $stmt->affected_rows > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (Exception $e) {
+        return "An error occurred: " . $e->getMessage();
+      }
+    } else {
+      return false;
+    }
+  }
+
+  public function deleteReview($review_id)
+  {
+    if ($this->createDatabaseConnection() == "OK") {
+      try {
+        $stmt = $this->db_connection->prepare("DELETE FROM `reviews` WHERE `review_id` = ?");
+        $stmt->bind_param("i", $review_id);
+        $success = $stmt->execute();
+
+        if ($success && $stmt->affected_rows > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      } catch (Exception $e) {
+        return "An error occurred: " . $e->getMessage();
+      }
+    } else {
+      return false;
+    }
+  }
 
 }
 

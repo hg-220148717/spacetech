@@ -4,6 +4,11 @@ require_once("../PHP/database-handler.php");
 
 $db_handler = new Database();
 
+if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id"])) {
+    header("Location: ../Pages/index.php");
+    exit; // Ensure no further execution happens after a redirect
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = trim($_POST["name"]);
     $description = trim($_POST["description"]);
