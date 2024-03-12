@@ -9,6 +9,19 @@ $setupStatus = $db_handler->checkSetup();
 if (!$setupStatus) {
     die("Error setting up the database.");
 }
+
+/** FILTER - SEARCH BY PRODUCT NAME **/
+
+// check if user has searched by product name
+$filter_search_active = isset($_GET["search"]);
+
+// set default search query to null (blank)
+$filter_search_query = null;
+
+if($filter_search_active) {
+    $filter_search_query = $_GET["search"];
+}
+
 /** FILTERS - MINIMUM PRICE **/
 
 // check if min price get param is set
@@ -48,7 +61,12 @@ $productsPerPage = 10;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page - 1) * $productsPerPage;
 
-$totalProducts = (!$filter_category_active ? $db_handler->getAllProducts(false) : $db_handler->getProductsByCategoryID($filter_category_id));
+$totalProducts = (!$filter_category_active ? (!$filter_search_active ? $db_handler->getAllProducts(false) : $db_handler->getProductsByName($filter_search_query)) : $db_handler->getProductsByCategoryID($filter_category_id));
+
+// database error handling
+if(!is_countable($totalProducts)) {
+    $totalProducts = array();
+}
 $totalPages = ceil(count($totalProducts) / $productsPerPage);
 $unfiltered_products_list = array_slice($totalProducts, $start, $productsPerPage);
 
@@ -95,20 +113,24 @@ foreach($unfiltered_products_list as $index => $product) {
     <div class="container mt-5">
         <h2 class="mb-4">Shop</h2>
         <p>Browse our wide range of products!</p>
+        <form method="GET">
+            <input name="search" class="form-control" type="text" value='<?= isset($_GET["search"]) ? htmlspecialchars($_GET["search"], ENT_QUOTES) : "" ?>' placeholder="Search by product name...">
+            <button type="submit" class="btn btn-primary ml-2">Search</button>
+        </form>
         <div class="content row">
         <div class="col g-5 sidebar">
                 <h3>Filter your search</h3>
                 <form method="GET" class="row row-cols-1">
-                    <div class="row g-6" style="margin-bottom: 15px;">
+                    <div class="form-group row g-6" style="margin-bottom: 15px;">
                         <label for="min_price_filter">Minimum Price (£)</label>
-                        <input name="min_price" min=0 max=99999999999 placeholder="25.99" id="min_price_filter" <?= isset($_GET["min_price"]) ? "value='". number_format(floatval($_GET["min_price"]), 2) . "'": ""; ?>/>
+                        <input class="form-control" name="min_price" min=0 max=99999999999 placeholder="25.99" id="min_price_filter" <?= isset($_GET["min_price"]) ? "value='". number_format(floatval($_GET["min_price"]), 2) . "'": ""; ?>/>
 
                     </div>
-                    <div class="row g-6" style="margin-bottom: 15px;">
+                    <div class="form-group row g-6" style="margin-bottom: 15px;">
                         <label for="max_price_filter">Maximum Price (£)</label>
-                        <input name="max_price" min=0 max=99999999999 placeholder="5999.99" id="max_price_filter" <?= isset($_GET["max_price"]) ? "value='". number_format(floatval($_GET["max_price"]), 2) . "'": ""; ?>/>
+                        <input class="form-control" name="max_price" min=0 max=99999999999 placeholder="5999.99" id="max_price_filter" <?= isset($_GET["max_price"]) ? "value='". number_format(floatval($_GET["max_price"]), 2) . "'": ""; ?>/>
                     </div>
-                    <button type="submit">Filter Products</button>
+                    <button type="submit" class="btn btn-primary">Filter Products</button>
                 </form> 
 
                 </div>

@@ -51,3 +51,7 @@ footer * {
 .category-title {
     text-shadow: #fff 0px 0px 5px, #fff 0px 0px 5px, #fff 0px 0px 5px, #fff 0px 0px 5px;
 }
+
+.ml-2 {
+    margin-left: 0.5rem !important;
+}
