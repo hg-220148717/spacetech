@@ -25,7 +25,7 @@ if($filter_search_active) {
 /** FILTERS - MINIMUM PRICE **/
 
 // check if min price get param is set
-$filter_min_price_active = isset($_GET["min_price"]);
+$filter_min_price_active = isset($_GET["min_price"]) && $_GET["max_price"] !== "";
 
 // set a default min price of £0.00
 $filter_min_price = 0.00;
@@ -39,7 +39,7 @@ if($filter_min_price_active) {
 /** FILTERS - MAX PRICE **/
 
 // check if min price get param is set
-$filter_max_price_active = isset($_GET["max_price"]);
+$filter_max_price_active = isset($_GET["max_price"]) && $_GET["max_price"] !== "";
 
 // set a default min price of £99,999,999,999.00
 $filter_max_price = 99999999999.00;
@@ -53,7 +53,7 @@ if($filter_max_price_active) {
 /** CATEGORY FILTER **/
 
 // check if filter is active
-$filter_category_active = isset($_GET["category"]);
+$filter_category_active = isset($_GET["category"]) && $_GET["category"] !== "ALL";
 $filter_category_id = ($filter_category_active ? intval($_GET["category"]) : 0);
 
 
@@ -91,6 +91,8 @@ foreach($unfiltered_products_list as $index => $product) {
 
 }
 
+$categories_list = $db_handler->getAllCategories(false);
+
 ?>
 
 <!DOCTYPE html>
@@ -123,12 +125,25 @@ foreach($unfiltered_products_list as $index => $product) {
                 <form method="GET" class="row row-cols-1">
                     <div class="form-group row g-6" style="margin-bottom: 15px;">
                         <label for="min_price_filter">Minimum Price (£)</label>
-                        <input class="form-control" name="min_price" min=0 max=99999999999 placeholder="25.99" id="min_price_filter" <?= isset($_GET["min_price"]) ? "value='". number_format(floatval($_GET["min_price"]), 2) . "'": ""; ?>/>
+                        <input class="form-control" name="min_price" min=0 max=99999999999 placeholder="25.99" id="min_price_filter" <?= isset($_GET["min_price"]) ? "value='". number_format(floatval($_GET["min_price"]), 2, '.', '') . "'": ""; ?>/>
 
                     </div>
                     <div class="form-group row g-6" style="margin-bottom: 15px;">
                         <label for="max_price_filter">Maximum Price (£)</label>
-                        <input class="form-control" name="max_price" min=0 max=99999999999 placeholder="5999.99" id="max_price_filter" <?= isset($_GET["max_price"]) ? "value='". number_format(floatval($_GET["max_price"]), 2) . "'": ""; ?>/>
+                        <input class="form-control" name="max_price" min=0 max=99999999999 placeholder="5999.99" id="max_price_filter" <?= isset($_GET["max_price"]) ? "value='". number_format(floatval($_GET["max_price"]), 2, '.', '') . "'": ""; ?>/>
+                    </div>
+                    <div class="form-group row g-6" style="margin-bottom: 15px;">
+                        <label for="category_filter">Filter by category:</label>
+                        <select class="form-control" name="category" id="category_filter">
+                            <?php if(!empty($categories_list)): ?>
+                                <option value="ALL">All Categories</option>
+                                <?php foreach($categories_list as $category): ?>
+                                    <option <?= intval($category["category_id"]) == intval($_GET["category"]) ? "selected " : "" ?>value="<?= htmlspecialchars($category["category_id"], ENT_QUOTES) ?>"><?= htmlspecialchars($category["category_name"], ENT_QUOTES) ?></option>
+                                <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option id="-1" default hidden>No categories found.</option>
+                                <?php endif; ?>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Filter Products</button>
                 </form> 
