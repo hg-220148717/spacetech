@@ -67,21 +67,26 @@ header .fa-bars{
 }
 /* nav bar*/
 
-/* search bar*/
+/* search bar and filter*/
 
 .search-wrapper {
     width: 95%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #search-container {
     margin: 1em 0;
+    margin-bottom: 20px;
+    
 
 }
 
 #search-container input {
     background-color: transparent;
-    width: 40%;
+    width: 60%;
     border-bottom: 2px solid #110f29;
     padding: 1em 0.3em;
 
@@ -90,6 +95,7 @@ header .fa-bars{
     border-bottom-color: #6759ff;
 
 }
+
 
 #search-container button {
     padding: 1em 2em;
@@ -108,6 +114,7 @@ header .fa-bars{
     background-color: transparent;
     color: #6759ff;
     cursor: pointer;
+    margin-right: 10px;
 }
 
 .active {
