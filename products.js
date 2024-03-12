@@ -25,3 +25,17 @@ function filterProduct(value) {
     });
 
 }
+
+document.getElementById("Search").addEventListener("click", () => {
+    console.log("Search button clicked");
+    let searchInput = document.getElementById("search-input").value.toUpperCase();
+    let elements = document.querySelectorAll(".description");
+    let cards = document.querySelectorAll(".pro");
+    elements.forEach((element, index) => {
+        if (element.innerText.toUpperCase().includes(searchInput)) {
+            cards[index].classList.remove("hide");
+        } else {
+            cards[index].classList.add("hide");
+        }
+    });
+});
