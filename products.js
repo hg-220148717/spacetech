@@ -39,3 +39,10 @@ document.getElementById("Search").addEventListener("click", () => {
         }
     });
 });
+
+document.querySelectorAll(".button-value").forEach(button => {
+    button.addEventListener("click", () => {
+        console.log("Button clicked:", button.innerText);
+        filterProduct(button.innerText);
+    });
+});
