@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - SpaceTech</title>
+  <link rel="stylesheet" href="userstyle.css">
+</head>
+<body>
+    <header>
+
+      <input type="checkbox" name="" id="toggler">
+        <label for="toggler" class="fa fa-bars"></label>
+
+        <a href="#" class="logo">SpaceTech<span>.</span></a>
+
+        <nav class="navbar">
+        <a href="#Home">Home</a>
+        <a href="#About">About</a>
+        <a href="#Products">Products</a>
+        <a href="#Contact Us">Contact Us</a>
+    </nav>
+
+    <div class="icons">
+        <a href="#" class="fa fa-heart"></a>
+        <a href="#" class="fa fa-shopping-cart"></a>
+        <a href="#" class="fa fa-user"></a>
+    </div>
+    
+    </header>
+    <main style="display: flex;">
+      <section class="my-details">
+  <h1>My details</h1>
+  <div class="profile-info">
+    <img src="placeholder.png" alt="Profile Picture" class="profile-pic">
+    <p>Click "Upload" to add or change your profile picture.</p>
+    <button type="button">Upload</button>
+
+    <div class="form-group">
+      <label for="first name">First Name</label>
+      <input type="text" id=" first name" name="first name" required>
+      <label for="middle name">Middle Name</label>
+      <input type="text" id="middle name" name="middle name" required1>
+      <label for="last name">Last Name</label>
+      <input type="text" id="last name" name="last name" required>
+  </div>
+</div>
+
+  <div class="form-group">
+      <h3>Contact Information</h3>
+      <label for="mobile">Mobile Number</label>
+      <input type="tel" id="mobile" name="mobile" required>
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" required>
+  </div>
+    <details>
+      <summary>Change Password</summary>
+      <form action="#">
+        <label for="current-password">Current Password:</label>
+        <input type="password" id="current-password" required>
+        <label for="new-password">New Password:</label>
+        <input type="password" id="new-password" required>
+        <label for="confirm-password">Confirm New Password:</label>
+        <input type="password" id="confirm-password" required>
+        <button type="submit">Change Password</button>
+      </form>
+    </details>
+    <p><a href="forpass.html">Forgot Password?</a></p>
+</div>
+  <button type="button" class="save-btn">Save Changes</button>
+</section>
+
+<section class="contact-info">
+  <h3>Contact Information</h3>
+  <p>Email: example@spacetech.com</p>
+  <p>Phone: +123 456 7890</p>
+</section>
+</main>
+</body>
+</html>
