@@ -6,7 +6,6 @@ CREATE TABLE products (
     product_type VARCHAR(50) NOT NULL
 );
 
--- Inserting product details into the products table
 INSERT INTO products (name, price, quantity, product_type)
 VALUES 
     ('Product A', 50.00, 100, 'Type 1'),
