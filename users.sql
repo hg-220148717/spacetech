@@ -6,3 +6,4 @@ CREATE TABLE users (
     role ENUM('user', 'staff', 'admin') DEFAULT 'user', -- Added 'role' column
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
