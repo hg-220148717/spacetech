@@ -562,7 +562,7 @@ Class Database {
 
       
     }
-  }
+  
 
   public function getReviewsByProductID($product_id)
   {
