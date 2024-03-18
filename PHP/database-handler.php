@@ -1347,10 +1347,10 @@ Class Database {
   /**
    * Check if a product is currently in stock.
    * 
-   * @return boolean|string Returns true/false if the specified product ID is in stock.
+   * @return int|string Returns the stock level of the specified product ID.
    * Returns a string if an error occurred.
    */
-  public function isItemInStock($product_id) {
+  public function getStockLevelOfItem($product_id) {
 
     // input validation
     if(!is_int($product_id)) {
@@ -1367,12 +1367,14 @@ Class Database {
 
       if($result->num_rows <= 0) {
         // product not found
-        return -1;
+        return "Error - product not found.";
       }
 
       while($row = $result->fetch_assoc()) {
-        return intval($row["product_stockcount"]) > 0;
+        return intval($row["product_stockcount"]);
       }
+
+      return "Error - something unexpected happened.";
 
     } catch(Exception $e) {
       return "Error - database query error.";
