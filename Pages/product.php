@@ -14,9 +14,8 @@ $db_handler = new Database();
 $db_handler->testDatabaseConnection();
 $db_handler->checkSetup();
 
-$product = $db_handler->getProductByID(intval($_GET["product_id"]));
-$reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]));
-
+$product = $db_handler->getProductByID(intval($_GET["id"]));
+$reviews = $db_handler->getReviewsByProductID(intval($_GET["id"]));
 ?>
 
 <!DOCTYPE html>
