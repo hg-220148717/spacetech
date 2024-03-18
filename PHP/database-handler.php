@@ -182,7 +182,7 @@ Class Database {
             `basket_entry_id` integer PRIMARY KEY,
             `basket_userid` integer NOT NULL,
             `basket_productid` integer NOT NULL,
-            `entry_quanitity` integer NOT NULL DEFAULT 1,
+            `entry_quantity` integer NOT NULL DEFAULT 1,
             `entry_subtotal` decimal(6,2) NOT NULL
           );",
 
@@ -1103,7 +1103,7 @@ Class Database {
     // attempt to add item to basket
     try {
       $this->db_connection->execute_query(
-        "INSERT INTO `basket_entries` (`basket_userid`, `basket_productid`, `entry_quanitity`, `entry_subtotal`) VALUES (?,?,?,?);", [$user_id, $product_id, $qty, $subtotal]
+        "INSERT INTO `basket_entries` (`basket_userid`, `basket_productid`, `entry_quantity`, `entry_subtotal`) VALUES (?,?,?,?);", [$user_id, $product_id, $qty, $subtotal]
       );
       
       // output success message
