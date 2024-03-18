@@ -587,33 +587,6 @@ Class Database {
     }
   }
 
-  public function getProductByID($id)
-  {
-    // Check if the provided ID is an integer
-    if (is_int($id)) {
-      // Attempt to create a database connection
-      if ($this->createDatabaseConnection() == "OK") {
-        try {
-          // Execute a query to fetch a product by its ID
-          $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_id` = ? LIMIT 1;", [$id]);
-
-          // Check if any row is returned
-          if ($result->num_rows > 0) {
-            // Fetch the array from the result set
-            $row = $result->fetch_assoc();
-
-            // Return the fetched row directly
-            return $row;
-          } else {
-            // Return an error message if no product is found with the given ID
-            return "Error - No results found.";
-          }
-
-        } catch (Exception $e) {
-          // Return a detailed error message in case of an exception
-          return "An error occurred. Stack trace: " . $e->getMessage();
-        }
-
   public function getProductPriceById($productId)
   {
     if ($this->createDatabaseConnection() !== "OK") {
@@ -828,18 +801,8 @@ Class Database {
       } catch(Exception $e) {
         return $this->ERROR_MSG_DB_QUERY_EXCEPTION;
       }
-}
-
-  public function createCategory($name, $is_disabled, $image_path)
-  {
-    // attempt to insert new category info into database
-    try {
-      $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
-      return "Category created successfully.";
-    } catch (Exception $e) {
-      return $e;
     }
-  }
+
   public function editCategory($category_id, $new_name, $new_image_path)
   {
     if ($this->createDatabaseConnection() !== "OK") {
@@ -882,6 +845,7 @@ Class Database {
     } catch (Exception $e) {
       return "Error - database query error: " . $e->getMessage();
     }
+  }
 
     /**
      * Create a new category from supplied parameters
