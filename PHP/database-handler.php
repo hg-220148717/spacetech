@@ -1064,6 +1064,43 @@ Class Database {
     
   }
 
+  /**
+   * Check if a product is currently in stock.
+   * 
+   * @return boolean|string Returns true/false if the specified product ID is in stock.
+   * Returns a string if an error occurred.
+   */
+  public function isItemInStock($product_id) {
+
+    // input validation
+    if(!is_int($product_id)) {
+      return "Error - product ID not an integer.";
+    }
+
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT `product_stockcount` FROM `products` WHERE `product_id` = ?;", [$product_id]);
+
+      if($result->num_rows <= 0) {
+        // product not found
+        return -1;
+      }
+
+      while($row = $result->fetch_assoc()) {
+        return intval($row["product_stockcount"]) > 0;
+      }
+
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
+  }
+
     
 }
 
