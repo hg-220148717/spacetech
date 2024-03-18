@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="update.css">
+
+</head>
+
+<body>
+	<div class="box">
+
+		<div class="inside-box">
+
+			<section class="title">
+				<h1>Testimonial</h1>
+			</section>
+
+			<section class="inner-box">
+
+				<div class="testItem active">
+					<img src="images/ginger.jpg">
+					<h3>Lisa Michelle</h3>
+					<div class="stars">
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+					</div>
+					<h4>"Unparalleled Innovation"</h4>
+					<p>As an avid Apple fan, I eagerly awaited the release of the iPhone 15 Titanium, and it has
+						exceeded all my expectations. The upgraded camera system captures stunning images with
+						true-to-life colors and incredible detail. With its super-fast performance and innovative
+						features, including the latest iOS updates, the iPhone 15 Titanium sets a new standard for
+						smartphones.</p>
+				</div>
+
+				<div class="testItem">
+					<img src="images/woman3.jpg">
+					<h3>Mary Karen</h3>
+					<div class="stars">
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+					</div>
+					<h4>"Immersive Entertainment"</h4>
+					<p> The Sony Bravia 50" 4K Smart TV has completely transformed my home entertainment experience. The
+						4K resolution delivers breathtaking clarity and detail, making every scene come to life with
+						vivid colors and sharp contrast. Plus, the sleek and slim design adds a touch of elegance to my
+						living room. If you're in the market for a new TV, the Sony Bravia 50" is definitely worth
+						considering.</p>
+				</div>
+
+				<div class="testItem">
+					<img src="images/man.jpg">
+					<h3>James Christopher</h3>
+					<div class="stars">
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+						<span class="fa fa-star checked"></span>
+					</div>
+					<h4>"Powerful Performance, Stunning Graphics"</h4>
+					<p> I recently upgraded to the Acer Nitro N50-650 Gaming PC, and I'm beyond impressed with its
+						performance. The Intel® Core™ i5 processor combined with the RTX 4060 graphics card delivers
+						smooth and responsive gameplay. Loading times are virtually non-existent thanks to the
+						lightning-fast 1TB SSD, allowing me to jump straight into the action. Whether you're a casual
+						gamer or a hardcore enthusiast, the Acer Nitro N50-650 is a solid choice that won't disappoint.
+					</p>
+				</div>
+
+			</section>
+
+			<section class="indicators">
+				<div class="dot active" attr='0' onclick="switchTest(this)"></div>
+				<div class="dot" attr='1' onclick="switchTest(this)"></div>
+				<div class="dot" attr='2' onclick="switchTest(this)"></div>
+			</section>
+
+		</div>
+	</div>
+
+	<script type="text/javascript">
+
+		// Access the testimonials
+		let testSlide = document.querySelectorAll('.testItem');
+		// Access the indicators
+		let dots = document.querySelectorAll('.dot');
+
+		var counter = 0;
+
+		// Add click event to the indicators
+		function switchTest(currentTest) {
+			currentTest.classList.add('active');
+			var testId = currentTest.getAttribute('attr');
+			if (testId > counter) {
+				testSlide[counter].style.animation = 'next1 0.5s ease-in forwards';
+				counter = testId;
+				testSlide[counter].style.animation = 'next2 0.5s ease-in forwards';
+			}
+			else if (testId == counter) { return; }
+			else {
+				testSlide[counter].style.animation = 'prev1 0.5s ease-in forwards';
+				counter = testId;
+				testSlide[counter].style.animation = 'prev2 0.5s ease-in forwards';
+			}
+			indicators();
+		}
+
+		// Add and remove active class from the indicators
+		function indicators() {
+			for (i = 0; i < dots.length; i++) {
+				dots[i].className = dots[i].className.replace(' active', '');
+			}
+			dots[counter].className += ' active';
+		}
+
+	</script>
+</body>
+
+</html>

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us</title>
 </head>
+
 <?php include_once("../PHP/header.php"); ?>
 
 <body>
@@ -92,5 +93,3 @@
     </div>
     <?php include_once("../PHP/footer.php"); ?>
 </body>
-
-</html>

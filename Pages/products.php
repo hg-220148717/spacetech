@@ -1,6 +1,9 @@
 <?php
 
-if (session_status() == PHP_SESSION_NONE) { session_start(); }
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once("../PHP/database-handler.php");
 
 $db_handler = new Database();
@@ -58,8 +61,9 @@ $filter_category_id = ($filter_category_active ? intval($_GET["category"]) : 0);
 
 
 $productsPerPage = 10;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $start = ($page - 1) * $productsPerPage;
+
 
 $totalProducts = (!$filter_category_active ? (!$filter_search_active ? $db_handler->getAllProducts(false) : $db_handler->getProductsByName($filter_search_query)) : $db_handler->getProductsByCategoryID($filter_category_id));
 
@@ -97,6 +101,7 @@ $categories_list = $db_handler->getAllCategories(false);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -106,6 +111,7 @@ $categories_list = $db_handler->getAllCategories(false);
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <?php include '../PHP/navbar.php'; ?>
@@ -113,6 +119,7 @@ $categories_list = $db_handler->getAllCategories(false);
     <!-- Main -->
     
     <div class="container mt-5">
+
         <h2 class="mb-4">Shop</h2>
         <p>Browse our wide range of products!</p>
         <form method="GET">
@@ -162,6 +169,7 @@ $categories_list = $db_handler->getAllCategories(false);
                                         <h4>£<?= htmlspecialchars($product["product_price"], ENT_QUOTES) ?></h4>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -182,7 +190,9 @@ $categories_list = $db_handler->getAllCategories(false);
             <ul class="pagination">
                 <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                     <li class="page-item <?= $page === $i ? 'active' : '' ?>">
-                        <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
+                        <a class="page-link" href="?page=<?= $i ?>">
+                            <?= $i ?>
+                        </a>
                     </li>
                 <?php endfor; ?>
             </ul>
@@ -192,4 +202,5 @@ $categories_list = $db_handler->getAllCategories(false);
     <?php include_once("../PHP/footer.php"); ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
