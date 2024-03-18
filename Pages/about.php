@@ -8,7 +8,7 @@
 </head>
 <body>
     
-    <?php include_once("header.php"); ?>
+    <?php include_once("../PHP/header.php"); ?>
     <h1 style="margin-top: 50px;">About Us</h1>
 
     <div class="container">
@@ -44,5 +44,5 @@
         </div>
     </div>
 </body>
-<?php include_once("footer.php"); ?>
+<?php include_once("./PHP/footer.php"); ?>
 </html>

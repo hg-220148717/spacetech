@@ -1,3 +1,11 @@
+<?php
+include_once("../PHP/database-handler.php");
+$db = new Database();
+
+$categories_list = $db->getAllCategories(false);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,6 +36,21 @@
                     <p class="lead">Where technology meets commerce! Explore the virtual universe of SPACETECH and embark on a cosmic adventure of invention.</p>
                     <a href="../Pages/products.php" class="btn btn-primary">Shop Now</a>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories py-5" id="shop">
+        <div class="container">
+            <h2 class="heading mb-4 text-center">Explore our products</h2>
+
+            <div class="row justify-content-center">
+                <?php foreach($categories_list as $category): ?>
+                    <div class="col-3 justify-content-center category-container" onclick="window.location='products.php?category=<?= htmlspecialchars($category["category_id"], ENT_QUOTES) ?>'"style="background-image: url(<?= $category['category_image'] ?>)">
+                        <h3 class="category-title text-center"><?= htmlspecialchars($category["category_name"], ENT_QUOTES) ?></h3>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>

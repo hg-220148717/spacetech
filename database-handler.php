@@ -334,11 +334,14 @@ Class Database {
           }
 
         }
+      } catch(Exception $e) {
+        return "An error occurred.";
+      }
 
         // if no entries match, credentials are wrong, return error.
         return "Incorrect credentials.";
         }
-      }
+      
 
     /**
      * Return information about all products
