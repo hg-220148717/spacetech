@@ -587,6 +587,59 @@ Class Database {
     }
   }
 
+  /**
+   * Makes a user a staff member.
+   * 
+   * @param int $user_id The ID of the user to be updated.
+   * @return string Returns a message indicating the success or failure of the operation.
+   */
+  public function makeUserStaff($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `users` SET `user_isstaff` = true WHERE `user_id` = ?;", [$user_id]);
+      return "User successfully made a staff member.";
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+  /**
+   * Checks if a user is a staff member.
+   * 
+   * @param int $user_id The ID of the user to check.
+   * @return boolean|string Returns true if the user is a staff member, false if not, or an error message if the operation fails.
+   */
+  public function isUserStaff($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT `user_isstaff` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$user_id]);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return (bool) $row["user_isstaff"];
+      } else {
+        return "User not found.";
+      }
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
   public function getProductPriceById($productId)
   {
     if ($this->createDatabaseConnection() !== "OK") {
