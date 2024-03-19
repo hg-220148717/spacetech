@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="coupon.css">
+</head>
+<body>
+
+<div class="box">
+  <h1>Redeem Your Coupon Now</h1>
+  <input type="email" placeholder="Enter your email address" id="email">
+  <button onclick="getCoupon()">Redeem</button>
+  <div class="coupon-code" id="couponCode">
+    <p>Your coupon code:</p>
+    <p id="code"></p>
+  </div>
+</div>
+
+<script>
+  function getCoupon() {
+    var email = document.getElementById('email').value;
+    var couponCode = Coupon();
+    document.getElementById('couponCode').style.display = 'block';
+    document.getElementById('code').innerText = couponCode;
+  }
+  function Coupon() {
+    return 'SPACE25';
+  }
+</script>
+
+</body>
+</html>
+
+
