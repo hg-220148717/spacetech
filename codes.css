@@ -1,0 +1,70 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .coupon {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .logo {
+    width: 100px;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px;
+  }
+  
+  .discount {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  .code-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .valid-till {
+    font-style: italic;
+    margin-bottom: 10px;
+    font-size: small;
+  }
+  
+  .code-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+  }
+  
+  .code {
+    flex-grow: 1;
+    font-weight: bold;
+  }
+  
+  button {
+    margin-left: 10px; /* Add margin to the left of the button */
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #f9a8a8;
+  }
+  
+  
