@@ -1,13 +1,13 @@
 <?php
-// Database connection settings
-$host = "localhost";
-$dbname = " ";
-$username = " ";
-$password = " ";
+// Database connection parameters
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "teamP";
 
 // Create a new PDO instance
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     // Set PDO error mode to exception
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
@@ -22,8 +22,8 @@ if ($is_admin && $_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate form input
     $user_id = $_POST['user_id'];
 
-    // Promote user to staff by updating the 'admin' column in the database
-    $sql = "UPDATE users SET admin = 1 WHERE id = :user_id";
+    // Promote user to staff by updating the 'role' column in the database
+    $sql = "UPDATE users SET role = 'admin' WHERE id = :user_id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['user_id' => $user_id]);
 
