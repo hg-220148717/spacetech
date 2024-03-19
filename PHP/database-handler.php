@@ -19,6 +19,115 @@ Class Database {
     private static $ERROR_MSG_DB_QUERY_EXCEPTION = "Database query error.";
 
 
+    public function validateResetToken($token) {
+
+      // input validation
+      if(!is_string($token)) {
+        return false;
+      }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return false;
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `password_reset_tokens` WHERE `token` = ?;", [$token]);
+
+        if($result->num_rows <= 0) {
+          // no results found, token invalid
+          
+          return false;
+        }
+
+        while ($row = $result->fetch_assoc() ) {
+          if($row["expiry_time"] > time()) {
+            // token valid
+            return true;
+          }
+        }
+        return false;
+
+      } catch(Exception $e) {
+        return false;
+      }
+
+    }
+
+    
+
+    public function getUserIDFromResetToken($token) {
+
+      // input validation
+      if(!is_string($token)) {
+        return "Input validation failed.";
+      }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return $this->ERROR_MSG_DB_CONNECTION_FAILED;
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `password_reset_tokens` WHERE `token` = ?;", [$token]);
+
+        if($result->num_rows <= 0) {
+          // no results found, token invalid
+          return false;
+        }
+
+        while ($row = $result->fetch_assoc() ) {
+          return $this->getUserIDFromEmail($row["email"]);
+        }
+        
+        return false;
+
+      } catch(Exception $e) {
+        return "Database query error.";
+      }
+
+    }
+
+/**
+     * Set's a user's password.
+     * 
+     * @param int $user_id - User's ID
+     * @param string $password - User's desired password
+     * 
+     * @return string|boolean - Returns an error if there was an issue resetting the password,
+     * or returns true if reset successfully.
+     * 
+     */
+    public function setPassword($user_id, $password) {
+
+      // input validation
+      if(!is_int($user_id) || !is_string($password)) {
+        return "Input validation failed.";
+      }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Database connection error.";
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT user_email FROM `users` WHERE `user_id` = ?", [$user_id]);
+        
+        if($result->num_rows < 0) {
+          // user not found
+          return "Error - user not found.";
+        }
+
+        
+        $passhash = $this->generatePasswordHash($password);
+        $this->db_connection->execute_query("UPDATE `users` SET `user_passwordhash` = ? WHERE `user_id` = ?", [$passhash, $user_id]);
+        return true;
+
+      } catch(Exception $e) {
+        return "Database query error.";
+      }
+    }
+
     private function createDatabaseConnection() {
 
         // check if database connectoin is already established
@@ -143,6 +252,14 @@ Class Database {
 
           "ALTER TABLE `users` CHANGE `user_id` `user_id` INT(11) NOT NULL AUTO_INCREMENT;",
           
+          "CREATE TABLE `password_reset_tokens` (
+            `token` VARCHAR(255) NOT NULL, 
+            `email` VARCHAR(255) NOT NULL, 
+            `creation_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `expiry_time` TIMESTAMP,
+            PRIMARY KEY (`token`(255))
+          );",
+
           "CREATE TABLE `categories` (
             `category_id` integer PRIMARY KEY,
             `category_name` varchar(50) NOT NULL,
@@ -1023,6 +1140,43 @@ Class Database {
 
   }
 
+  public function getUserIDFromEmail($email) {
+    // check if supplied user email is a string
+    if(!is_string($email)) {
+      return "Error - email must be a string";
+    }
+
+    // check db connection is active, error if not
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection failure.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query(
+        "SELECT `user_id` FROM `users` WHERE `user_email` LIKE ? LIMIT 1;", [$email]
+      );
+    
+      // check if the db returned at least 1 user entry
+      if($result->num_rows <= 0) {
+        return "Error - user ID not found.";
+      }
+
+      // loop through returned data from db
+      while($row = $result->fetch_assoc()) {
+        // return user's email address from queried user ID
+        return $row["user_id"];
+      }
+
+    } catch(Exception $e) {
+      return "Error - database query failure.";
+    }
+
+    return "Error - unexpected error occurred.";
+
+  }
+
+
+
   /** 
    * Get a user's name from a given user ID
    * 
@@ -1381,7 +1535,48 @@ Class Database {
     }
 
   }
+
+  public function storeAndSendPassResetToken($email) {
+
+    if(!is_string($email)) {
+      // input validation failed
+      return false;
+    }
+
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
     
+
+    $hash_length = 16; // sets length for bytes used for reset token
+    $reset_token = bin2hex(random_bytes($hash_length)); // url safe output 
+    $current_time = strtotime(time());
+    $expiry_time = strtotime(time() + 3600); // expires 1hr after creation
+
+    try {
+      $request = $this->db_connection->execute_query("INSERT INTO `password_reset_tokens` (`token`, `email`, `expiry_time`) VALUES (?, ?, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 HOUR));",[$reset_token, $email]);
+      $this->sendPassResetEmailToUser($email, $reset_token);
+      return true;
+    } catch(Exception $e) {
+      return false;
+    }
+    
+
+  }
+    
+    private function sendPassResetEmailToUser($email, $reset_token) {
+      
+      $message = "Hi there,\n
+      You have requested to reset your password. Please click the link <a href='/reset.php?token=". $reset_token . "'>here</a> to reset your password.\n
+      Kind regards,\n
+      SpaceTech.";
+
+      mail($email, "SpaceTech Password Reset", $message);
+
+      return true;
+    } 
+
     
     public function approveReview($review_id)
   {
