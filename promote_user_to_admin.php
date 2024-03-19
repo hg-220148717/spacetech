@@ -14,6 +14,7 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
+
 // Check if the current user is an admin (you need to implement this logic)
 $is_admin = true; // Example logic - you need to implement your own logic to check if the current user is an admin
 
