@@ -52,8 +52,9 @@ $categories = $db_handler->getAllCategories(false);
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Price</th>
-                        <th scope="col">Disabled</th>
-                        <th scope="col">Product</th>
+                        <th scope="col">Enabled?</th>
+                        <th scope="col">Stock Count</th>
+                        <th scope="col">Category</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -67,7 +68,7 @@ $categories = $db_handler->getAllCategories(false);
                                 <?= htmlspecialchars($product["product_name"], ENT_QUOTES); ?>
                             </td>
                             <td>
-                                <?= htmlspecialchars($db_handler->getProductPriceById($product["product_id"]), ENT_QUOTES); ?>
+                                £<?= htmlspecialchars($db_handler->getProductPriceById($product["product_id"]), ENT_QUOTES); ?>
                             </td>
                             <td>
                                 <?php if ($product["product_isdisabled"]): ?>
@@ -77,12 +78,18 @@ $categories = $db_handler->getAllCategories(false);
                                 <?php endif; ?>
                             </td>
                             <td>
+                                    <?= htmlspecialchars($db_handler->getStockLevelOfItem($product["product_id"]), ENT_QUOTES); ?>
+                            </td>
+                            <td>
                                 <?= htmlspecialchars($db_handler->getCategoryNameByProductId($product["product_id"]), ENT_QUOTES); ?>
                             </td>
                             <td>
                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#editProductModal" data-product-id="<?= $product["product_id"] ?>"
-                                    data-product-name="<?= htmlspecialchars($product["product_name"], ENT_QUOTES); ?>">
+                                    data-product-name="<?= htmlspecialchars($product["product_name"], ENT_QUOTES); ?>"
+                                    data-product-desc="<?= htmlspecialchars($product["product_desc"], ENT_QUOTES); ?>"
+                                    data-product-price="<?= htmlspecialchars($product["product_price"], ENT_QUOTES); ?>"
+                                    data-product-stock="<?= htmlspecialchars($product["product_stockcount"], ENT_QUOTES); ?>">
                                     Edit
                                 </button>
                                 <button class="btn btn-<?= $product["product_isdisabled"] ? 'success' : 'warning'; ?> btn-sm toggle-product" data-bs-toggle="modal"
@@ -129,8 +136,8 @@ $categories = $db_handler->getAllCategories(false);
                                 required>
                         </div>
                         <div class="mb-3">
-                            <label for="productProduct" class="form-label">Product</label>
-                            <select class="form-select" id="productProduct" name="category" required>
+                            <label for="productCategory" class="form-label">Product</label>
+                            <select class="form-select" id="productCategory" name="category" required>
                                 <?php foreach ($categories as $product): ?>
                                     <option value="<?= htmlspecialchars($product["category_id"], ENT_QUOTES); ?>">
                                         <?= htmlspecialchars($product["category_name"], ENT_QUOTES); ?>
@@ -159,20 +166,36 @@ $categories = $db_handler->getAllCategories(false);
                 </div>
                 <form class="row" id="editProductForm" enctype="multipart/form-data">
                     <!-- enctype added for file upload -->
+                    <input type="hidden" id="editProductId" name="product_id">
                     <div class="modal-body">
-                        <input type="hidden" id="editProductId" name="product_id">
-                        <!-- Product Name -->
                         <div class="mb-3">
-                            <label for="editProductName" class="form-label">Name</label>
+                            <label for="productName" class="form-label">Name</label>
                             <input type="text" class="form-control" id="editProductName" name="name" required>
                         </div>
-
-                        <!-- Image Upload -->
                         <div class="mb-3">
-                            <label for="formFileSm" class="form-label">Image</label>
-                            <input class="form-control form-control-sm" id="formFileSm" type="file"
-                                name="productImage">
-
+                            <label for="productDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editProductDesc" name="description"
+                                required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productPrice" class="form-label">Price (£)</label>
+                            <input type="number" step="0.01" class="form-control" id="editProductPrice" name="price"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productStock" class="form-label">Stock Count</label>
+                            <input type="number" step="1" class="form-control" id="editProductStock" name="stock"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCategory" class="form-label">Category</label>
+                            <select class="form-select" id="editProductCategory" name="category" required>
+                                <?php foreach ($categories as $product): ?>
+                                    <option value="<?= htmlspecialchars($product["category_id"], ENT_QUOTES); ?>">
+                                        <?= htmlspecialchars($product["category_name"], ENT_QUOTES); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">

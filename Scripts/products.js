@@ -3,9 +3,16 @@ $(document).ready(function(){
         var button = $(event.relatedTarget); 
         var productId = button.data('product-id');
         var productName = button.data('product-name');
+        var productDesc = button.data('product-desc');
+        var productPrice = button.data('product-price');
+        var productStock = button.data('product-stock');
 
         $('#editProductName').val(productName);
         $('#editProductId').val(productId);
+        $('#editProductDesc').val(productDesc);
+        $('#editProductPrice').val(productPrice);
+        $('#editProductStock').val(productStock);
+
     });
     $('.toggle-product').on('click', function() {
         var productId = $(this).data('product-id');

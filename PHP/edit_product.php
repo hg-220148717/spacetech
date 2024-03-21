@@ -14,25 +14,25 @@ if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $categoryId = intval($_POST["category_id"]);
-    $newName = trim($_POST["name"]);
+    $productId = intval($_POST["product_id"]);
+    $newName = trim($_POST["product_name"]);
 
     $response = [];
-    $categoryDetails = $db_handler->getCategoryById($categoryId);
-    if (!is_array($categoryDetails)) {
+    $productDetails = $db_handler->getProductById($productId);
+    if (!is_array($productDetails)) {
         $response = [
             'status' => 'error',
-            'message' => 'InvalidCategory' 
+            'message' => 'InvalidProduct' 
         ];
     } else {
-        $previousName = $categoryDetails['category_name'];
-        $previousImagePath = $categoryDetails['category_image'];
-        $target_dir = "../images/categories/";
-        $target_file = $target_dir . basename($_FILES["categoryImage"]["name"]);
+        $previousName = $productDetails['product_name'];
+        $previousImagePath = $productDetails['product_image'];
+        $target_dir = "../images/products/";
+        $target_file = $target_dir . $productId . pathinfo(basename($_FILES["categoryImage"]["name"], PATHINFO_EXTENSION));
         $uploadOk = 0;
 
         if (isset($_FILES['categoryImage']) && $_FILES['categoryImage']['error'] == UPLOAD_ERR_OK) {
-            $target_dir . basename($_FILES["categoryImage"]["name"]);
+            $target_dir . $productId . pathinfo(basename($_FILES["categoryImage"]["name"], PATHINFO_EXTENSION));
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
             if (file_exists($target_file)) {
@@ -79,11 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'message' => 'NameExists'
             ];
         } else {
-            $result = $db_handler->editCategory($categoryId, (isset($newName) ? $newName : $previousName), (isset($target_file) ? $target_file : $previousImagePath));
-            if ($result == "Category updated successfully.") {
+            $result = $db_handler->editProduct($categoryId, (isset($newName) ? $newName : $previousName), (isset($target_file) ? $target_file : $previousImagePath));
+            if ($result == "Product updated successfully.") {
                 $response = [
                     'status' => 'success',
-                    'message' => 'Category updated successfully.',
+                    'message' => 'Product updated successfully.',
                     'categoryId' => $categoryId,
                     'newName' => $newName
                 ];
