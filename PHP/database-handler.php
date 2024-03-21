@@ -1046,6 +1046,22 @@ Class Database {
     }
   }
 
+  public function deleteProduct($product_id)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "DELETE FROM `products` WHERE `product_id` = ?";
+      $this->db_connection->execute_query($query, [$product_id]);
+
+      return "Product deleted successfully.";
+    } catch (Exception $e) {
+      return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
     /**
      * Create a new category from supplied parameters
      * @param $name Product name
