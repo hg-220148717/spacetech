@@ -1017,6 +1017,19 @@ Class Database {
     }
   }
 
+  public function toggleProductStatus($productId, $isDisabled)
+  {
+    // SQL to toggle the status
+    $sql = "UPDATE products SET product_isdisabled = ? WHERE product_id = ?";
+    $stmt = $this->db_connection->prepare($sql);
+    $stmt->bind_param("ii", $isDisabled, $productId);
+    if ($stmt->execute()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public function deleteCategory($category_id)
   {
     if ($this->createDatabaseConnection() !== "OK") {

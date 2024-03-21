@@ -44,7 +44,7 @@ $(document).ready(function(){
                 },
                 success: function(response) {
                     console.log(response)
-                  //  window.location.reload(true);
+                    window.location.reload(true);
                 },
                 error: function() {
                     alert('Error deleting category.');
