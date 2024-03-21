@@ -1,3 +1,77 @@
+<?php
+error_reporting(E_ERROR | E_PARSE);
+
+include_once("../PHP/database-handler.php");
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    if(isset($_POST["first-name"]) &&
+        isset($_POST["last-name"]) &&
+        isset($_POST["mobile"]) &&
+        isset($_POST["email"]) &&
+        isset($_POST["msg"])
+    ) {
+
+       sendMessage($_POST["first-name"], $_POST["last-name"], $_POST["email"], $_POST["mobile"], $_POST["msg"]); 
+        $message = "Your message has been sent successfully.";
+    } else {
+
+        if(isset($_POST["newsletter"])) {
+            subscribeToNewsletter($_POST["newsletter"]);
+            $message = "Thank you for subscribing!";
+        } else {
+            // input validation not satisified
+            header("Location: ../Pages/contact.php");
+            exit;
+        }
+    }
+
+}
+
+function subscribeToNewsletter($email) {
+    $db_handler = new Database();
+
+    $admins_list = $db_handler->getAdminsList();
+
+    $message = "Hi there,\n
+    A visitor has subscribed to the newsletter:\n
+    \n
+    Email: " . htmlspecialchars($email, ENT_QUOTES) . "\n
+    \n
+    Kind regards,\n
+    SpaceTech.";
+
+    foreach($admins_list as $admin) {
+      mail($admin, "SpaceTech - New Newsletter Subscription", $message);
+    }
+
+}
+
+function sendMessage($forename, $surname, $email, $mobile, $msg) {
+    $db_handler = new Database();
+
+    $admins_list = $db_handler->getAdminsList();
+
+    foreach($admins_list as $admin) {
+      $message = "Hi there,\n
+      A visitor has submitted a new contact form:\n
+      \n
+      Name: " . htmlspecialchars($forename, ENT_QUOTES) . " " . htmlspecialchars($surname, ENT_QUOTES) . "\n
+      Email: " . htmlspecialchars($email, ENT_QUOTES) . "\n
+      Mobile: " . htmlspecialchars($mobile, ENT_QUOTES) . "\n
+      Message: " . htmlspecialchars($msg, ENT_QUOTES) . "\n
+      \n
+      Kind regards,\n
+      SpaceTech.";
+
+      mail($admin, "SpaceTech - New Contact Form Submission", $message);
+    }
+
+}
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,37 +91,41 @@
             <h1 class="mb-4">Get in Touch</h1>
         </div>
         <div class="container mt-5">
-
+            <? if(isset($message)): ?>
+                <div class="content row">
+                    <h4><?= htmlspecialchars($message, ENT_QUOTES); ?></h4>
+                </div>
+            <? endif; ?>
             <div class="contact form ">
                 <h3>Send a Message</h3>
                 <br>
-                <form>  
+                <form method="POST">  
                     <div class="content row">
                         <div class="col sidebar">
                         <div class="form-group row g-6">
                             <div class="form-group">
                                 <label for="first-name">First Name</label>
-                                <input class="form-control" type="text" placeholder="john" id="first-name" required>
+                                <input class="form-control" type="text" name="first-name" placeholder="john" id="first-name" required>
                             </div>
                             <div class="form-group">
                                 <label for="last-name">Last Name</label>
-                                <input class="form-control" type="text" placeholder="doe" id="last-name" required>
+                                <input class="form-control" type="text" name="last-name" placeholder="doe" id="last-name" required>
                             </div>
                         </div>
                         <div class="form-group row g-6">
                             <div class="form-group">
                                 <label for="email">Email Address</label>
-                                <input class="form-control" type="text" placeholder="johndoe@gmail.com" id="email" required>
+                                <input class="form-control" type="email" name="email" placeholder="johndoe@gmail.com" id="email" required>
                             </div>
                             <div class="form-group">
                                 <label for="mobile">Mobile</label>
-                                <input class="form-control" type="text" placeholder="+99 123 345 6789" id="mobile" required>
+                                <input class="form-control" type="text" name="mobile" placeholder="+99 123 345 6789" id="mobile" required>
                             </div>
                         </div>
                         <div class="form-group row g-6">
                             <div class="form-group">
                                 <label for="msg">Message</label>
-                                <textarea class="form-control" placeholder="Write your message here..." id="msg" required></textarea>
+                                <textarea class="form-control" name="msg" placeholder="Write your message here..." id="msg" required></textarea>
                             </div>
                         </div>
                         <div class="form-group row g-6">
@@ -78,8 +156,8 @@
             <div class="news row mt-5">
                 <h2>Subscribe to Our Newsletter!</h2>
                 <div class="form-group mb-4">
-                    <form>
-                        <input class="form-control" type="email" placeholder="Your Email Address" required>
+                    <form method="POST">
+                        <input class="form-control" name="newsletter" type="email" placeholder="Your Email Address" required>
                         <button class="btn btn-primary ml-2" type="submit">Subscribe</button>
                     </form>
                 </div>

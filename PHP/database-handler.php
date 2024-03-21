@@ -1577,6 +1577,34 @@ Class Database {
       return true;
     } 
 
+    public function getAdminsList() {
+
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Database connection error.";
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `users` WHERE `user_isadmin` = 1;");
+        
+        $admins_list = array();
+
+        // no admins found - return blank array
+        if($result->num_rows <= 0) {
+          return $admins_list;
+        }
+
+        while($row = $result->fetch_assoc()) {
+          $admins_list[] = $admins_list + $row;
+        }
+
+        return $admins_list;
+
+      } catch(Exception $e) {
+        return "Database query error.";
+      }
+
+    }
+
     
     public function approveReview($review_id)
   {
