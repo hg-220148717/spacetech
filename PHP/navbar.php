@@ -29,6 +29,7 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
             <div class="navbar-nav">
                 <a class="nav-link" aria-current="page" href="../Pages/index.php" target="_self">Home</a>
                 <a class="nav-link" aria-current="page" href="../Pages/products.php" target="_self">Shop</a>
+                <a class="nav-link" aria-current="page" href="../Pages/about.php" target="_self">About Us</a>
                 <a class="nav-link" aria-current="page" href="../Pages/contact.php" target="_self">Contact Us</a>
             </div>
             <div class="navbar-nav dropdown ms-auto">
