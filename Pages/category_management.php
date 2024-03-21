@@ -99,7 +99,7 @@ $categories = $db_handler->getAllCategories(true);
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Products</th>
-                        <th scope="col">Disabled</th>
+                        <th scope="col">Enabled?</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -117,7 +117,7 @@ $categories = $db_handler->getAllCategories(true);
                                 <?= htmlspecialchars(count($db_handler->getProductsByCategoryID($category['category_id'])), ENT_QUOTES); ?>
                             </td>
                             <td>
-                                <?php if ($category["category_isdisabled"]): ?>
+                                <?php if (!$category["category_isdisabled"]): ?>
                                     <i class="fas fa-check-circle"></i>
                                 <?php else: ?>
                                     <i class="fas fa-times-circle"></i>
@@ -129,7 +129,7 @@ $categories = $db_handler->getAllCategories(true);
                                     data-category-name="<?= htmlspecialchars($category["category_name"], ENT_QUOTES); ?>">
                                     Edit
                                 </button>
-                                <button class="btn btn-warning btn-sm toggle-category" data-bs-toggle="modal"
+                                <button class="btn btn-<?= $category["category_isdisabled"] ? 'success' : 'warning'; ?> btn-sm toggle-category" data-bs-toggle="modal"
                                     data-bs-target="#toggleCategoryModal" data-category-id="<?= $category["category_id"] ?>"
                                     data-is-disabled="<?= $category["category_isdisabled"] ? '1' : '0'; ?>">
                                     <?= $category["category_isdisabled"] ? 'Enable' : 'Disable'; ?>
