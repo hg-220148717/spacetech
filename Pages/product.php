@@ -55,16 +55,21 @@ $reviews = $db_handler->getReviewsByProductID(intval($_GET["id"]));
                 <p>
                     <?php echo htmlspecialchars($product["product_desc"], ENT_QUOTES); ?>
                 </p>
+                <?php if(intval($product["product_stockcount"]) > 0): ?>
+                <h5><?= htmlspecialchars($product["product_stockcount"], ENT_QUOTES) ?> in stock</h5>
                 <form action="../PHP/add_to_cart.php" method="POST" class="py-2">
                     <input type="number" name="product_id"
                         value="<?php echo htmlspecialchars($product["product_id"], ENT_QUOTES); ?>" hidden>
-
+                
                     <div class="input-group mb-3" style="width: 160px;">
                         <span class="input-group-text">Qty</span>
-                        <input type="number" name="qty" value="1" class="form-control" aria-label="Quantity" min="1">
+                        <input type="number" name="qty" value="1" min="1" max="<?= htmlspecialchars($product["product_stockcount"], ENT_QUOTES) ?>" class="form-control" aria-label="Quantity">
                     </div>
                     <button type="submit" class="btn btn-primary">Add To Cart</button>
                 </form>
+                <?php else: ?>
+                    <h4>Out of stock</h4>
+                <?php endif; ?>
             </div>
         </div>
     </div>

@@ -166,7 +166,7 @@ $basket_contents = $db_handler->getBasketContents($_SESSION["user_id"]);
                                 <span class="text-muted">£
                                     <?= htmlspecialchars($item["entry_subtotal"], ENT_QUOTES); ?>
                                 </span>
-                                <form action="remove_from_cart.php" method="POST" class="d-inline">
+                                <form action="../PHP/remove_from_cart.php" method="POST" class="d-inline">
                                     <input type="hidden" name="entry_id"
                                         value="<?= htmlspecialchars($item["basket_entry_id"], ENT_QUOTES); ?>">
                                     <button type="submit" class="btn btn-sm btn-danger">Remove</button>

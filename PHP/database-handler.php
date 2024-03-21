@@ -1336,14 +1336,14 @@ Class Database {
       // get order number from previous query
       $order_no = $this->db_connection->insert_id;
 
-      $basket_contents = $this->getBasketContents($user_id);
+      $basket_contents = $this->getBasketContents(intval($user_id));
 
       // loop through each entry in the basket
       foreach ($basket_contents as $item) {
         // add item line to database and link to order ID
-        $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $item["product_id"], $item["qty"], $item["subtotal"]]);
+        $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $item["basket_productid"], $item["entry_quantity"], $item["entry_subtotal"]]);
         // remove item from basket
-        $this->removeFromBasket($item["entry_id"], $user_id);
+        $this->removeFromBasket(intval($item["basket_entry_id"]), $user_id);
       }
   
       return "Order submitted successfully.";
