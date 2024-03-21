@@ -22,12 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!is_array($categoryDetails)) {
         $response = [
             'status' => 'error',
-            'message' => 'InvalidCategory'
+            'message' => 'InvalidCategory' 
         ];
     } else {
         $previousName = $categoryDetails['category_name'];
         $previousImagePath = $categoryDetails['category_image'];
-
+        echo var_dump($_FILES);
         $target_dir = "../images/categories/";
         $target_file = $target_dir . basename($_FILES["categoryImage"]["name"]);
         $uploadOk = 0;
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'message' => 'NameExists'
             ];
         } else {
-            $result = $db_handler->editCategory($categoryId, $newName or $previousName, $target_file or $previousImagePath);
+            $result = $db_handler->editCategory($categoryId, (isset($newName) ? $newName : $previousName), (isset($target_file) ? $target_file : $previousImagePath));
             if ($result == "Category updated successfully.") {
                 $response = [
                     'status' => 'success',

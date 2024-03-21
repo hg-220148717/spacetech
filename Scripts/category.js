@@ -56,13 +56,16 @@ $(document).ready(function(){
 
 $('#editCategoryForm').submit(function(event) {
     event.preventDefault();
-    var formData = $(this).serialize(); 
+    var formData = new FormData($("#editCategoryForm")[0]);
+    formData.append('file', document.getElementById("formFileSm").files[0]);
     console.log(formData)
 
     $.ajax({
         type: "POST",
         url: "../PHP/edit_category.php",
         data: formData,
+        processData: false,
+        contentType: false,
         success: function(response) {
             console.log(response)
             var alertHtml = '';
@@ -71,7 +74,7 @@ $('#editCategoryForm').submit(function(event) {
             } else if(response.message === 'NameExists') {
                 alertHtml = '<div class="alert alert-warning" role="alert">Category Name Exists!</div>';
             } else {
-                alertHtml = '<div class="alert alert-danger" role="alert">Failed to update category. ' + response.message + '</div>';
+                alertHtml = '<div class="alert alert-danger" role="alert">Failed to update category.</div>';
             }
     
             $('#alertPlaceholder').html(alertHtml);
