@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate password requirements
     if (!preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/", $password)) {
         // Password does not meet the requirements
-        $message = "Password must contain at least one uppercase letter, one number, and one special character, and be at least 8 characters long.";
+        $message = "Your password must contain at least one uppercase letter, one number, and one special character, and be at least 8 characters long.";
     } else {
 
     if ($db_handler->createUser($email, $password, $name) == "User account created successfully.") {
@@ -27,8 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         exit();
     } else {
-        echo "User already exists. Please log in.";
-        exit();
+        $message = "An account with that email address already exists. Please log in.";
     }
 }
 
