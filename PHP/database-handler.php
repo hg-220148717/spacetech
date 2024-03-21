@@ -914,7 +914,23 @@ Class Database {
     }
   }
 
-  
+  public function categoryExists($name)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "SELECT 1 FROM `categories` WHERE `category_name` = ? LIMIT 1;";
+      $execution = $this->db_connection->execute_query($query, [$name]);
+      $exists = $execution->num_rows > 0;
+      $execution->free_result();
+
+      return $exists;
+    } catch (Exception $e) {
+      return false;
+    }
+  }
 
     /**
      * Get an array of products belonging to a particular category from Category ID.
