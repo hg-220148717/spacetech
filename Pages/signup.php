@@ -15,9 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate password requirements
     if (!preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/", $password)) {
         // Password does not meet the requirements
-        echo "Password must contain at least one uppercase letter, one number, and one special character, and be at least 8 characters long.";
-        exit();
-    }
+        $message = "Password must contain at least one uppercase letter, one number, and one special character, and be at least 8 characters long.";
+    } else {
 
     if ($db_handler->createUser($email, $password, $name) == "User account created successfully.") {
         // Redirect to a Home Page, login successful
@@ -31,6 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "User already exists. Please log in.";
         exit();
     }
+}
 
 }
 
@@ -56,6 +56,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="card">
                     <div class="card-body">
                         <h3 class="card-title text-center">Sign Up</h3>
+
+                        <?php if(isset($message)): ?>
+                        <div class="alert alert-danger">
+                            <p><?= htmlspecialchars($message); ?>
+                        </div>
+                        <?php endif; ?>
+
                         <form action="../Pages/signup.php" method="POST">
                             <div class="mb-3">
                                 <label for="fname" class="form-label">First Name</label>
