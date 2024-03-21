@@ -929,11 +929,11 @@ Class Database {
 
       // input validation
       if(!is_int($category_id)) {
-        return $this->ERROR_MSG_INPUT_VALIDATION;
+        return "Error - Category ID must be an int.";
       }
       // check db connection
       if($this->createDatabaseConnection() !== "OK") {
-        return $this->ERROR_MSG_DB_CONNECTION_FAILED;
+        return "Error - Database connection error.    ";
       }
 
 
@@ -941,8 +941,8 @@ Class Database {
         $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `category_id` = ?;", [$category_id]);
            
         if($result->num_rows <= 0) {
-          // no results found, category contains no products, return null
-          return null;
+          // no results found, category contains no products, return blank array
+          return array();
         }
 
         $products_array = array();
