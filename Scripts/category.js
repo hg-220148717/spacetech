@@ -71,7 +71,7 @@ $('#editCategoryForm').submit(function(event) {
             } else if(response.message === 'NameExists') {
                 alertHtml = '<div class="alert alert-warning" role="alert">Category Name Exists!</div>';
             } else {
-                alertHtml = '<div class="alert alert-danger" role="alert">Failed to update category.</div>';
+                alertHtml = '<div class="alert alert-danger" role="alert">Failed to update category. ' + response.message + '</div>';
             }
     
             $('#alertPlaceholder').html(alertHtml);

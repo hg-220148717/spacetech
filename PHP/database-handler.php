@@ -895,7 +895,7 @@ Class Database {
     }
 
     try {
-      $sql = "SELECT category_id FROM categories WHERE category_id = ? LIMIT 1;";
+      $sql = "SELECT * FROM categories WHERE category_id = ? LIMIT 1;";
       $stmt = $this->db_connection->prepare($sql);
 
       $stmt->bind_param("i", $categoryID);
@@ -905,7 +905,7 @@ Class Database {
 
       if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        return $row['category_id'];
+        return $row;
       } else {
         return "null";
       }
