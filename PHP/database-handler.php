@@ -1340,10 +1340,29 @@ Class Database {
 
       // loop through each entry in the basket
       foreach ($basket_contents as $item) {
+
+        $product_id = $item["basket_productid"];
+        $qty = $item["entry_quantity"];
+        $subtotal = $item["entry_subtotal"];
+
         // add item line to database and link to order ID
-        $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $item["basket_productid"], $item["entry_quantity"], $item["entry_subtotal"]]);
+        $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $product_id, $qty, $subtotal]);
         // remove item from basket
         $this->removeFromBasket(intval($item["basket_entry_id"]), $user_id);
+
+        
+
+        // update stock
+        $new_stock_level = intval($this->getStockLevelOfItem($product_id) - $qty);
+        $this->setStockLevelOfItem($product_id, $new_stock_level);
+
+        // check if low/out of stock notification required
+        if($new_stock_level >= 6 && $new_stock_level !== 0) {
+          $this->notifyLowStock($product_id);
+        } else if($new_stock_level == 0) {
+          $this->notifyOutOfStock($product_id);
+        }
+
       }
   
       return "Order submitted successfully.";
@@ -1352,6 +1371,39 @@ Class Database {
       return "Error - database query error.";
     }
 
+  }
+
+  private function notifyLowStock($product_id) {
+    $admins_list = $this->getAdminsList();
+
+    $message = "Hi there,\n
+    An item is now low on stock.\n
+    \n
+    Product ID: " . htmlspecialchars($product_id, ENT_QUOTES) . "\n
+    \n
+    Kind regards,\n
+    SpaceTech.";
+
+    foreach($admins_list as $admin) {
+      mail($admin, "SpaceTech - Stock Notification", $message);
+    }
+  }
+
+  private function notifyOutOfStock($product_id) {
+
+    $admins_list = $this->getAdminsList();
+
+    $message = "Hi there,\n
+    An item is now out of stock.\n
+    \n
+    Product ID: " . htmlspecialchars($product_id, ENT_QUOTES) . "\n
+    \n
+    Kind regards,\n
+    SpaceTech.";
+
+    foreach($admins_list as $admin) {
+      mail($admin, "SpaceTech - Stock Notification", $message);
+    }
   }
 
   /**
@@ -1529,6 +1581,37 @@ Class Database {
       }
 
       return "Error - something unexpected happened.";
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
+  }
+
+  /**
+   * Check if a product is currently in stock.
+   * 
+   * @param $product_id Product ID
+   * @param $new_stock_level Desired new stock level
+   * 
+   * @return int|string Returns new stock level of the specified product ID.
+   * Returns a string if an error occurred.
+   */
+  public function setStockLevelOfItem($product_id, $new_stock_level) {
+
+    // input validation
+    if(!is_int($product_id)) {
+      return "Error - product ID not an integer.";
+    }
+
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `products` SET `product_stockcount` = ? WHERE `product_id` = ?;", [$new_stock_level, $product_id]);
+      return $this->getStockLevelOfItem($product_id);
 
     } catch(Exception $e) {
       return "Error - database query error.";
