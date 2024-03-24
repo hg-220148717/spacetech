@@ -56,8 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="card-body">
                         <h3 class="card-title text-center">Login Here</h3>
                         <form action="login.php" method="POST">
-                            <?php if (isset($error_msg))
-                                echo $error_msg; ?>
+                            <?php if (isset($error_msg)): ?>
+                                <div class="alert alert-danger">
+                                    <p><?= htmlspecialchars($error_msg, ENT_QUOTES); ?>
+                                </div>
+                            <?php endif; ?>
 
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
