@@ -526,6 +526,72 @@ Class Database {
 
     }
 
+  public function getJsonOrderContents($order_id) {
+    
+    // input validation
+    if(!is_int($order_id)) {
+      return "Error - order ID must be integer";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `order_items`.*, `products`.`product_name` FROM `order_items` JOIN `products` ON `order_items`.`product_id` = `products`.`product_id` WHERE `order_id` = ?;";
+
+    try {
+      $request = $this->db_connection->execute_query($sql, [$order_id]);
+
+      $order_contents_array = array();
+
+      // check if any line items found
+      if(!($request->num_rows > 0)) {
+        return "{}";
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $order_contents_array[] = $row;
+      }
+
+      return json_encode($order_contents_array);
+ 
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
+
+
+  public function getAllOrders() {
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` ORDER BY `orders`.`order_id` ASC;";
+    
+    try {
+      $request = $this->db_connection->execute_query($sql);
+      $orders_array = array();
+
+      // check if any orders found, return blank array if none found
+      if(!($request->num_rows > 0)) {
+        return $orders_array();
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $orders_array[] = $orders_array + $row;
+      }
+
+      return $orders_array;
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
+
   public function getRandomProducts($limit = 6)
   {
     $sql = "SELECT * FROM products ORDER BY RAND() LIMIT ?";
