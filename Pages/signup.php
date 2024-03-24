@@ -44,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- CSS -->
+    <link rel="stylesheet" href="../Styles/master-style.css">
     <link rel="stylesheet" href="../Styles/backgroundimage.css">
 </head>
 
@@ -52,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card">
+                <div class="card mb-5">
                     <div class="card-body">
                         <h3 class="card-title text-center">Sign Up</h3>
 
@@ -92,6 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">Sign Up</button>
+                                <a href="../Pages/login.php" class="btn btn-outline-secondary">Already signed up? Login</a>
                             </div>
                         </form>
                     </div>
