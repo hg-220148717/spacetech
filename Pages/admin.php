@@ -43,15 +43,6 @@ $name = $db_handler->getNameFromUserID($_SESSION["user_id"])
   <div class="container mt-5">
     <h1 class="mb-4">Welcome, <?= htmlspecialchars($name) ?></h3>
     <div class="row g-5">
-    <div class="col-lg-4 col-md-6">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-boxes fa-lg"></i> Stock Management</h5>
-            <p class="card-text">Manage your inventory and stock levels.</p>
-            <a href="stock_management.php" class="btn btn-primary">Manage Stock</a>
-          </div>
-        </div>
-      </div>
       <div class="col-lg-4 col-md-6">
         <div class="card h-100">
           <div class="card-body">
@@ -82,9 +73,9 @@ $name = $db_handler->getNameFromUserID($_SESSION["user_id"])
       <div class="col-lg-4 col-md-6">
         <div class="card h-100">
           <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-box-open fa-lg"></i> Product Management</h5>
-            <p class="card-text">Add, update, or remove products.</p>
-            <a href="product_management.php" class="btn btn-warning">Manage Products</a>
+            <h5 class="card-title"><i class="fas fa-box-open fa-lg"></i> Product & Stock Management</h5>
+            <p class="card-text">Add, update, or remove products, manage stock levels and inventory.</p>
+            <a href="product_management.php" class="btn btn-warning">Manage Products & Inventory</a>
           </div>
         </div>
       </div>
