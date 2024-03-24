@@ -6,12 +6,14 @@ $(document).ready(function(){
         var productDesc = button.data('product-desc');
         var productPrice = button.data('product-price');
         var productStock = button.data('product-stock');
+        var productCategory = button.data('product-category');
 
         $('#editProductName').val(productName);
         $('#editProductId').val(productId);
         $('#editProductDesc').val(productDesc);
         $('#editProductPrice').val(productPrice);
         $('#editProductStock').val(productStock);
+        $('#editProductCategory').val(productCategory);
 
     });
     $('.toggle-product').on('click', function() {
@@ -64,7 +66,7 @@ $(document).ready(function(){
 $('#editProductForm').submit(function(event) {
     event.preventDefault();
     var formData = new FormData($("#editProductForm")[0]);
-    formData.append('file', document.getElementById("formFileSm").files[0]);
+    formData.append('file', document.getElementById("formFileEdit").files[0]);
     console.log(formData)
 
     $.ajax({

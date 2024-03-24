@@ -89,6 +89,7 @@ $categories = $db_handler->getAllCategories(false);
                                     data-product-name="<?= htmlspecialchars($product["product_name"], ENT_QUOTES); ?>"
                                     data-product-desc="<?= htmlspecialchars($product["product_desc"], ENT_QUOTES); ?>"
                                     data-product-price="<?= htmlspecialchars($product["product_price"], ENT_QUOTES); ?>"
+                                    data-product-category="<?= htmlspecialchars($product["category_id"], ENT_QUOTES); ?>"
                                     data-product-stock="<?= htmlspecialchars($product["product_stockcount"], ENT_QUOTES); ?>">
                                     Edit
                                 </button>
@@ -145,6 +146,13 @@ $categories = $db_handler->getAllCategories(false);
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <!-- Image Upload -->
+                        <div class="mb-3">
+                            <label for="formFileSm" class="form-label">Product Image</label>
+                            <input class="form-control form-control-sm" id="formFileCreate" type="file"
+                                name="productImage">
+
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -170,7 +178,7 @@ $categories = $db_handler->getAllCategories(false);
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="productName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="editProductName" name="name" required>
+                            <input type="text" class="form-control" id="editProductName" name="product_name" required>
                         </div>
                         <div class="mb-3">
                             <label for="productDescription" class="form-label">Description</label>
@@ -196,6 +204,13 @@ $categories = $db_handler->getAllCategories(false);
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                        <!-- Image Upload -->
+                        <div class="mb-3">
+                            <label for="formFileSm" class="form-label">Product Image</label>
+                            <input class="form-control form-control-sm" id="formFileEdit" type="file"
+                                name="product_image">
+
                         </div>
                     </div>
                     <div class="modal-footer">

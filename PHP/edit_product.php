@@ -16,6 +16,10 @@ if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $productId = intval($_POST["product_id"]);
     $newName = trim($_POST["product_name"]);
+    $newDesc = trim($_POST["description"]);
+    $newStock = trim($_POST["stock"]);
+    $newPrice = trim($_POST["price"]);
+    $newCategoryID = trim($_POST["category"]);
 
     $response = [];
     $productDetails = $db_handler->getProductById($productId);
@@ -26,13 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ];
     } else {
         $previousName = $productDetails['product_name'];
-        $previousImagePath = $productDetails['product_image'];
+        $previousImagePath = strval($productDetails['product_id']) . ".jpg";
         $target_dir = "../images/products/";
-        $target_file = $target_dir . $productId . pathinfo(basename($_FILES["categoryImage"]["name"], PATHINFO_EXTENSION));
+        $target_file = $target_dir . $productId . strval($productDetails['product_id']) . ".jpg";
         $uploadOk = 0;
+        $previousCategoryID = $productDetails["category_id"];
+        $previousDesc = $productDetails["product_desc"];
+        $previousStock = $productDetails["product_stockcount"];
+        $previousPrice = $productDetails["product_price"];
 
-        if (isset($_FILES['categoryImage']) && $_FILES['categoryImage']['error'] == UPLOAD_ERR_OK) {
-            $target_dir . $productId . pathinfo(basename($_FILES["categoryImage"]["name"], PATHINFO_EXTENSION));
+
+        if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] == UPLOAD_ERR_OK) {
+            $target_dir . $productId . ".jpg";
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
             if (file_exists($target_file)) {
@@ -43,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ];
             }
 
-            if ($_FILES["categoryImage"]["size"] > 2000000) {
+            if ($_FILES["product_image"]["size"] > 2000000) {
                 $uploadOk = 0;
                 $response = [
                     'status' => 'error',
@@ -51,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ];
             }
 
-            $check = getimagesize($_FILES["categoryImage"]["tmp_name"]);
+            $check = getimagesize($_FILES["product_image"]["tmp_name"]);
             if ($check == false) {
                 $uploadOk = 0;
                 $response = [
@@ -60,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ];
             }
 
-            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+            if ($imageFileType != "jpg") {
                 $uploadOk = 0;
                 $response = [
                     'status' => 'error',
@@ -68,23 +77,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ];
             }
 
-            if (move_uploaded_file($_FILES["categoryImage"]["tmp_name"], $target_file)) {
+            if (move_uploaded_file($_FILES["product_image"]["tmp_name"], $target_file)) {
                 $uploadOk = 1;
             }
-        }
-
-        if ($db_handler->categoryExists($newName)) {
-            $response = [
-                'status' => 'error',
-                'message' => 'NameExists'
-            ];
         } else {
-            $result = $db_handler->editProduct($categoryId, (isset($newName) ? $newName : $previousName), (isset($target_file) ? $target_file : $previousImagePath));
+            $result = $db_handler->editProduct($productId,
+            (isset($newName) ? $newName : $previousName),
+            (isset($newDesc) ? $newDesc : $previousDesc),
+            (isset($newPrice) ? $newPrice : $previousPrice),
+            (isset($newStock) ? $newStock : $previousStock),
+            (isset($newCategoryID) ? $newCategoryID : $previousCategoryID),
+            );
             if ($result == "Product updated successfully.") {
                 $response = [
                     'status' => 'success',
                     'message' => 'Product updated successfully.',
-                    'categoryId' => $categoryId,
+                    'productId' => $productId,
                     'newName' => $newName
                 ];
             } else {

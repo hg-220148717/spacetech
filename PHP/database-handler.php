@@ -1004,6 +1004,21 @@ Class Database {
     }
   }
 
+  public function editProduct($product_id, $new_name, $new_desc, $new_price, $new_stock, $new_category_id)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "UPDATE `products` SET `category_id`=?,`product_name`=?,`product_desc`=?,`product_price`=?,`product_stockcount`=? WHERE `product_id` = ?";
+      $this->db_connection->execute_query($query, [$new_category_id, $new_name, $new_desc, $new_price, $new_stock, $product_id]);
+      return "Product updated successfully.";
+    } catch (Exception $e) {
+      return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
   public function toggleCategoryStatus($categoryId, $isDisabled)
   {
     // SQL to toggle the status
