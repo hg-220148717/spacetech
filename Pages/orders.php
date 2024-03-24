@@ -21,7 +21,7 @@ $order_statuses = $db_handler->getOrderStatuses();
 
 
 
-if(isset($_GET["search"])) {
+if(isset($_GET["search"]) && strlen($_GET["search"]) > 0) {
     $filtered_orders = array();
     foreach($orders as $order) {
         if(str_starts_with(strtolower($order["user_name"]), strtolower($_GET["search"]))) {
@@ -30,6 +30,19 @@ if(isset($_GET["search"])) {
     }
 
     $orders = $filtered_orders;
+}
+
+if(isset($_GET["order_status"]) && $_GET["order_status"] > 0) {
+
+    $filtered_orders = array();
+    foreach($orders as $order) {
+        if($order["status_id"] == $_GET["order_status"]) {
+            $filtered_orders[] = $order;
+        }
+    }
+
+    $orders = $filtered_orders;
+
 }
 
 ?>
@@ -58,9 +71,22 @@ if(isset($_GET["search"])) {
     <div class="container mt-5">
         <h2>Orders List</h2>
         <form method="GET">
-            <input name="search" class="form-control" type="text" value='<?= isset($_GET["search"]) ? htmlspecialchars($_GET["search"], ENT_QUOTES) : "" ?>' placeholder="Search by customer name...">
-            <button type="submit" class="btn btn-primary ml-2">Search</button>
+            <div class="form-group">
+                <input name="search" class="form-control" type="text" value='<?= isset($_GET["search"]) ? htmlspecialchars($_GET["search"], ENT_QUOTES) : "" ?>' placeholder="Search by customer name...">
+            </div>
+            <div class="form-group">
+                <label>Filter by order status:
+                <select class="form-control" name="order_status">
+                    <?php foreach($order_statuses as $status): ?>
+                    <option value="<?= htmlspecialchars($status["status_id"]) ?>"  <?= (isset($_GET["order_status"]) && $status["status_id"] == $_GET["order_status"] ? "selected" : "")?>><?= htmlspecialchars($status["status_name"]) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group mt-2">
+                <button type="submit" class="btn btn-primary ml-2">Filter</button>
+            </div>
         </form>
+        <?php if(!empty($orders)): ?>
         <table class="table">
             <thead class="thead-dark">
                 <tr>
@@ -106,6 +132,9 @@ if(isset($_GET["search"])) {
                 <?php endforeach; ?>
             </tbody>
         </table>
+        <?php else: ?>
+            <h4>No orders found that meet your search criteria.</h4>
+        <?php endif; ?>
     </div>
 
     <!-- View Modal -->

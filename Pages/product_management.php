@@ -17,6 +17,31 @@ if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id
 
 $products = $db_handler->getAllProducts(true);
 $categories = $db_handler->getAllCategories(false);
+
+if(isset($_GET["search"]) && strlen($_GET["search"]) > 0) {
+    $filtered_products = array();
+    foreach($products as $product) {
+        if(str_starts_with(strtolower($product["product_name"]), strtolower($_GET["search"]))) {
+            $filtered_products[] = $product;
+        }
+    }
+
+    $products = $filtered_products;
+}
+
+if(isset($_GET["category"]) && $_GET["category"] > 0) {
+
+    $filtered_products = array();
+    foreach($products as $product) {
+        if($product["category_id"] == $_GET["category"]) {
+            $filtered_products[] = $product;
+        }
+    }
+
+    $products = $filtered_products;
+
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -42,7 +67,25 @@ $categories = $db_handler->getAllCategories(false);
 
     <div class="container mt-5">
         <h2 class="mb-4">Product Management</h2>
-        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#createProductModal">Create New
+        <form method="GET">
+            <div class="form-group">
+                <input name="search" class="form-control" type="text" value='<?= isset($_GET["search"]) ? htmlspecialchars($_GET["search"], ENT_QUOTES) : "" ?>' placeholder="Search by customer name...">
+            </div>
+            <div class="form-group">
+                <label>Filter by category:
+                <select class="form-control" name="category">
+                <?php foreach ($categories as $product): ?>
+                    <option value="<?= htmlspecialchars($product["category_id"], ENT_QUOTES);?>" <?= (isset($_GET["category"]) && $product["category_id"] == $_GET["category"] ? "selected" : "")?>>
+                        <?= htmlspecialchars($product["category_name"], ENT_QUOTES); ?>
+                    </option>
+                <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="form-group mt-2">
+                <button type="submit" class="btn btn-primary ml-2">Filter</button>
+            </div>
+        </form>
+        <button class="btn btn-primary mt-5 mb-3" data-bs-toggle="modal" data-bs-target="#createProductModal">Create New
             Product</button>
         <!-- Table to display products -->
         <div class="table-responsive">
