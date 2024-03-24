@@ -43,6 +43,15 @@ $name = $db_handler->getNameFromUserID($_SESSION["user_id"])
   <div class="container mt-5">
     <h1 class="mb-4">Welcome, <?= htmlspecialchars($name) ?></h3>
     <div class="row g-5">
+    <div class="col-lg-4 col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-users fa-lg"></i> Users</h5>
+            <p class="card-text">View and manage users.</p>
+            <a href="user_management.php" class="btn btn-primary">View Users</a>
+          </div>
+        </div>
+      </div>
       <div class="col-lg-4 col-md-6">
         <div class="card h-100">
           <div class="card-body">

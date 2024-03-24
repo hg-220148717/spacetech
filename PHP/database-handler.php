@@ -656,6 +656,38 @@ Class Database {
 
   }
 
+  public function getAllUsers() {
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `user_id`,`user_name`,`user_email`,`user_isstaff`,`user_isadmin` FROM `users`;";
+
+    try {
+
+      $request = $this->db_connection->execute_query($sql);
+      $users_array = array();
+      if($request->num_rows < 1) {
+        return $users_array;
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $users_array[] = $row;
+      }
+
+      return $users_array;
+
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+    
+
+
+  }
+
+
   public function getUserDetails($user_id) {
 
     // input validation
@@ -689,6 +721,7 @@ Class Database {
 
 
   }
+
 
   public function getOrdersByUser($user_id) {
 
@@ -983,6 +1016,37 @@ Class Database {
       return "An error occurred. Stack trace: " . $e->getMessage();
     }
   }
+
+/**
+   * Checks if a user is an admin.
+   * 
+   * @param int $user_id The ID of the user to check.
+   * @return boolean|string Returns true if the user is an admin, false if not, or an error message if the operation fails.
+   */
+  public function isUserAdmin($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT `user_isadmin` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$user_id]);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return (bool) $row["user_isadmin"];
+      } else {
+        return "User not found.";
+      }
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+
 
   public function getProductPriceById($productId)
   {
