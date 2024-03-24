@@ -15,7 +15,23 @@ if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id
     exit;
 }
 
+
 $orders = $db_handler->getAllOrders();
+$order_statuses = $db_handler->getOrderStatuses();
+
+
+
+if(isset($_GET["search"])) {
+    $filtered_orders = array();
+    foreach($orders as $order) {
+        if(str_starts_with(strtolower($order["user_name"]), strtolower($_GET["search"]))) {
+            $filtered_orders[] = $order;
+        }
+    }
+
+    $orders = $filtered_orders;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -41,6 +57,10 @@ $orders = $db_handler->getAllOrders();
     <!-- Main -->
     <div class="container mt-5">
         <h2>Orders List</h2>
+        <form method="GET">
+            <input name="search" class="form-control" type="text" value='<?= isset($_GET["search"]) ? htmlspecialchars($_GET["search"], ENT_QUOTES) : "" ?>' placeholder="Search by customer name...">
+            <button type="submit" class="btn btn-primary ml-2">Search</button>
+        </form>
         <table class="table">
             <thead class="thead-dark">
                 <tr>
@@ -76,6 +96,7 @@ $orders = $db_handler->getAllOrders();
                                     data-user-email="<?= htmlspecialchars($order["user_email"], ENT_QUOTES) ?>"
                                     data-user-addr="<?= htmlspecialchars($order["order_address"], ENT_QUOTES) ?>"
                                     data-order-notes="<?= htmlspecialchars($order["order_comments"], ENT_QUOTES) ?>"
+                                    data-order-status="<?= htmlspecialchars($order["status_id"], ENT_QUOTES) ?>"
                                     data-order-contents="<?= base64_encode($db_handler->getJsonOrderContents($order["order_id"])) ?>"
                                     data-order-total="<?= htmlspecialchars($order["order_total"], ENT_QUOTES)?>">
                                     View
@@ -96,9 +117,9 @@ $orders = $db_handler->getAllOrders();
                     <h5 class="modal-title" id="viewOrderModalLabel">View Order #</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="row" id="updateOrder" enctype="multipart/form-data">
+                <form action="../PHP/update_order.php" method="POST" class="row" id="updateOrder" enctype="multipart/form-data">
                     <!-- enctype added for file upload -->
-                    <input type="hidden" id="updateOrder" name="product_id">
+                    <input type="hidden" id="order_id" name="order_id">
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="updateCustomerNameEmail" class="form-label">Customer Name & Email</label>
@@ -117,22 +138,28 @@ $orders = $db_handler->getAllOrders();
                             <textarea style="height: 5.5em; resize: none;" class="form-control" id="updateOrderNotes" disabled></textarea>
                         </div>
                         <div class="mb-3">
+                            <label for="updateOrderStatus" class="form-label">Order Status</label>
+                            <select class="form-control" id="updateOrderStatus" name="order_status">
+                                <?php foreach($order_statuses as $status): ?>
+                                <option value="<?= htmlspecialchars($status["status_id"]) ?>"><?= htmlspecialchars($status["status_name"]) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <table class="table" id="modalOrderItemsTbl">
                                 <thead class="thead-dark">
                                     <th scope="col">Product Name</th>
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Subtotal</th>
                                 </thead>
-                                <tbody>
-
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                         
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Edit Product</button>
+                        <button type="submit" class="btn btn-primary">Update Order</button>
                     </div>
                 </form>
             </div>

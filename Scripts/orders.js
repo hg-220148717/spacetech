@@ -6,12 +6,15 @@ $('#viewOrderModal').on('show.bs.modal', function (event) {
     var custAddr = button.data('user-addr');
     var orderTotal = button.data('order-total');
     var orderNotes = button.data('order-notes');
+    var orderStatus = button.data('order-status');
 
     $('#updateCustomerNameEmail').val(custName + " (" + custEmail + ")");
     $('#updateCustomerAddr').val(custAddr);
     $('#updateOrderTotal').val(orderTotal);
     $('#updateOrderNotes').val(orderNotes);
     $('#viewOrderModalLabel').html("View Order #" + orderId);
+    $('#updateOrderStatus').val(orderStatus);
+    $('#order_id').val(orderId)
 
     var orderContents = JSON.parse(atob(button.data('order-contents')));
     console.log(orderContents);

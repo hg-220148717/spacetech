@@ -562,6 +562,52 @@ Class Database {
 
   }
 
+  public function getOrderStatuses() {
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT * FROM `order_status`;";
+
+    try {
+      $request = $this->db_connection->execute_query($sql);
+      $statuses_array = array();
+
+      while($row = $request->fetch_assoc()) {
+        $statuses_array[] = $row;
+      }
+
+      return $statuses_array;
+
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+  }
+
+  public function updateOrder($order_id, $new_order_status, $isRefund) {
+
+    // input validation
+    if(!is_int($order_id) && !is_int($new_order_status)) {
+      return "Error - parameters must be integers.";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "UPDATE `orders` SET `order_status`=?, `order_ispaid`=? WHERE `order_id`=?;";
+
+    try {
+      $this->db_connection->execute_query($sql, [$new_order_status, !$isRefund, $order_id]);
+      return true;
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+
+    
+  }
+
 
   public function getAllOrders() {
 
