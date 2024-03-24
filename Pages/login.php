@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: index.php");
     } else {
         // Login failed, display error message
-        $error = "Invalid email or password";
-        $error_msg = "<div style='color:red'>" . htmlspecialchars($error, ENT_QUOTES) . "</div>";
+        $error = "Invalid email or password. Please check your credentials and try again.";
+        $error_msg = htmlspecialchars($error, ENT_QUOTES);
     }
 
 }

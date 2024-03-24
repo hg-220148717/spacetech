@@ -315,6 +315,8 @@ Class Database {
             `order_status` integer NOT NULL
           );",
           "ALTER TABLE `orders` CHANGE `order_id` `order_id` INT(11) NOT NULL AUTO_INCREMENT;",
+
+          "ALTER TABLE `orders` ADD `order_creation` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `order_status`;",
           
           "CREATE TABLE `order_status` (
             `status_id` integer PRIMARY KEY,
@@ -688,6 +690,39 @@ Class Database {
 
   }
 
+  public function getOrdersByUser($user_id) {
+
+    // input validation
+    if(!is_int($user_id)) {
+      return "Input validation failed.";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `orders`.`order_creation`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` WHERE `orders`.`order_userid` = ? ORDER BY `orders`.`order_id` ASC;";
+    
+    try {
+      $request = $this->db_connection->execute_query($sql,[$user_id]);
+      $orders_array = array();
+
+      // check if any orders found, return blank array if none found
+      if(!($request->num_rows > 0)) {
+        return $orders_array;
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $orders_array[] = $orders_array + $row;
+      }
+
+      return $orders_array;
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
 
   public function getAllOrders() {
 
@@ -696,7 +731,7 @@ Class Database {
       return "Error - database connection error.";
     }
 
-    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` ORDER BY `orders`.`order_id` ASC;";
+    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `orders`.`order_creation`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` ORDER BY `orders`.`order_id` ASC;";
     
     try {
       $request = $this->db_connection->execute_query($sql);
@@ -704,7 +739,7 @@ Class Database {
 
       // check if any orders found, return blank array if none found
       if(!($request->num_rows > 0)) {
-        return $orders_array();
+        return $orders_array;
       }
 
       while($row = $request->fetch_assoc()) {
