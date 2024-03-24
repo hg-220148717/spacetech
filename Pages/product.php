@@ -79,7 +79,17 @@ $reviews = $db_handler->getReviewsByProductID(intval($_GET["id"]));
         <h2>Product Reviews</h2>
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#reviewModal">Write a
             Review</button>
-
+        <?php if(isset($_GET["review"])): ?>
+            <?php if($_GET["review"] == "success"): ?>
+                <div class="alert alert-success">
+                            <p>Your review has been successfully recieved. Once our team have moderated and confirmed your review meets our standards to publish, your review will become visible. Please check back in 48-72 hours.</p>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-danger">
+                    <p>An error occurred leaving your review. Please try again.</p>
+                </div>
+            <?php endif; ?>
+            <?php endif; ?>
         <!-- Display Reviews -->
         <div id="reviews-list">
             <?php if (!empty($reviews)): ?>
@@ -154,7 +164,6 @@ $reviews = $db_handler->getReviewsByProductID(intval($_GET["id"]));
 
 
     <?php include_once("../PHP/footer.php"); ?>
-    <script src="../Scripts/products.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

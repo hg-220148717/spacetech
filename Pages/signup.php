@@ -58,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <?php if(isset($message)): ?>
                         <div class="alert alert-danger">
-                            <p><?= htmlspecialchars($message); ?>
+                            <p><?= htmlspecialchars($message, ENT_QUOTES); ?>
                         </div>
                         <?php endif; ?>
 
