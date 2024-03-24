@@ -608,6 +608,86 @@ Class Database {
     
   }
 
+  public function changePassword($user_id, $new_pass) {
+
+  // input validation
+  if(!is_int($user_id) || !is_string($new_pass)) {
+    return "Input validation failed";
+  }
+
+  // check db connection
+  if($this->createDatabaseConnection() !== "OK") {
+    return "Error - database connection error.";
+  }
+
+  $password_hash = $this->generatePasswordHash($new_pass);
+  $sql = "UPDATE `users` SET `user_passwordhash`=? WHERE `user_id`=?;";
+
+  try {
+    $this->db_connection->execute_query($sql, [$password_hash, $user_id]);
+  } catch(Exception $e) {
+    return "DB query error.";
+  }
+
+  }
+
+  public function updateUserDetails($user_id, $new_name, $new_email) {
+
+    // input validation
+    if(!is_int($user_id) || !is_string($new_name) || !is_string($new_email)) {
+      return "Input validation failed";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "UPDATE `users` SET `user_email`=?,`user_name`=? WHERE `user_id`=?;";
+
+    try {
+      $this->db_connection->execute_query($sql, [$new_email, $new_name, $user_id]);
+      return true;
+    } catch(Exception $e) {
+      return "DB Query error.";
+    }
+
+  }
+
+  public function getUserDetails($user_id) {
+
+    // input validation
+    if(!is_int($user_id)) {
+      return "Input validation failed.";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT * FROM `users` WHERE `user_id` = ? LIMIT 1;";
+
+    try {
+
+      $request = $this->db_connection->execute_query($sql, [$user_id]);
+
+      if($request->num_rows < 1) {
+        return "No results found.";
+      }
+
+      while($row = $request->fetch_assoc()) {
+        return $row;
+      }
+
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+    
+
+
+  }
+
 
   public function getAllOrders() {
 

@@ -53,10 +53,12 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
                 <ul class="dropdown-menu">
                     <?php if ($loggedin): ?>
                         <!-- Display for logged-in users -->
-                        <li><a class="dropdown-item" href="../Pages/logout.php">Logout</a></li>
+                        <li><a class="dropdown-item" href="../Pages/my-profile.php">My Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="../Pages/logout.php">Logout</a></li>
                         <?php if ($isStaff): ?>
                             <!-- Additional option for staff members -->
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="../Pages/admin.php">Staff Panel</a></li>
                         <?php endif; ?>
                     <?php else: ?>
