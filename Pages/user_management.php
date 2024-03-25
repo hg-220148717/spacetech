@@ -70,7 +70,7 @@ $user_details = $db_handler->getAllUsers();
             echo "<script>
                 var alertDiv = document.createElement('div');
                 alertDiv.className = 'alert alert-success';
-                var alertText = document.createTextNode('User created!');
+                var alertText = document.createTextNode('Changes made successfully.');
                 alertDiv.appendChild(alertText);
                 var alertPlaceholder = document.getElementById('alertPlaceholder');
                 alertPlaceholder.appendChild(alertDiv);
@@ -127,24 +127,31 @@ $user_details = $db_handler->getAllUsers();
                                     Edit
                                 </button>
                                 <?php if(!$user["user_isstaff"]): ?>
-                                    <!--- promote to staff btn --->
+                                    <button class="btn btn-success btn-sm promote-to-staff" data-bs-toggle="modal"
+                                    data-bs-target="#promoteToStaffModal" data-user-id="<?= $user["user_id"] ?>">
+                                    Promote to Staff
+                                    </button>
                                 <?php elseif(!$user["user_isadmin"]): ?>
-                                    <!-- promote to admin btn --
-                                    -- demote to user btn -->
+                                    <button class="btn btn-success btn-sm promote-to-admin" data-bs-toggle="modal"
+                                    data-bs-target="#promoteToAdminModal" data-user-id="<?= $user["user_id"] ?>">
+                                    Promote to Admin
+                                    </button>
+                                    <button class="btn btn-warning btn-sm demote-to-user" data-bs-toggle="modal"
+                                    data-bs-target="#demoteToUserModal" data-user-id="<?= $user["user_id"] ?>">
+                                    Demote to User
+                                    </button>
                                 <?php else: ?>
-                                    <!-- demote to staff btn --
-                                    -- demote to user btn -->
+                                    <button class="btn btn-warning btn-sm demote-to-staff" data-bs-toggle="modal"
+                                    data-bs-target="#demoteToStaffModal" data-user-id="<?= $user["user_id"] ?>">
+                                    Demote to Staff
+                                    </button>
                                 <?php endif; ?>
-                                <!--<button class="btn btn-<?= $category["category_isdisabled"] ? 'success' : 'warning'; ?> btn-sm toggle-category" data-bs-toggle="modal"
-                                    data-bs-target="#toggleCategoryModal" data-category-id="<?= $category["category_id"] ?>"
-                                    data-is-disabled="<?= $category["category_isdisabled"] ? '1' : '0'; ?>">
-                                    <?= $category["category_isdisabled"] ? 'Enable' : 'Disable'; ?>
-                                </button>
-                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#deleteCategoryModal"
-                                    data-category-id="<?= $category["category_id"] ?>">
+                                
+                                <button class="btn btn-danger btn-sm delete-user" data-bs-toggle="modal"
+                                    data-bs-target="#deleteUserModal"
+                                    data-user-id="<?= $user["user_id"] ?>">
                                     Delete
-                                </button>-->
+                                </button>
                             </td>
 
                         </tr>
@@ -164,7 +171,6 @@ $user_details = $db_handler->getAllUsers();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form class="row" action="../PHP/create_user.php" method="POST" enctype="multipart/form-data">
-
                     <div class="modal-body">
                         <!-- Form fields -->
                         <div class="mb-3">
@@ -191,72 +197,134 @@ $user_details = $db_handler->getAllUsers();
     </div>
 
     <!-- Edit Modal -->
-    <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel"
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                    <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="row" id="editCategoryForm" enctype="multipart/form-data">
+                <form method="POST" action="../PHP/edit_user.php" class="row" id="editUserForm" enctype="multipart/form-data">
                     <!-- enctype added for file upload -->
                     <div class="modal-body">
-                        <input type="hidden" id="editCategoryId" name="category_id">
-                        <!-- Category Name -->
+                        <input type="hidden" id="editUserId" name="user_id">
+                        <!-- User's Name -->
                         <div class="mb-3">
-                            <label for="editCategoryName" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="editCategoryName" name="name" required>
+                            <label for="editUserName" class="form-label">User's Name</label>
+                            <input type="text" class="form-control" id="editUserName" name="name" required>
                         </div>
 
-                        <!-- Image Upload -->
                         <div class="mb-3">
-                            <label for="formFileSm" class="form-label">Image</label>
-                            <input class="form-control form-control-sm" id="formFileSm" type="file"
-                                name="categoryImage">
+                            <label for="editUserEmail" class="form-label">User's Email</label>
+                            <input type="email" class="form-control" id="editUserEmail" name="email" required>
+                        </div>
 
+                        <div class="mb-3">
+                            <label for="editUserPwd" class="form-label">User's Password</label>
+                            <input type="password" class="form-control" id="editUserPwd" name="password" required>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Edit Category</button>
+                        <button type="submit" class="btn btn-primary">Edit User</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Enable/Disable Modal -->
-    <div class="modal fade" id="toggleCategoryModal" tabindex="-1" aria-labelledby="toggleCategoryModalLabel"
+    <!-- Promote to Staff Modal -->
+    <div class="modal fade" id="promoteToStaffModal" tabindex="-1" aria-labelledby="promoteToStaffModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="toggleCategoryModalLabel">Toggle Category Status</h5>
+                    <h5 class="modal-title" id="promoteToStaffModalLabel">Promote to Staff</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to <span id="toggleAction">enable</span> this category?
+                    Are you sure you want to promote this user to Staff?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmToggle">Yes</button>
+                    <button type="button" class="btn btn-primary" id="confirmPromotionToStaff">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demote to User Modal -->
+    <div class="modal fade" id="demoteToUserModal" tabindex="-1" aria-labelledby="demoteToUserModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="demoteToUserModalLabel">Demote to User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to demote this user to User?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmDemotionToUser">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demote to Staff Modal -->
+    <div class="modal fade" id="demoteToStaffModal" tabindex="-1" aria-labelledby="demoteToStaffModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="demoteToStaffModalLabel">Demote to Staff</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to demote this user to Staff?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmDemotionToStaff">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Promote to Admin Modal -->
+    <div class="modal fade" id="promoteToAdminModal" tabindex="-1" aria-labelledby="promoteToAdminModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="promoteToAdminModalLabel">Promote to Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to promote this user to Admin?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmPromotionToAdmin">Yes</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Delete Modal -->
-    <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel"
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteCategoryModalLabel">Delete Category</h5>
+                    <h5 class="modal-title" id="deleteUserModalLabel">Delete User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to delete this category? This action cannot be undone.
+                    Are you sure you want to delete this user? This action cannot be undone.
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

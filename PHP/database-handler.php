@@ -989,6 +989,79 @@ Class Database {
   }
 
   /**
+   * Makes a user an admin.
+   * 
+   * @param int $user_id The ID of the user to be updated.
+   * @return string Returns a message indicating the success or failure of the operation.
+   */
+  public function makeUserAdmin($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `users` SET `user_isstaff` = true, `user_isadmin` = true WHERE `user_id` = ?;", [$user_id]);
+      return "User successfully made an admin.";
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+
+  /**
+   * Demotes a staff member to a normal user.
+   * 
+   * @param int $user_id The ID of the user to be updated.
+   * @return string Returns a message indicating the success or failure of the operation.
+   */
+  public function makeStaffUser($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `users` SET `user_isstaff` = false WHERE `user_id` = ?;", [$user_id]);
+      return "User successfully demoted.";
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+  /**
+   * Demotes an admin to a staff nmember.
+   * 
+   * @param int $user_id The ID of the user to be updated.
+   * @return string Returns a message indicating the success or failure of the operation.
+   */
+  public function makeAdminStaff($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `users` SET `user_isadmin` = false WHERE `user_id` = ?;", [$user_id]);
+      return "User successfully demoted.";
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+  /**
    * Checks if a user is a staff member.
    * 
    * @param int $user_id The ID of the user to check.
@@ -1280,6 +1353,23 @@ Class Database {
       }
     }
 
+    public function editUser($userId, $newName, $newEmail, $newPassword) {
+      if ($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+  
+      $password_hash = $this->generatePasswordHash($newPassword);
+
+      try {
+        $query = "UPDATE `users` SET `user_name` = ?, `user_email` = ?, `user_passwordhash`=? WHERE `user_id` = ?";
+        $this->db_connection->execute_query($query, [$newName, $newEmail, $password_hash, $userId]);
+        return "User updated successfully.";
+      } catch (Exception $e) {
+        return "Error - database query error: " . $e->getMessage();
+      }
+
+    }
+
   public function editCategory($category_id, $new_name, $new_image_path)
   {
     if ($this->createDatabaseConnection() !== "OK") {
@@ -1347,6 +1437,23 @@ Class Database {
       $this->db_connection->execute_query($query, [$category_id]);
 
       return "Category deleted successfully.";
+    } catch (Exception $e) {
+      return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
+
+  public function deleteUser($user_id)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "DELETE FROM `users` WHERE `user_id` = ?";
+      $this->db_connection->execute_query($query, [$user_id]);
+
+      return "User deleted successfully.";
     } catch (Exception $e) {
       return "Error - database query error: " . $e->getMessage();
     }
