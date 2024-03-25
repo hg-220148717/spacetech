@@ -18,7 +18,7 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
 <nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light">
     <div class="container">
         <a class="navbar-brand" href="../Pages/index.php" target="_self">
-            <img src="../Images/SpaceTech.png" alt="SpaceTech" width="120" height="30">
+            <img src="../Images/SpaceTech.png" alt="SpaceTech" width="100%" height="30">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
             <div class="navbar-nav">
                 <a class="nav-link" aria-current="page" href="../Pages/index.php" target="_self">Home</a>
                 <a class="nav-link" aria-current="page" href="../Pages/products.php" target="_self">Shop</a>
+                <a class="nav-link" aria-current="page" href="../Pages/about.php" target="_self">About Us</a>
                 <a class="nav-link" aria-current="page" href="../Pages/contact.php" target="_self">Contact Us</a>
             </div>
             <div class="navbar-nav dropdown ms-auto">
@@ -52,10 +53,13 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
                 <ul class="dropdown-menu">
                     <?php if ($loggedin): ?>
                         <!-- Display for logged-in users -->
-                        <li><a class="dropdown-item" href="../Pages/logout.php">Logout</a></li>
+                        <li><a class="dropdown-item" href="../Pages/my-profile.php">My Profile</a></li>
+                        <li><a class="dropdown-item" href="../Pages/my-past-orders.php">My Past Orders</a></li>
                         <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="../Pages/logout.php">Logout</a></li>
                         <?php if ($isStaff): ?>
                             <!-- Additional option for staff members -->
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="../Pages/admin.php">Staff Panel</a></li>
                         <?php endif; ?>
                     <?php else: ?>

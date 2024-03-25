@@ -15,9 +15,116 @@ class Database
 
   private $db_connection = null;
 
-  private function createDatabaseConnection()
-  {
+    public function validateResetToken($token) {
 
+      // input validation
+      if(!is_string($token)) {
+        return false;
+      }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return false;
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `password_reset_tokens` WHERE `token` = ?;", [$token]);
+
+        if($result->num_rows <= 0) {
+          // no results found, token invalid
+          
+          return false;
+        }
+
+        while ($row = $result->fetch_assoc() ) {
+          if($row["expiry_time"] > time()) {
+            // token valid
+            return true;
+          }
+        }
+        return false;
+
+      } catch(Exception $e) {
+        return false;
+      }
+
+    }
+
+    
+
+    public function getUserIDFromResetToken($token) {
+
+      // input validation
+      if(!is_string($token)) {
+        return "Input validation failed.";
+      }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return $this->ERROR_MSG_DB_CONNECTION_FAILED;
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `password_reset_tokens` WHERE `token` = ?;", [$token]);
+
+        if($result->num_rows <= 0) {
+          // no results found, token invalid
+          return false;
+        }
+
+        while ($row = $result->fetch_assoc() ) {
+          return $this->getUserIDFromEmail($row["email"]);
+        }
+        
+        return false;
+
+      } catch(Exception $e) {
+        return "Database query error.";
+      }
+
+    }
+
+/**
+     * Set's a user's password.
+     * 
+     * @param int $user_id - User's ID
+     * @param string $password - User's desired password
+     * 
+     * @return string|boolean - Returns an error if there was an issue resetting the password,
+     * or returns true if reset successfully.
+     * 
+     */
+    public function setPassword($user_id, $password) {
+
+      // input validation
+      if(!is_int($user_id) || !is_string($password)) {
+        return "Input validation failed.";
+      }
+
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Database connection error.";
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT user_email FROM `users` WHERE `user_id` = ?", [$user_id]);
+        
+        if($result->num_rows < 0) {
+          // user not found
+          return "Error - user not found.";
+        }
+
+        
+        $passhash = $this->generatePasswordHash($password);
+        $this->db_connection->execute_query("UPDATE `users` SET `user_passwordhash` = ? WHERE `user_id` = ?", [$passhash, $user_id]);
+        return true;
+
+      } catch(Exception $e) {
+        return "Database query error.";
+      }
+    }
+
+    private function createDatabaseConnection() {
     // check if database connectoin is already established
 
     if ($this->db_connection === null) {
@@ -142,7 +249,15 @@ class Database
             `user_isadmin` boolean NOT NULL DEFAULT false
           );",
 
-      "ALTER TABLE `users` CHANGE `user_id` `user_id` INT(11) NOT NULL AUTO_INCREMENT;",
+          "ALTER TABLE `users` CHANGE `user_id` `user_id` INT(11) NOT NULL AUTO_INCREMENT;",
+          
+          "CREATE TABLE `password_reset_tokens` (
+            `token` VARCHAR(255) NOT NULL, 
+            `email` VARCHAR(255) NOT NULL, 
+            `creation_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `expiry_time` TIMESTAMP,
+            PRIMARY KEY (`token`(255))
+          );",
 
       "CREATE TABLE `categories` (
         `category_id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -178,7 +293,7 @@ class Database
             `basket_entry_id` integer PRIMARY KEY,
             `basket_userid` integer NOT NULL,
             `basket_productid` integer NOT NULL,
-            `entry_quanitity` integer NOT NULL DEFAULT 1,
+            `entry_quantity` integer NOT NULL DEFAULT 1,
             `entry_subtotal` decimal(6,2) NOT NULL
           );",
 
@@ -191,7 +306,10 @@ class Database
             `order_ispaid` boolean NOT NULL DEFAULT true,
             `order_status` integer NOT NULL
           );",
+          "ALTER TABLE `orders` CHANGE `order_id` `order_id` INT(11) NOT NULL AUTO_INCREMENT;",
 
+          "ALTER TABLE `orders` ADD `order_creation` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `order_status`;",
+          
       "CREATE TABLE `order_status` (
             `status_id` integer PRIMARY KEY,
             `status_name` varchar(20) NOT NULL,
@@ -384,6 +502,364 @@ class Database
     }
   }
 
+  public function getJsonOrderContents($order_id) {
+    
+    // input validation
+    if(!is_int($order_id)) {
+      return "Error - order ID must be integer";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `order_items`.*, `products`.`product_name` FROM `order_items` JOIN `products` ON `order_items`.`product_id` = `products`.`product_id` WHERE `order_id` = ?;";
+
+    try {
+      $request = $this->db_connection->execute_query($sql, [$order_id]);
+
+      $order_contents_array = array();
+
+      // check if any line items found
+      if(!($request->num_rows > 0)) {
+        return "{}";
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $order_contents_array[] = $row;
+      }
+
+      return json_encode($order_contents_array);
+ 
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
+
+  public function getOrderStatuses() {
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT * FROM `order_status`;";
+
+    try {
+      $request = $this->db_connection->execute_query($sql);
+      $statuses_array = array();
+
+      while($row = $request->fetch_assoc()) {
+        $statuses_array[] = $row;
+      }
+
+      return $statuses_array;
+
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+  }
+
+  public function updateOrder($order_id, $new_order_status, $isRefund) {
+
+    // input validation
+    if(!is_int($order_id) && !is_int($new_order_status)) {
+      return "Error - parameters must be integers.";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "UPDATE `orders` SET `order_status`=?, `order_ispaid`=? WHERE `order_id`=?;";
+
+    try {
+      $this->db_connection->execute_query($sql, [$new_order_status, !$isRefund, $order_id]);
+      return true;
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+
+    
+  }
+
+  public function changePassword($user_id, $new_pass) {
+
+  // input validation
+  if(!is_int($user_id) || !is_string($new_pass)) {
+    return "Input validation failed";
+  }
+
+  // check db connection
+  if($this->createDatabaseConnection() !== "OK") {
+    return "Error - database connection error.";
+  }
+
+  $password_hash = $this->generatePasswordHash($new_pass);
+  $sql = "UPDATE `users` SET `user_passwordhash`=? WHERE `user_id`=?;";
+
+  try {
+    $this->db_connection->execute_query($sql, [$password_hash, $user_id]);
+  } catch(Exception $e) {
+    return "DB query error.";
+  }
+
+  }
+
+  public function updateUserDetails($user_id, $new_name, $new_email) {
+
+    // input validation
+    if(!is_int($user_id) || !is_string($new_name) || !is_string($new_email)) {
+      return "Input validation failed";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "UPDATE `users` SET `user_email`=?,`user_name`=? WHERE `user_id`=?;";
+
+    try {
+      $this->db_connection->execute_query($sql, [$new_email, $new_name, $user_id]);
+      return true;
+    } catch(Exception $e) {
+      return "DB Query error.";
+    }
+
+  }
+
+  public function getAllUsers() {
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `user_id`,`user_name`,`user_email`,`user_isstaff`,`user_isadmin` FROM `users`;";
+
+    try {
+
+      $request = $this->db_connection->execute_query($sql);
+      $users_array = array();
+      if($request->num_rows < 1) {
+        return $users_array;
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $users_array[] = $row;
+      }
+
+      return $users_array;
+
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+    
+
+
+  }
+
+
+  public function getUserDetails($user_id) {
+
+    // input validation
+    if(!is_int($user_id)) {
+      return "Input validation failed.";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT * FROM `users` WHERE `user_id` = ? LIMIT 1;";
+
+    try {
+
+      $request = $this->db_connection->execute_query($sql, [$user_id]);
+
+      if($request->num_rows < 1) {
+        return "No results found.";
+      }
+
+      while($row = $request->fetch_assoc()) {
+        return $row;
+      }
+
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+    
+
+
+  }
+
+
+  public function getOrdersByUser($user_id) {
+
+    // input validation
+    if(!is_int($user_id)) {
+      return "Input validation failed.";
+    }
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `orders`.`order_creation`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` WHERE `orders`.`order_userid` = ? ORDER BY `orders`.`order_id` ASC;";
+    
+    try {
+      $request = $this->db_connection->execute_query($sql,[$user_id]);
+      $orders_array = array();
+
+      // check if any orders found, return blank array if none found
+      if(!($request->num_rows > 0)) {
+        return $orders_array;
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $orders_array[] = $orders_array + $row;
+      }
+
+      return $orders_array;
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
+
+  public function getAllOrders() {
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `orders`.`order_creation`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` ORDER BY `orders`.`order_id` ASC;";
+    
+    try {
+      $request = $this->db_connection->execute_query($sql);
+      $orders_array = array();
+
+      // check if any orders found, return blank array if none found
+      if(!($request->num_rows > 0)) {
+        return $orders_array;
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $orders_array[] = $orders_array + $row;
+      }
+
+      return $orders_array;
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
+
+  public function getRecentOrders($maxDaysAgo) {
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `orders`.`order_creation`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` WHERE `orders`.`order_creation` > CURRENT_DATE - ? ORDER BY `orders`.`order_id` ASC;";
+    
+    try {
+      $request = $this->db_connection->execute_query($sql, [$maxDaysAgo]);
+      $orders_array = array();
+
+      // check if any orders found, return blank array if none found
+      if(!($request->num_rows > 0)) {
+        return $orders_array;
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $orders_array[] = $orders_array + $row;
+      }
+
+      return $orders_array;
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
+
+  public function getRecentRefundedOrders($maxDaysAgo) {
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `orders`.`order_creation`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` WHERE `orders`.`order_creation` > CURRENT_DATE - ? AND `order_status` = 6 AND `order_ispaid` = FALSE ORDER BY `orders`.`order_id` ASC;";
+    
+    try {
+      $request = $this->db_connection->execute_query($sql, [$maxDaysAgo]);
+      $orders_array = array();
+
+      // check if any orders found, return blank array if none found
+      if(!($request->num_rows > 0)) {
+        return $orders_array;
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $orders_array[] = $orders_array + $row;
+      }
+
+      return $orders_array;
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
+
+  public function getRevenueStats() {
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $getRevenueSQL = "SELECT SUM(`order_total`) AS 'revenue' FROM `orders` WHERE `order_status` != 6 AND `order_ispaid` = true;";
+    $getRefundsSQL = "SELECT SUM(`order_total`) AS 'refunds' FROM `orders` WHERE `order_status` = 6 AND `order_ispaid` = false;";
+
+    $output = array();
+
+    try {
+
+      $revenueResult = $this->db_connection->execute_query($getRevenueSQL);
+      if($revenueResult->num_rows > 0) {
+        while($row = $revenueResult->fetch_assoc()) {
+          $output["revenue"] = $row["revenue"];
+        }
+      }
+
+      $refundResult = $this->db_connection->execute_query($getRefundsSQL);
+      if($refundResult->num_rows > 0) {
+        while($row = $refundResult->fetch_assoc()) {
+          $output["refunds"] = $row["refunds"];
+        }
+      }
+
+      if(!is_string($output["revenue"])) {
+        $output["revenue"] = 0.00;
+      }
+      
+      if(!is_string($output["refunds"])) {
+        $output["refunds"] = 0.00;
+      }
+
+      return $output;
+    } catch(Exception $e) {
+      return "DB query error.";
+    }
+
+  }
+
   public function getRandomProducts($limit = 6)
   {
     $sql = "SELECT * FROM products ORDER BY RAND() LIMIT ?";
@@ -533,32 +1009,162 @@ class Database
     }
   }
 
-  public function getProductByID($id)
+  /**
+   * Makes a user a staff member.
+   * 
+   * @param int $user_id The ID of the user to be updated.
+   * @return string Returns a message indicating the success or failure of the operation.
+   */
+  public function makeUserStaff($user_id)
   {
-    // Check if the provided ID is an integer
-    if (is_int($id)) {
-      // Attempt to create a database connection
-      if ($this->createDatabaseConnection() == "OK") {
-        try {
-          // Execute a query to fetch a product by its ID
-          $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_id` = ? LIMIT 1;", [$id]);
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
 
-          // Check if any row is returned
-          if ($result->num_rows > 0) {
-            // Fetch the array from the result set
-            $row = $result->fetch_assoc();
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
 
-            // Return the fetched row directly
-            return $row;
-          } else {
-            // Return an error message if no product is found with the given ID
-            return "Error - No results found.";
-          }
+    try {
+      $this->db_connection->execute_query("UPDATE `users` SET `user_isstaff` = true WHERE `user_id` = ?;", [$user_id]);
+      return "User successfully made a staff member.";
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
 
-        } catch (Exception $e) {
-          // Return a detailed error message in case of an exception
-          return "An error occurred. Stack trace: " . $e->getMessage();
-        }
+  /**
+   * Makes a user an admin.
+   * 
+   * @param int $user_id The ID of the user to be updated.
+   * @return string Returns a message indicating the success or failure of the operation.
+   */
+  public function makeUserAdmin($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `users` SET `user_isstaff` = true, `user_isadmin` = true WHERE `user_id` = ?;", [$user_id]);
+      return "User successfully made an admin.";
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+
+  /**
+   * Demotes a staff member to a normal user.
+   * 
+   * @param int $user_id The ID of the user to be updated.
+   * @return string Returns a message indicating the success or failure of the operation.
+   */
+  public function makeStaffUser($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `users` SET `user_isstaff` = false WHERE `user_id` = ?;", [$user_id]);
+      return "User successfully demoted.";
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+  /**
+   * Demotes an admin to a staff nmember.
+   * 
+   * @param int $user_id The ID of the user to be updated.
+   * @return string Returns a message indicating the success or failure of the operation.
+   */
+  public function makeAdminStaff($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `users` SET `user_isadmin` = false WHERE `user_id` = ?;", [$user_id]);
+      return "User successfully demoted.";
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+  /**
+   * Checks if a user is a staff member.
+   * 
+   * @param int $user_id The ID of the user to check.
+   * @return boolean|string Returns true if the user is a staff member, false if not, or an error message if the operation fails.
+   */
+  public function isUserStaff($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT `user_isstaff` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$user_id]);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return (bool) $row["user_isstaff"];
+      } else {
+        return "User not found.";
+      }
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+/**
+   * Checks if a user is an admin.
+   * 
+   * @param int $user_id The ID of the user to check.
+   * @return boolean|string Returns true if the user is an admin, false if not, or an error message if the operation fails.
+   */
+  public function isUserAdmin($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT `user_isadmin` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$user_id]);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return (bool) $row["user_isadmin"];
+      } else {
+        return "User not found.";
+      }
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
+
 
       } else {
         // Return an error message if database connection fails
@@ -728,7 +1334,7 @@ class Database
     }
 
     try {
-      $sql = "SELECT category_id FROM categories WHERE category_id = ? LIMIT 1;";
+      $sql = "SELECT * FROM categories WHERE category_id = ? LIMIT 1;";
       $stmt = $this->db_connection->prepare($sql);
 
       $stmt->bind_param("i", $categoryID);
@@ -738,7 +1344,7 @@ class Database
 
       if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
-        return $row['category_id'];
+        return $row;
       } else {
         return "null";
       }
@@ -747,6 +1353,93 @@ class Database
     }
   }
 
+
+    public function categoryExists($name) {
+    try {
+      $query = "SELECT 1 FROM `categories` WHERE `category_name` = ? LIMIT 1;";
+      $execution = $this->db_connection->execute_query($query, [$name]);
+      $exists = $execution->num_rows > 0;
+      $execution->free_result();
+
+      return $exists;
+    } catch (Exception $e) {
+      return false;
+    }
+  }
+
+    /**
+     * Get an array of products belonging to a particular category from Category ID.
+     * @author H. Green (2024)
+     * @param $category_id Category ID
+     * @return null|string|array
+     * Returns null if no products found.
+     * Returns string (error message) if something went wrong
+     * Returns array of products if successful.
+     */
+    public function getProductsByCategoryID($category_id) {
+
+      // input validation
+      if(!is_int($category_id)) {
+        return "Error - Category ID must be an int.";
+      }
+      // check db connection
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Error - Database connection error.    ";
+      }
+
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `category_id` = ?;", [$category_id]);
+           
+        if($result->num_rows <= 0) {
+          // no results found, category contains no products, return blank array
+          return array();
+        }
+
+        $products_array = array();
+
+        while($row = $result->fetch_assoc() ) {
+
+          // Refactored this mess again.
+          /*
+          $product = array();
+          $product["product_id"] = $row["product_id"];
+          $product["category_id"] = $row["category_id"];
+          $product["product_name"] = $row["product_name"];
+          $product["product_desc"] = $row["product_desc"];
+          $product["product_price"] = $row["product_price"];
+          $product["product_stockcount"] = $row["product_stockcount"];
+          $product["product_isdisabled"] = $row["product_isdisabled"];
+          $output[] = $output + $product;
+  
+          */
+
+          $products_array[] = $products_array + $row;
+        
+        }
+
+        return $products_array;
+      } catch(Exception $e) {
+        return $this->ERROR_MSG_DB_QUERY_EXCEPTION;
+      }
+    }
+
+    public function editUser($userId, $newName, $newEmail, $newPassword) {
+      if ($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+  
+      $password_hash = $this->generatePasswordHash($newPassword);
+
+      try {
+        $query = "UPDATE `users` SET `user_name` = ?, `user_email` = ?, `user_passwordhash`=? WHERE `user_id` = ?";
+        $this->db_connection->execute_query($query, [$newName, $newEmail, $password_hash, $userId]);
+        return "User updated successfully.";
+      } catch (Exception $e) {
+        return "Error - database query error: " . $e->getMessage();
+      }
+    }
+
   public function createCategory($name, $is_disabled, $image_path)
   {
 
@@ -754,7 +1447,6 @@ class Database
     if ($this->createDatabaseConnection() !== "OK") {
       return "Error - database connection error.";
     }
-
     // attempt to insert new category info into database
     try {
       $this->db_connection->execute_query("INSERT INTO `categories` (`category_name`, `category_isdisabled`, `category_image`) VALUES (?,?,?);", [$name, $is_disabled, $image_path]);
@@ -762,7 +1454,61 @@ class Database
     } catch (Exception $e) {
       return $e;
     }
-  }
+
+    public function getLowStockReport($below_amount) {
+      if ($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+
+      if (!is_int($below_amount)) {
+        return "input validation failed";
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_stockcount` < ?;", [$below_amount]);
+        $products_array = array();
+
+        if($result->num_rows > 0) {
+          while($row = $result->fetch_assoc()) {
+            $products_array[] = $row;
+          }
+        }
+
+        return $products_array;
+
+      } catch(Exception $e) {
+        return "DB query error.";
+      }
+
+    }
+
+    public function getHighStockReport($below_amount) {
+      if ($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+
+      if (!is_int($below_amount)) {
+        return "input validation failed";
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_stockcount` >= ?;", [$below_amount]);
+        $products_array = array();
+
+        if($result->num_rows > 0) {
+          while($row = $result->fetch_assoc()) {
+            $products_array[] = $row;
+          }
+        }
+
+        return $products_array;
+
+      } catch(Exception $e) {
+        return "DB query error.";
+      }
+
+    }
+
   public function editCategory($category_id, $new_name, $new_image_path)
   {
     if ($this->createDatabaseConnection() !== "OK") {
@@ -773,6 +1519,21 @@ class Database
       $query = "UPDATE `categories` SET `category_name` = ?, `category_image` = ? WHERE `category_id` = ?";
       $this->db_connection->execute_query($query, [$new_name, $new_image_path, $category_id]);
       return "Category updated successfully.";
+    } catch (Exception $e) {
+      return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
+  public function editProduct($product_id, $new_name, $new_desc, $new_price, $new_stock, $new_category_id)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "UPDATE `products` SET `category_id`=?,`product_name`=?,`product_desc`=?,`product_price`=?,`product_stockcount`=? WHERE `product_id` = ?";
+      $this->db_connection->execute_query($query, [$new_category_id, $new_name, $new_desc, $new_price, $new_stock, $product_id]);
+      return "Product updated successfully.";
     } catch (Exception $e) {
       return "Error - database query error: " . $e->getMessage();
     }
@@ -791,6 +1552,19 @@ class Database
     }
   }
 
+  public function toggleProductStatus($productId, $isDisabled)
+  {
+    // SQL to toggle the status
+    $sql = "UPDATE products SET product_isdisabled = ? WHERE product_id = ?";
+    $stmt = $this->db_connection->prepare($sql);
+    $stmt->bind_param("ii", $isDisabled, $productId);
+    if ($stmt->execute()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public function deleteCategory($category_id)
   {
     if ($this->createDatabaseConnection() !== "OK") {
@@ -802,6 +1576,38 @@ class Database
       $this->db_connection->execute_query($query, [$category_id]);
 
       return "Category deleted successfully.";
+    } catch (Exception $e) {
+      return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
+  public function deleteUser($user_id)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "DELETE FROM `users` WHERE `user_id` = ?";
+      $this->db_connection->execute_query($query, [$user_id]);
+
+      return "User deleted successfully.";
+    } catch (Exception $e) {
+      return "Error - database query error: " . $e->getMessage();
+    }
+  }
+
+  public function deleteProduct($product_id)
+  {
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $query = "DELETE FROM `products` WHERE `product_id` = ?";
+      $this->db_connection->execute_query($query, [$product_id]);
+
+      return "Product deleted successfully.";
     } catch (Exception $e) {
       return "Error - database query error: " . $e->getMessage();
     }
@@ -906,6 +1712,43 @@ class Database
     }
   }
 
+  public function getUserIDFromEmail($email) {
+    // check if supplied user email is a string
+    if(!is_string($email)) {
+      return "Error - email must be a string";
+    }
+
+    // check db connection is active, error if not
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection failure.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query(
+        "SELECT `user_id` FROM `users` WHERE `user_email` LIKE ? LIMIT 1;", [$email]
+      );
+    
+      // check if the db returned at least 1 user entry
+      if($result->num_rows <= 0) {
+        return "Error - user ID not found.";
+      }
+
+      // loop through returned data from db
+      while($row = $result->fetch_assoc()) {
+        // return user's email address from queried user ID
+        return $row["user_id"];
+      }
+
+    } catch(Exception $e) {
+      return "Error - database query failure.";
+    }
+
+    return "Error - unexpected error occurred.";
+
+  }
+
+
+
   /** 
    * Get a user's name from a given user ID
    * 
@@ -977,8 +1820,7 @@ class Database
     // attempt to add item to basket
     try {
       $this->db_connection->execute_query(
-        "INSERT INTO `basket_entries` (`basket_userid`, `basket_productid`, `entry_quanitity`, `entry_subtotal`) VALUES (?,?,?,?);",
-        [$user_id, $product_id, $qty, $subtotal]
+        "INSERT INTO `basket_entries` (`basket_userid`, `basket_productid`, `entry_quantity`, `entry_subtotal`) VALUES (?,?,?,?);", [$user_id, $product_id, $qty, $subtotal]
       );
 
       // output success message
@@ -1059,14 +1901,33 @@ class Database
       // get order number from previous query
       $order_no = $this->db_connection->insert_id;
 
-      $basket_contents = $this->getBasketContents($user_id);
+      $basket_contents = $this->getBasketContents(intval($user_id));
 
       // loop through each entry in the basket
       foreach ($basket_contents as $item) {
+
+        $product_id = $item["basket_productid"];
+        $qty = $item["entry_quantity"];
+        $subtotal = $item["entry_subtotal"];
+
         // add item line to database and link to order ID
-        $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $item["product_id"], $item["qty"], $item["subtotal"]]);
+        $result = $this->db_connection->execute_query("INSERT INTO `order_items` (`order_id`, `product_id`, `line_quantity`, `line_subtotal`) VALUES (?, ?, ?, ?)", [$order_no, $product_id, $qty, $subtotal]);
         // remove item from basket
-        $this->removeFromBasket($item["entry_id"], $user_id);
+        $this->removeFromBasket(intval($item["basket_entry_id"]), $user_id);
+
+        
+
+        // update stock
+        $new_stock_level = intval($this->getStockLevelOfItem($product_id) - $qty);
+        $this->setStockLevelOfItem($product_id, $new_stock_level);
+
+        // check if low/out of stock notification required
+        if($new_stock_level >= 6 && $new_stock_level !== 0) {
+          $this->notifyLowStock($product_id);
+        } else if($new_stock_level == 0) {
+          $this->notifyOutOfStock($product_id);
+        }
+
       }
 
       return "Order submitted successfully.";
@@ -1075,6 +1936,39 @@ class Database
       return "Error - database query error.";
     }
 
+  }
+
+  private function notifyLowStock($product_id) {
+    $admins_list = $this->getAdminsList();
+
+    $message = "Hi there,\n
+    An item is now low on stock.\n
+    \n
+    Product ID: " . htmlspecialchars($product_id, ENT_QUOTES) . "\n
+    \n
+    Kind regards,\n
+    SpaceTech.";
+
+    foreach($admins_list as $admin) {
+      mail($admin, "SpaceTech - Stock Notification", $message);
+    }
+  }
+
+  private function notifyOutOfStock($product_id) {
+
+    $admins_list = $this->getAdminsList();
+
+    $message = "Hi there,\n
+    An item is now out of stock.\n
+    \n
+    Product ID: " . htmlspecialchars($product_id, ENT_QUOTES) . "\n
+    \n
+    Kind regards,\n
+    SpaceTech.";
+
+    foreach($admins_list as $admin) {
+      mail($admin, "SpaceTech - Stock Notification", $message);
+          }
   }
 
 
@@ -1231,7 +2125,148 @@ class Database
     }
   }
 
-  public function approveReview($review_id)
+
+  /**
+   * Check if a product is currently in stock.
+   * 
+   * @return int|string Returns the stock level of the specified product ID.
+   * Returns a string if an error occurred.
+   */
+  public function getStockLevelOfItem($product_id) {
+
+    // input validation
+    if(!is_int($product_id)) {
+      return "Error - product ID not an integer.";
+    }
+
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT `product_stockcount` FROM `products` WHERE `product_id` = ?;", [$product_id]);
+
+      if($result->num_rows <= 0) {
+        // product not found
+        return "Error - product not found.";
+      }
+
+      while($row = $result->fetch_assoc()) {
+        return intval($row["product_stockcount"]);
+      }
+
+      return "Error - something unexpected happened.";
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
+  }
+
+  /**
+   * Check if a product is currently in stock.
+   * 
+   * @param $product_id Product ID
+   * @param $new_stock_level Desired new stock level
+   * 
+   * @return int|string Returns new stock level of the specified product ID.
+   * Returns a string if an error occurred.
+   */
+  public function setStockLevelOfItem($product_id, $new_stock_level) {
+
+    // input validation
+    if(!is_int($product_id)) {
+      return "Error - product ID not an integer.";
+    }
+
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    try {
+      $this->db_connection->execute_query("UPDATE `products` SET `product_stockcount` = ? WHERE `product_id` = ?;", [$new_stock_level, $product_id]);
+      return $this->getStockLevelOfItem($product_id);
+
+    } catch(Exception $e) {
+      return "Error - database query error.";
+    }
+
+  }
+
+  public function storeAndSendPassResetToken($email) {
+
+    if(!is_string($email)) {
+      // input validation failed
+      return false;
+    }
+
+    // check database connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+    
+
+    $hash_length = 16; // sets length for bytes used for reset token
+    $reset_token = bin2hex(random_bytes($hash_length)); // url safe output 
+    $current_time = strtotime(time());
+    $expiry_time = strtotime(time() + 3600); // expires 1hr after creation
+
+    try {
+      $request = $this->db_connection->execute_query("INSERT INTO `password_reset_tokens` (`token`, `email`, `expiry_time`) VALUES (?, ?, DATE_ADD(CURRENT_TIMESTAMP, INTERVAL 1 HOUR));",[$reset_token, $email]);
+      $this->sendPassResetEmailToUser($email, $reset_token);
+      return true;
+    } catch(Exception $e) {
+      return false;
+    }
+    
+
+  }
+    
+    private function sendPassResetEmailToUser($email, $reset_token) {
+      
+      $message = "Hi there,\n
+      You have requested to reset your password. Please click the link <a href='/reset.php?token=". $reset_token . "'>here</a> to reset your password.\n
+      Kind regards,\n
+      SpaceTech.";
+
+      mail($email, "SpaceTech Password Reset", $message);
+
+      return true;
+    } 
+
+    public function getAdminsList() {
+
+      if($this->createDatabaseConnection() !== "OK") {
+        return "Database connection error.";
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `users` WHERE `user_isadmin` = 1;");
+        
+        $admins_list = array();
+
+        // no admins found - return blank array
+        if($result->num_rows <= 0) {
+          return $admins_list;
+        }
+
+        while($row = $result->fetch_assoc()) {
+          $admins_list[] = $admins_list + $row;
+        }
+
+        return $admins_list;
+
+      } catch(Exception $e) {
+        return "Database query error.";
+      }
+
+    }
+
+    
+    public function approveReview($review_id)
+
   {
     if ($this->createDatabaseConnection() == "OK") {
       try {

@@ -47,6 +47,7 @@ $reviews = $db_handler->getAllReviews();
 
         }
         ?>
+        <?php if(count($reviews) > 0): ?>
         <!-- Table to display reviews -->
         <div class="table-responsive">
             <table class="table">
@@ -107,6 +108,9 @@ $reviews = $db_handler->getAllReviews();
                 </tbody>
             </table>
         </div>
+        <?php else: ?>
+            <h4>No reviews require moderation currently. Please check back later.</h4>
+        <?php endif; ?>
         
         <!-- Modal JS -->
         <script src="../Scripts/category.js"></script>

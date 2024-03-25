@@ -14,9 +14,8 @@ $db_handler = new Database();
 $db_handler->testDatabaseConnection();
 $db_handler->checkSetup();
 
-$product = $db_handler->getProductByID(intval($_GET["product_id"]));
-$reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]));
-
+$product = $db_handler->getProductByID(intval($_GET["id"]));
+$reviews = $db_handler->getReviewsByProductID(intval($_GET["id"]));
 ?>
 
 <!DOCTYPE html>
@@ -56,16 +55,21 @@ $reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]));
                 <p>
                     <?php echo htmlspecialchars($product["product_desc"], ENT_QUOTES); ?>
                 </p>
+                <?php if(intval($product["product_stockcount"]) > 0): ?>
+                <h5><?= htmlspecialchars($product["product_stockcount"], ENT_QUOTES) ?> in stock</h5>
                 <form action="../PHP/add_to_cart.php" method="POST" class="py-2">
                     <input type="number" name="product_id"
                         value="<?php echo htmlspecialchars($product["product_id"], ENT_QUOTES); ?>" hidden>
-
+                
                     <div class="input-group mb-3" style="width: 160px;">
                         <span class="input-group-text">Qty</span>
-                        <input type="number" name="qty" value="1" class="form-control" aria-label="Quantity" min="1">
+                        <input type="number" name="qty" value="1" min="1" max="<?= htmlspecialchars($product["product_stockcount"], ENT_QUOTES) ?>" class="form-control" aria-label="Quantity">
                     </div>
                     <button type="submit" class="btn btn-primary">Add To Cart</button>
                 </form>
+                <?php else: ?>
+                    <h4>Out of stock</h4>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -75,7 +79,17 @@ $reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]));
         <h2>Product Reviews</h2>
         <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#reviewModal">Write a
             Review</button>
-
+        <?php if(isset($_GET["review"])): ?>
+            <?php if($_GET["review"] == "success"): ?>
+                <div class="alert alert-success">
+                            <p>Your review has been successfully recieved. Once our team have moderated and confirmed your review meets our standards to publish, your review will become visible. Please check back in 48-72 hours.</p>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-danger">
+                    <p>An error occurred leaving your review. Please try again.</p>
+                </div>
+            <?php endif; ?>
+            <?php endif; ?>
         <!-- Display Reviews -->
         <div id="reviews-list">
             <?php if (!empty($reviews)): ?>
@@ -150,7 +164,6 @@ $reviews = $db_handler->getReviewsByProductID(intval($_GET["product_id"]));
 
 
     <?php include_once("../PHP/footer.php"); ?>
-    <script src="../Scripts/products.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

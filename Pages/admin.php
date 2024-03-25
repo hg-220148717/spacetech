@@ -46,9 +46,9 @@ $name = $db_handler->getNameFromUserID($_SESSION["user_id"])
     <div class="col-lg-4 col-md-6">
         <div class="card h-100">
           <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-boxes fa-lg"></i> Stock Management</h5>
-            <p class="card-text">Manage your inventory and stock levels.</p>
-            <a href="stock_management.php" class="btn btn-primary">Manage Stock</a>
+            <h5 class="card-title"><i class="fas fa-users fa-lg"></i> Users</h5>
+            <p class="card-text">View and manage users.</p>
+            <a href="user_management.php" class="btn btn-primary">View Users</a>
           </div>
         </div>
       </div>
@@ -82,9 +82,18 @@ $name = $db_handler->getNameFromUserID($_SESSION["user_id"])
       <div class="col-lg-4 col-md-6">
         <div class="card h-100">
           <div class="card-body">
-            <h5 class="card-title"><i class="fas fa-box-open fa-lg"></i> Product Management</h5>
-            <p class="card-text">Add, update, or remove products.</p>
-            <a href="product_management.php" class="btn btn-warning">Manage Products</a>
+            <h5 class="card-title"><i class="fas fa-box-open fa-lg"></i> Product & Stock Management</h5>
+            <p class="card-text">Add, update, or remove products, manage stock levels and inventory.</p>
+            <a href="product_management.php" class="btn btn-warning">Manage Products & Inventory</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-file fa-lg"></i> Reports</h5>
+            <p class="card-text">View reports and key metrics about the site.</p>
+            <a href="reports.php" class="btn btn-info">View Reports</a>
           </div>
         </div>
       </div>

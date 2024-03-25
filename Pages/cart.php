@@ -153,22 +153,22 @@ $basket_contents = $db_handler->getBasketContents($_SESSION["user_id"]);
                 <?php if ($basket_count > 0): ?>
                     <div class="list-group mb-3">
                         <?php foreach ($basket_contents as $item): ?>
-                            <?php $product = $db_handler->getProductByID($item["product_id"]); ?>
+                            <?php $product = $db_handler->getProductByID(intval($item["basket_productid"])); ?>
                             <div class="list-group-item d-flex justify-content-between lh-sm">
                                 <div>
                                     <h6 class="my-0">
                                         <?= htmlspecialchars($product["product_name"], ENT_QUOTES); ?>
                                     </h6>
                                     <small class="text-muted">Quantity:
-                                        <?= htmlspecialchars($item["qty"], ENT_QUOTES); ?>
+                                        <?= htmlspecialchars($item["entry_quantity"], ENT_QUOTES); ?>
                                     </small>
                                 </div>
                                 <span class="text-muted">£
-                                    <?= htmlspecialchars($item["subtotal"], ENT_QUOTES); ?>
+                                    <?= htmlspecialchars($item["entry_subtotal"], ENT_QUOTES); ?>
                                 </span>
-                                <form action="remove_from_cart.php" method="POST" class="d-inline">
+                                <form action="../PHP/remove_from_cart.php" method="POST" class="d-inline">
                                     <input type="hidden" name="entry_id"
-                                        value="<?= htmlspecialchars($item["entry_id"], ENT_QUOTES); ?>">
+                                        value="<?= htmlspecialchars($item["basket_entry_id"], ENT_QUOTES); ?>">
                                     <button type="submit" class="btn btn-sm btn-danger">Remove</button>
                                 </form>
                             </div>

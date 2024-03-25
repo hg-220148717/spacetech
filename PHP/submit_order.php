@@ -27,8 +27,8 @@ if($basket_count <= 0) {
 if($is_paid) {
 
     foreach ($basket_contents as $item) {
-        if(!$db_handler->isItemInStock($item["product_id"])) {
-            header("Location: ../Pages/cart.php?error=outOfStock&item_id=" . $item["product_id"]);
+        if(!$db_handler->getStockLevelOfItem($item["basket_productid"]) >= $item["entry_quantity"] ) {
+            header("Location: ../Pages/cart.php?error=outOfStock&item_id=" . $item["basket_productid"]);
             exit;
         }
     }

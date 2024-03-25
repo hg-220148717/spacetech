@@ -17,9 +17,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $db_handler->createReview($userId, $productId, $rating, $reviewText);
 
     if ($result) {
-        header("Location: ../Pages/product.php?product_id=$productId&review=success");
+        header("Location: ../Pages/product.php?id=$productId&review=success");
     } else {
-        header("Location: ../Pages/product.php?product_id=$productId&review=error");
+        header("Location: ../Pages/product.php?id=$productId&review=error");
     }
 } else {
     header("Location: index.php");

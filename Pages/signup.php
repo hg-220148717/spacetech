@@ -15,9 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate password requirements
     if (!preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$/", $password)) {
         // Password does not meet the requirements
-        echo "Password must contain at least one uppercase letter, one number, and one special character, and be at least 8 characters long.";
-        exit();
-    }
+        $message = "Your password must contain at least one uppercase letter, one number, and one special character, and be at least 8 characters long.";
+    } else {
 
     if ($db_handler->createUser($email, $password, $name) == "User account created successfully.") {
         // Redirect to a Home Page, login successful
@@ -28,9 +27,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         exit();
     } else {
-        echo "User already exists. Please log in.";
-        exit();
+        $message = "An account with that email address already exists. Please log in.";
     }
+}
 
 }
 
@@ -45,6 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- CSS -->
+    <link rel="stylesheet" href="../Styles/master-style.css">
     <link rel="stylesheet" href="../Styles/backgroundimage.css">
 </head>
 
@@ -53,9 +53,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card">
+                <div class="card mb-5">
                     <div class="card-body">
                         <h3 class="card-title text-center">Sign Up</h3>
+
+                        <?php if(isset($message)): ?>
+                        <div class="alert alert-danger">
+                            <p><?= htmlspecialchars($message, ENT_QUOTES); ?>
+                        </div>
+                        <?php endif; ?>
+
                         <form action="../Pages/signup.php" method="POST">
                             <div class="mb-3">
                                 <label for="fname" class="form-label">First Name</label>
@@ -86,6 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">Sign Up</button>
+                                <a href="../Pages/login.php" class="btn btn-outline-secondary">Already signed up? Login</a>
                             </div>
                         </form>
                     </div>

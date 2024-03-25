@@ -44,7 +44,7 @@ $(document).ready(function(){
                 },
                 success: function(response) {
                     console.log(response)
-                  //  window.location.reload(true);
+                    window.location.reload(true);
                 },
                 error: function() {
                     alert('Error deleting category.');
@@ -56,13 +56,16 @@ $(document).ready(function(){
 
 $('#editCategoryForm').submit(function(event) {
     event.preventDefault();
-    var formData = $(this).serialize(); 
+    var formData = new FormData($("#editCategoryForm")[0]);
+    formData.append('file', document.getElementById("formFileSm").files[0]);
     console.log(formData)
 
     $.ajax({
         type: "POST",
         url: "../PHP/edit_category.php",
         data: formData,
+        processData: false,
+        contentType: false,
         success: function(response) {
             console.log(response)
             var alertHtml = '';
