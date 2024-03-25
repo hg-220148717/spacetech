@@ -1009,29 +1009,6 @@ class Database
     }
   }
 
-  /**
-   * Makes a user a staff member.
-   * 
-   * @param int $user_id The ID of the user to be updated.
-   * @return string Returns a message indicating the success or failure of the operation.
-   */
-  public function makeUserStaff($user_id)
-  {
-    if (!is_int($user_id)) {
-      return "Error - User ID must be an integer.";
-    }
-
-    if ($this->createDatabaseConnection() !== "OK") {
-      return "Error - Database connection error.";
-    }
-
-    try {
-      $this->db_connection->execute_query("UPDATE `users` SET `user_isstaff` = true WHERE `user_id` = ?;", [$user_id]);
-      return "User successfully made a staff member.";
-    } catch (Exception $e) {
-      return "An error occurred. Stack trace: " . $e->getMessage();
-    }
-  }
 
   /**
    * Makes a user an admin.
@@ -1106,35 +1083,7 @@ class Database
     }
   }
 
-  /**
-   * Checks if a user is a staff member.
-   * 
-   * @param int $user_id The ID of the user to check.
-   * @return boolean|string Returns true if the user is a staff member, false if not, or an error message if the operation fails.
-   */
-  public function isUserStaff($user_id)
-  {
-    if (!is_int($user_id)) {
-      return "Error - User ID must be an integer.";
-    }
-
-    if ($this->createDatabaseConnection() !== "OK") {
-      return "Error - Database connection error.";
-    }
-
-    try {
-      $result = $this->db_connection->execute_query("SELECT `user_isstaff` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$user_id]);
-      if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        return (bool) $row["user_isstaff"];
-      } else {
-        return "User not found.";
-      }
-    } catch (Exception $e) {
-      return "An error occurred. Stack trace: " . $e->getMessage();
-    }
-  }
-
+  
 /**
    * Checks if a user is an admin.
    * 
@@ -1161,18 +1110,6 @@ class Database
       }
     } catch (Exception $e) {
       return "An error occurred. Stack trace: " . $e->getMessage();
-    }
-  }
-
-
-
-      } else {
-        // Return an error message if database connection fails
-        return "Database connection failed.";
-      }
-    } else {
-      // Return an error message if the provided ID is not an integer
-      return "Error - ID must be an integer";
     }
   }
 
@@ -1238,43 +1175,7 @@ class Database
     }
   }
 
-  public function getProductsByCategoryID($category_id)
-  {
-    if (is_int($category_id)) {
-      if ($this->createDatabaseConnection() == "OK") {
-        try {
-          $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `category_id` = ?;", [$category_id]);
-          $output = array();
-          while ($row = $result->fetch_assoc()) {
-            if ($result->num_rows > 0) {
-              $product = array();
-              $product["product_id"] = $row["product_id"];
-              $product["category_id"] = $row["category_id"];
-              $product["product_name"] = $row["product_name"];
-              $product["product_desc"] = $row["product_desc"];
-              $product["product_price"] = $row["product_price"];
-              $product["product_stockcount"] = $row["product_stockcount"];
-              $product["product_isdisabled"] = $row["product_isdisabled"];
-
-              $output[] = $output + $product;
-
-            } else {
-              return "Error - No results found.";
-            }
-          }
-
-          return $output;
-
-        } catch (Exception $e) {
-          return "An error occurred. Stack trace: " . $e;
-        }
-
-      }
-    } else {
-      return "Error - ID must be an integer";
-    }
-  }
-
+  
   public function getCategoryNameByProductId($productId)
   {
     if ($this->createDatabaseConnection() !== "OK") {
@@ -1354,18 +1255,6 @@ class Database
   }
 
 
-    public function categoryExists($name) {
-    try {
-      $query = "SELECT 1 FROM `categories` WHERE `category_name` = ? LIMIT 1;";
-      $execution = $this->db_connection->execute_query($query, [$name]);
-      $exists = $execution->num_rows > 0;
-      $execution->free_result();
-
-      return $exists;
-    } catch (Exception $e) {
-      return false;
-    }
-  }
 
     /**
      * Get an array of products belonging to a particular category from Category ID.
@@ -1454,6 +1343,7 @@ class Database
     } catch (Exception $e) {
       return $e;
     }
+  }
 
     public function getLowStockReport($below_amount) {
       if ($this->createDatabaseConnection() !== "OK") {
@@ -1969,41 +1859,6 @@ class Database
     foreach($admins_list as $admin) {
       mail($admin, "SpaceTech - Stock Notification", $message);
           }
-  }
-
-
-  public function getAllOrders()
-  {
-    // Ensure the database connection is established
-    if ($this->createDatabaseConnection() !== "OK") {
-      return "Error - Database connection error.";
-    }
-
-    $orders = array(); // Initialize an empty array to hold the orders
-
-    try {
-      // Prepare the query to fetch orders along with their status
-      $query = "SELECT o.order_id, o.order_total, os.status_name, os.status_colour 
-                  FROM orders o 
-                  INNER JOIN order_status os ON o.order_status = os.status_id
-                  ORDER BY o.order_id DESC";
-
-      // Execute the query
-      $result = $this->db_connection->query($query);
-
-      // Check if the query was successful and returned rows
-      if ($result && $result->num_rows > 0) {
-        // Fetch each row and add it to the $orders array
-        while ($row = $result->fetch_assoc()) {
-          $orders[] = $row;
-        }
-      }
-
-      return $orders; // Return the array of orders
-    } catch (Exception $e) {
-      // Handle any errors, such as query failures
-      return "An error occurred: " . $e->getMessage();
-    }
   }
 
   /**

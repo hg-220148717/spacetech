@@ -137,7 +137,7 @@ function sendMessage($forename, $surname, $email, $mobile, $msg) {
                         </div>
 </div>
                 </form>
-            <div class="row row-cols-1 row-cols-md-1 w-50 g-4">
+            <div class="row row-cols-1 row-cols-md-1 w-100 g-4">
                 <h3>For any inquiries, please contact us using the information below:</h3>
                 <p>Email: info@spacetech.com<br>
                 Phone: +1 (123) 456-7890<br>
@@ -174,7 +174,8 @@ function sendMessage($forename, $surname, $email, $mobile, $msg) {
 </div>
         </div>
     </div>
-
+    </div>
+    </div>
     <?php include_once("../PHP/footer.php"); ?>
 
     <!-- Bootstrap JS -->
