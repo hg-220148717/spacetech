@@ -7,10 +7,9 @@ $db_handler = new Database();
 $db_handler->testDatabaseConnection();
 $db_handler->checkSetup();
 
-// Check if the user is logged in and is staff
-if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id"])) {
+if (!isset($_SESSION["user_id"]) || !$db_handler->IsUserAdmin($_SESSION["user_id"])) {
     header("Location: ../Pages/index.php");
-    exit; // Ensure no further execution happens after a redirect
+    exit; 
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
