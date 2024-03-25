@@ -267,7 +267,7 @@ class Database
       );",
 
       "CREATE TABLE `products` (
-            `product_id` integer PRIMARY KEY,
+            `product_id` integer AUTO_INCREMENT PRIMARY KEY,
             `category_id` integer NOT NULL,
             `product_name` varchar(75) NOT NULL,
             `product_desc` text NOT NULL,
@@ -284,9 +284,7 @@ class Database
             `review_text` text NOT NULL,
             `review_approved` boolean NOT NULL DEFAULT false,
           );",
-
-      
-
+          
       "ALTER TABLE `reviews` ADD `review_approved` BOOLEAN NOT NULL DEFAULT FALSE;",
 
       "CREATE TABLE `basket_entries` (
@@ -721,7 +719,7 @@ class Database
       }
 
       while($row = $request->fetch_assoc()) {
-        $orders_array[] = $orders_array + $row;
+        $orders_array[] = $row;
       }
 
       return $orders_array;
@@ -750,7 +748,7 @@ class Database
       }
 
       while($row = $request->fetch_assoc()) {
-        $orders_array[] = $orders_array + $row;
+        $orders_array[] = $row;
       }
 
       return $orders_array;
@@ -779,7 +777,7 @@ class Database
       }
 
       while($row = $request->fetch_assoc()) {
-        $orders_array[] = $orders_array + $row;
+        $orders_array[] = $row;
       }
 
       return $orders_array;
@@ -808,7 +806,7 @@ class Database
       }
 
       while($row = $request->fetch_assoc()) {
-        $orders_array[] = $orders_array + $row;
+        $orders_array[] =  $row;
       }
 
       return $orders_array;
@@ -970,7 +968,7 @@ class Database
             $category["category_image"] = $row["category_image"];
             */
 
-            $output[] = $output + $row;
+            $output[] = $row;
 
           } else {
             break;
@@ -1158,7 +1156,7 @@ class Database
               $product["product_stockcount"] = $row["product_stockcount"];
               $product["product_isdisabled"] = $row["product_isdisabled"];
 
-              $output[] = $output + $product;
+              $output[] = $product;
 
             } else {
               return "Error - No results found.";
@@ -1303,7 +1301,7 @@ class Database
   
           */
 
-          $products_array[] = $products_array + $row;
+          $products_array[] = $row;
         
         }
 
@@ -1962,7 +1960,7 @@ class Database
               $basket_entry["qty"] = $row["entry_quanitity"];
               $basket_entry["subtotal"] = $row["entry_subtotal"];
 
-              $basket[] = $basket + $basket_entry;
+              $basket[] = $basket_entry;
 
             }
           }
@@ -1980,6 +1978,42 @@ class Database
     }
   }
 
+  public function getProductByID($id)
+  {
+    // Check if the provided ID is an integer
+    if (is_int($id)) {
+      // Attempt to create a database connection
+      if ($this->createDatabaseConnection() == "OK") {
+        try {
+          // Execute a query to fetch a product by its ID
+          $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_id` = ? LIMIT 1;", [$id]);
+
+          // Check if any row is returned
+          if ($result->num_rows > 0) {
+            // Fetch the array from the result set
+            $row = $result->fetch_assoc();
+
+            // Return the fetched row directly
+            return $row;
+          } else {
+            // Return an error message if no product is found with the given ID
+            return "Error - No results found.";
+          }
+
+        } catch (Exception $e) {
+          // Return a detailed error message in case of an exception
+          return "An error occurred. Stack trace: " . $e->getMessage();
+        }
+
+      } else {
+        // Return an error message if database connection fails
+        return "Database connection failed.";
+      }
+    } else {
+      // Return an error message if the provided ID is not an integer
+      return "Error - ID must be an integer";
+    }
+  }
 
   /**
    * Check if a product is currently in stock.
@@ -2108,7 +2142,7 @@ class Database
         }
 
         while($row = $result->fetch_assoc()) {
-          $admins_list[] = $admins_list + $row;
+          $admins_list[] = $row;
         }
 
         return $admins_list;

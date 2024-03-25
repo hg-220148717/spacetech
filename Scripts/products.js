@@ -76,15 +76,18 @@ $('#editProductForm').submit(function(event) {
         processData: false,
         contentType: false,
         success: function(response) {
-            console.log(response)
             var alertHtml = '';
             if(response.status === 'success') {
                 window.location.reload(true);
             } else if(response.message === 'NameExists') {
                 alertHtml = '<div class="alert alert-warning" role="alert">Product Name Exists!</div>';
+                return;
             } else {
                 alertHtml = '<div class="alert alert-danger" role="alert">Failed to update product.</div>';
+                return;
             }
+
+            window.location.reload(true);
     
             $('#alertPlaceholder').html(alertHtml);
             setTimeout(function() {

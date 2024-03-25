@@ -145,7 +145,7 @@ $categories_list = $db_handler->getAllCategories(false);
                             <?php if(!empty($categories_list)): ?>
                                 <option value="ALL">All Categories</option>
                                 <?php foreach($categories_list as $category): ?>
-                                    <option <?= intval($category["category_id"]) == intval($_GET["category"]) ? "selected " : "" ?>value="<?= htmlspecialchars($category["category_id"], ENT_QUOTES) ?>"><?= htmlspecialchars($category["category_name"], ENT_QUOTES) ?></option>
+                                    <option <?= isset($_GET["category"]) && intval($category["category_id"]) == intval($_GET["category"]) ? "selected " : "" ?>value="<?= htmlspecialchars($category["category_id"], ENT_QUOTES) ?>"><?= htmlspecialchars($category["category_name"], ENT_QUOTES) ?></option>
                                 <?php endforeach; ?>
                                 <?php else: ?>
                                     <option id="-1" default hidden>No categories found.</option>

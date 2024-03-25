@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $previousName = $productDetails['product_name'];
         $previousImagePath = strval($productDetails['product_id']) . ".jpg";
         $target_dir = "../images/products/";
-        $target_file = $target_dir . $productId . strval($productDetails['product_id']) . ".jpg";
+        $target_file = $target_dir . strval($productDetails['product_id']) . ".jpg";
         $uploadOk = 0;
         $previousCategoryID = $productDetails["category_id"];
         $previousDesc = $productDetails["product_desc"];

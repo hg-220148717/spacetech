@@ -42,7 +42,7 @@ function subscribeToNewsletter($email) {
     SpaceTech.";
 
     foreach($admins_list as $admin) {
-      mail($admin, "SpaceTech - New Newsletter Subscription", $message);
+      mail($admin["user_email"], "SpaceTech - New Newsletter Subscription", $message);
     }
 
 }
@@ -64,7 +64,7 @@ function sendMessage($forename, $surname, $email, $mobile, $msg) {
       Kind regards,\n
       SpaceTech.";
 
-      mail($admin, "SpaceTech - New Contact Form Submission", $message);
+      mail($admin["user_email"], "SpaceTech - New Contact Form Submission", $message);
     }
 
 }
