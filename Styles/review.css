@@ -1,0 +1,29 @@
+.rating {
+    direction: ltr;
+    unicode-bidi: bidi-override;
+}
+
+.rating_modal {
+    direction: rtl !important;
+    unicode-bidi: bidi-override;
+    text-align: center;
+}
+
+
+.rating > label {
+    font-size: 30px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.rating > .radio-btn:checked ~ label {
+    color: #f7d106;
+}
+
+.hide {
+    display: none;
+}
+
+.clear {
+    clear: both;
+}
