@@ -26,11 +26,23 @@ if(isset($_GET["stockLevelBelow"])) {
     
 }
 
+if(isset($_GET["stockLevelAbove"])) {
+
+    $stock_report_data = $db_handler->getHighStockReport(intval($_GET["stockLevelAbove"]));
+    
+}
+
 $order_report_data = array();
 
 if(isset($_GET["incomingOrdersLastDays"])) {
 
     $order_report_data = $db_handler->getRecentOrders(intval($_GET["incomingOrdersLastDays"]));
+
+}
+
+if(isset($_GET["refundedOrdersLastDays"])) {
+
+    $order_report_data = $db_handler->getRecentRefundedOrders(intval($_GET["refundedOrdersLastDays"]));
 
 }
 
@@ -81,8 +93,28 @@ if(isset($_GET["incomingOrdersLastDays"])) {
 
         <form method="GET">
             <div class="form-group">
+                <label for="stockLevelAbove">Show all products with a stock level greater than:</label>
+                <input id="stockLevelAbove" min=0 <?= isset($_GET["stockLevelAbove"]) ? 'value="' . htmlspecialchars($_GET["stockLevelAbove"], ENT_QUOTES) . '"': ""?>type="number" name="stockLevelAbove" class="form-control">
+            </div>
+            <div class="form-group mt-2">
+                <button class="btn btn-primary" type="submit">Generate</button>
+            </div>
+        </form>
+
+        <form method="GET">
+            <div class="form-group">
                 <label for="incomingOrdersLastDays">Show incoming orders in the last ___ days:</label>
                 <input id="incomingOrdersLastDays" <?= isset($_GET["incomingOrdersLastDays"]) ? 'value="' . htmlspecialchars($_GET["incomingOrdersLastDays"], ENT_QUOTES) . '"': ""?> type="number" min=1 name="incomingOrdersLastDays" class="form-control">
+            </div>
+            <div class="form-group mt-2">
+                <button class="btn btn-primary" type="submit">Generate</button>
+            </div>
+        </form>
+
+        <form method="GET">
+            <div class="form-group">
+                <label for="refundedOrdersLastDays">Show refunded orders in the last ___ days:</label>
+                <input id="refundedOrdersLastDays" <?= isset($_GET["refundedOrdersLastDays"]) ? 'value="' . htmlspecialchars($_GET["refundedOrdersLastDays"], ENT_QUOTES) . '"': ""?> type="number" min=1 name="refundedOrdersLastDays" class="form-control">
             </div>
             <div class="form-group mt-2">
                 <button class="btn btn-primary" type="submit">Generate</button>

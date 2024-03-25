@@ -815,6 +815,35 @@ Class Database {
 
   }
 
+  public function getRecentRefundedOrders($maxDaysAgo) {
+
+    // check db connection
+    if($this->createDatabaseConnection() !== "OK") {
+      return "Error - database connection error.";
+    }
+
+    $sql = "SELECT `orders`.`order_id`, `orders`.`order_address`, `orders`.`order_comments`, `orders`.`order_total`, `orders`.`order_ispaid`, `orders`.`order_creation`, `order_status`.`status_id`, `order_status`.`status_name`, `order_status`.`status_colour`, `users`.`user_id`, `users`.`user_name`,`users`.`user_email` FROM `orders` JOIN `users` ON `orders`.`order_userid` = `users`.`user_id` JOIN `order_status` ON `orders`.`order_status` = `order_status`.`status_id` WHERE `orders`.`order_creation` > CURRENT_DATE - ? AND `order_status` = 6 AND `order_ispaid` = FALSE ORDER BY `orders`.`order_id` ASC;";
+    
+    try {
+      $request = $this->db_connection->execute_query($sql, [$maxDaysAgo]);
+      $orders_array = array();
+
+      // check if any orders found, return blank array if none found
+      if(!($request->num_rows > 0)) {
+        return $orders_array;
+      }
+
+      while($row = $request->fetch_assoc()) {
+        $orders_array[] = $orders_array + $row;
+      }
+
+      return $orders_array;
+    } catch(Exception $e) {
+      return "Database query error.";
+    }
+
+  }
+
   public function getRevenueStats() {
     // check db connection
     if($this->createDatabaseConnection() !== "OK") {
@@ -1452,6 +1481,33 @@ Class Database {
 
       try {
         $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_stockcount` < ?;", [$below_amount]);
+        $products_array = array();
+
+        if($result->num_rows > 0) {
+          while($row = $result->fetch_assoc()) {
+            $products_array[] = $row;
+          }
+        }
+
+        return $products_array;
+
+      } catch(Exception $e) {
+        return "DB query error.";
+      }
+
+    }
+
+    public function getHighStockReport($below_amount) {
+      if ($this->createDatabaseConnection() !== "OK") {
+        return "Error - database connection error.";
+      }
+
+      if (!is_int($below_amount)) {
+        return "input validation failed";
+      }
+
+      try {
+        $result = $this->db_connection->execute_query("SELECT * FROM `products` WHERE `product_stockcount` >= ?;", [$below_amount]);
         $products_array = array();
 
         if($result->num_rows > 0) {
