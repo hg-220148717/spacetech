@@ -88,6 +88,15 @@ $name = $db_handler->getNameFromUserID($_SESSION["user_id"])
           </div>
         </div>
       </div>
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="fas fa-file fa-lg"></i> Reports</h5>
+            <p class="card-text">View reports and key metrics about the site.</p>
+            <a href="reports.php" class="btn btn-info">View Reports</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
