@@ -4,19 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learn More</title>
-    <link rel="stylesheet" type="text/css" href="../Styles/learnmore.css">
+     <!-- Bootstrap CSS -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
 <body>
     
-    <?php include_once("../PHP/header.php"); ?>
-    <h1 style="margin-top: 50px;">About Us</h1>
+    <?php include_once("../PHP/navbar.php"); ?>
+    
 
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
+            <h1 class="mt-5">About Us</h1>
+            <img src="../images/background.png" style="height:475px">
+            <div class="col-md-6">
                 <div class="main">
                     <div class="service">
-                        <div class="serviec-logo">
+                        <div class="service-logo">
                             <img src="logo.jpeg" alt="">
                         </div>
                         <h2>Our Story</h2>
@@ -27,10 +34,10 @@
                     <div class="shadow2"></div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="main">
                     <div class="service">
-                        <div class="serviec-logo">
+                        <div class="service-logo">
                             <img src="logo.jpeg" alt="">
                         </div>
                         <h2>Our Mission</h2>
@@ -43,6 +50,10 @@
             </div>
         </div>
     </div>
+
+<?php include_once("../PHP/footer.php"); ?>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-<?php include_once("./PHP/footer.php"); ?>
 </html>
