@@ -11,7 +11,7 @@ if (!$setupStatus) {
   die("Error setting up the database.");
 }
 
-if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id"]))  {
+if (!isset($_SESSION["user_id"]) || (!$db_handler->isUserStaff($_SESSION["user_id"]) or !$db_handler->isUserAdmin($_SESSION["user_id"])))  {
   header("Location: ../Pages/index.php");
 }
 

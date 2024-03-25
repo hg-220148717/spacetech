@@ -55,9 +55,8 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
                         <!-- Display for logged-in users -->
                         <li><a class="dropdown-item" href="../Pages/my-profile.php">My Profile</a></li>
                         <li><a class="dropdown-item" href="../Pages/my-past-orders.php">My Past Orders</a></li>
-                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="../Pages/logout.php">Logout</a></li>
-                        <?php if ($isStaff): ?>
+                        <?php if ($isStaff or $db_handler->isUserAdmin($_SESSION["user_id"])): ?>
                             <!-- Additional option for staff members -->
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="../Pages/admin.php">Staff Panel</a></li>

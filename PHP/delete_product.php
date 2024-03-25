@@ -7,7 +7,7 @@ $db_handler = new Database();
 $db_handler->testDatabaseConnection();
 $db_handler->checkSetup();
 
-if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id"])) {
+if (!isset($_SESSION["user_id"]) and !$db_handler->isUserAdmin($_SESSION["user_id"])) {
     header("Location: ../Pages/index.php");
     exit; // Ensure no further execution happens after a redirect
 }
