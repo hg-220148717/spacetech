@@ -18,7 +18,7 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
 <nav class="navbar navbar-expand-lg bg-light" data-bs-theme="light">
     <div class="container">
         <a class="navbar-brand" href="../Pages/index.php" target="_self">
-            <img src="../Images/SpaceTech.png" alt="SpaceTech" width="100%" height="30">
+            <img src="../images/SpaceTech.png" alt="SpaceTech" width="100%" height="30">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
             aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
