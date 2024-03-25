@@ -2,16 +2,16 @@
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-require_once("../PHP/database-handler.php");
+require_once ("../PHP/database-handler.php");
 
 $db_handler = new Database();
 $setupStatus = $db_handler->checkSetup();
 
 if (!$setupStatus) {
-    die("Error setting up the database.");
+    die ("Error setting up the database.");
 }
 
-if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id"])) {
+if (!isset ($_SESSION["user_id"]) || !$db_handler->IsUserAdmin($_SESSION["user_id"])) {
     header("Location: ../Pages/index.php");
 }
 
@@ -30,6 +30,8 @@ $categories = $db_handler->getAllCategories(false);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
@@ -76,6 +78,15 @@ $categories = $db_handler->getAllCategories(false);
                             </td>
                             <td>
                                 <?= htmlspecialchars($db_handler->getCategoryNameByProductId($product["product_id"]), ENT_QUOTES); ?>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#editProductModal" data-product-id="<?= $product["product_id"] ?>"
+                                    data-product-name="<?= htmlspecialchars($product["product_name"], ENT_QUOTES); ?>"
+                                    data-product-price="<?= htmlspecialchars($product["product_price"], ENT_QUOTES); ?>"
+                                    data-product-desc="<?= htmlspecialchars($product["product_desc"], ENT_QUOTES); ?>">
+                                    Edit
+                                </button>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -130,9 +141,54 @@ $categories = $db_handler->getAllCategories(false);
     </div>
 
     <!-- Edit -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createProductModalLabel">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="row" action="../PHP/create_product.php" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="editProductName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editProductName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editProductDescription" name="description"
+                                required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductPrice" class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" id="editProductPrice" name="price"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productCategory" class="form-label">Category</label>
+                            <select class="form-select" id="productCategory" name="category" required>
+                                <?php foreach ($categories as $category): ?>
+                                    <option value="<?= htmlspecialchars($category["category_id"], ENT_QUOTES); ?>">
+                                        <?= htmlspecialchars($category["category_name"], ENT_QUOTES); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Edit Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Delete -->
 
+    <!-- Product JS -->
+    <script src="../Scripts/product.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

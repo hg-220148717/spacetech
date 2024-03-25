@@ -11,6 +11,7 @@ if (!$setupStatus) {
 
 $loggedin = isset($_SESSION["user_id"]);
 $isStaff = $loggedin ? $db_handler->isUserStaff($_SESSION["user_id"]) : false;
+$isAdmin = $loggedin ? $db_handler->IsUserAdmin($_SESSION["user_id"]) : false;
 $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Guest";
 ?>
 
@@ -53,8 +54,8 @@ $name = $loggedin ? $db_handler->getNameFromUserID($_SESSION["user_id"]) : "Gues
                     <?php if ($loggedin): ?>
                         <!-- Display for logged-in users -->
                         <li><a class="dropdown-item" href="../Pages/logout.php">Logout</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <?php if ($isStaff): ?>
+                        <?php if ($isStaff or $isAdmin): ?>
+                            <li><hr class="dropdown-divider"></li>
                             <!-- Additional option for staff members -->
                             <li><a class="dropdown-item" href="../Pages/admin.php">Staff Panel</a></li>
                         <?php endif; ?>

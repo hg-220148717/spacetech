@@ -9,9 +9,8 @@ if (!$setupStatus) {
     die("Error setting up the database.");
 }
 
-if (!isset($_SESSION["user_id"]) || !$db_handler->isUserStaff($_SESSION["user_id"])) {
+if (!isset($_SESSION["user_id"]) || !$db_handler->IsUserAdmin($_SESSION["user_id"])) {
     header("Location: ../Pages/login.php");
-    // redirect as no user id found in session or not staff
     exit;
 }
 

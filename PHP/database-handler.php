@@ -340,6 +340,29 @@ class Database
     }
   }
 
+  public function IsUserAdmin($user_id)
+  {
+    if (!is_int($user_id)) {
+      return "Error - User ID must be an integer.";
+    }
+
+    if ($this->createDatabaseConnection() !== "OK") {
+      return "Error - Database connection error.";
+    }
+
+    try {
+      $result = $this->db_connection->execute_query("SELECT `user_isadmin` FROM `users` WHERE `user_id` = ? LIMIT 1;", [$user_id]);
+      if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        return (bool) $row["user_isadmin"];
+      } else {
+        return "User not found.";
+      }
+    } catch (Exception $e) {
+      return "An error occurred. Stack trace: " . $e->getMessage();
+    }
+  }
+
   /**
    * Checks & validates given credentials against database of users
    * 
@@ -853,7 +876,7 @@ class Database
     } catch (Exception $e) {
       return "Error - database query error.";
     }
-  }
+  } 
 
   public function createReview($userId, $productId, $rating, $reviewText)
   {
