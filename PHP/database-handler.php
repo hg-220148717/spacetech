@@ -284,7 +284,7 @@ class Database
             `review_text` text NOT NULL,
             `review_approved` boolean NOT NULL DEFAULT false,
           );",
-          
+
       "ALTER TABLE `reviews` ADD `review_approved` BOOLEAN NOT NULL DEFAULT FALSE;",
 
       "CREATE TABLE `basket_entries` (
@@ -1838,7 +1838,7 @@ class Database
     SpaceTech.";
 
     foreach($admins_list as $admin) {
-      mail($admin, "SpaceTech - Stock Notification", $message);
+      mail($admin["user_email"], "SpaceTech - Stock Notification", $message);
     }
   }
 
@@ -1855,7 +1855,7 @@ class Database
     SpaceTech.";
 
     foreach($admins_list as $admin) {
-      mail($admin, "SpaceTech - Stock Notification", $message);
+      mail($admin["user_email"], "SpaceTech - Stock Notification", $message);
           }
   }
 
@@ -1953,14 +1953,7 @@ class Database
           while ($row = $result->fetch_assoc()) {
             if ($result->num_rows > 0) {
 
-              $basket_entry = array();
-
-              $basket_entry["entry_id"] = $row["basket_entry_id"];
-              $basket_entry["product_id"] = $row["basket_productid"];
-              $basket_entry["qty"] = $row["entry_quanitity"];
-              $basket_entry["subtotal"] = $row["entry_subtotal"];
-
-              $basket[] = $basket_entry;
+              $basket[] = $row;
 
             }
           }
