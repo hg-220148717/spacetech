@@ -1,13 +1,13 @@
 <?php
-// Database connection settings
-$host = "localhost";
-$dbname = " ";
-$username = " ";
-$password = " ";
+// Database connection parameters
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "teamP";
 
 // Create a new PDO instance
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     // Set PDO error mode to exception
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Disable user in the database
-    $sql = "UPDATE users SET status = 'disabled' WHERE id = :user_id";
+    $sql = "UPDATE users SET role = 'disabled' WHERE id = :user_id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['user_id' => $user_id]);
 

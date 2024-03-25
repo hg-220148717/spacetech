@@ -77,10 +77,14 @@ function sendMessage($forename, $surname, $email, $mobile, $msg) {
 
 <head>
     <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../Styles/master-style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../Styles/master-style.css">
 </head>
 
 
@@ -126,8 +130,6 @@ function sendMessage($forename, $surname, $email, $mobile, $msg) {
                             <div class="form-group">
                                 <label for="msg">Message</label>
                                 <textarea class="form-control" name="msg" placeholder="Write your message here..." id="msg" required></textarea>
-                            </div>
-                        </div>
                         <div class="form-group row g-6">
                             <div class="form-group">
                                 <button class="btn btn-primary mt-2" type="submit">Send message</button>
@@ -172,6 +174,12 @@ function sendMessage($forename, $surname, $email, $mobile, $msg) {
 </div>
         </div>
     </div>
+
     <?php include_once("../PHP/footer.php"); ?>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
+</html>
+

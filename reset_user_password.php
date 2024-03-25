@@ -1,9 +1,9 @@
 <?php
-// Database connection settings
-$host = "localhost";
-$dbname = " ";
-$username = " ";
-$password = " ";
+// Database connection parameters
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "teamP";
 
 // Create a new PDO instance
 try {

@@ -7,9 +7,6 @@ include_once("database-handler.php");
 $db_handler = new Database();
 $db_handler->checkSetup();
 
-
-
-
 ?>
 
 <!DOCTYPE html>
